@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model appointment_tbl {
+  appointment_no      Int      @default(autoincrement())
+  patient_no          Int
+  treatment           String   @db.VarChar(50)
+  doctor_no           Int
+  appointment_time    DateTime @db.Time(0)
+  date_of_appointment DateTime @db.Date
+
+  @@id([appointment_no, patient_no, treatment, doctor_no])
+}
+
+model doctor_tbl {
+  doctor_no   Int      @id @default(autoincrement())
+  doctor_name String   @db.VarChar(20)
+  gender      String   @db.VarChar(20)
+  dob         DateTime @db.Date
+  hire_date   DateTime @db.Date
+}
+
+model patient_tbl {
+  patient_no        Int      @id @default(autoincrement())
+  patient_name      String   @db.VarChar(50)
+  address           String   @db.LongText
+  age               Int
+  sex               String   @db.VarChar(20)
+  civil_status      String   @db.VarChar(20)
+  bda               DateTime @db.Date
+  mobile_no         Int
+  emergency_contact String   @db.VarChar(20)
+  ec_mobile_no      Int
+  medical_history   String   @db.LongText
+}
+
+model records_tbl {
+  record_no    Int    @id @default(autoincrement())
+  patient_no   String @db.VarChar(11)
+  patient_name String @db.VarChar(50)
+  doctor_no    Int    @unique(map: "doctor_no")
+  doctor_name  String @unique(map: "doctor_name") @db.VarChar(20)
+  treatment    String @unique(map: "treatment") @db.VarChar(50)
+  cost         Int    @unique(map: "cost")
+  ammount_paid Int
+  balance      Int
+  commission   String @db.LongText
+}
+
+model reports_tbl {
+  doctor_no       Int
+  patient_no      Int
+  treatment       String @db.VarChar(20)
+  medical_history String @db.LongText
+
+  @@id([doctor_no, patient_no])
+}
+
+model treatment_tbl {
+  treatment String @db.VarChar(50)
+  cost      Int
+  ID        Int    @id
+}
+
+model user_tbl {
+  user_id    Int    @id @default(autoincrement())
+  username   String @db.Text
+  password   String @db.Text
+  firstname  String @db.Text
+  lastname   String @db.Text
+  middlename String @db.Text
+  user_level String @db.Text
+  email      String @db.Text
+}
