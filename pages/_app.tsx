@@ -23,88 +23,50 @@ export default function App(props: AppProps) {
           colorScheme: "dark",
           colors: {
             primary: [
-              "#e3bfb5",
-              "#dcafa3",
-              "#d59f90",
-              "#cc8b79",
-              "#b95f46",
-              "#a6563f",
-              "#944c38",
-              "#814331",
-              "#6f392a",
-              "#4a261c"
+              "#fabf9e",
+              "#f8ae86",
+              "#f79e6e",
+              "#f58e56",
+              "#f3722c",
+              "#d9540c",
+              "#c14b0b",
+              "#a9420a",
+              "#913808",
+              "#612605"
             ],
             gradientFrom: [
-              "#d7bfd9",
-              "#cdafcf",
-              "#c3a0c5",
-              "#b990bc",
-              "#9b609f",
-              "#8b568f",
-              "#7c4d7f",
-              "#714674",
-              "#5d3a5f",
-              "#3e2640"
+              "#ffee99",
+              "#ffea80",
+              "#ffe566",
+              "#ffe14d",
+              "#ffd60a",
+              "#e6bf00",
+              "#ccaa00",
+              "#b39500",
+              "#997f00",
+              "#665500"
             ],
             gradientTo: [
-              "#c7b1e7",
-              "#b99ee1",
-              "#ab8adb",
-              "#9d77d5",
-              "#733cc3",
-              "#6836af",
-              "#5c309c",
-              "#512a88",
-              "#432371",
-              "#2e184e"
+              "#99c9ff",
+              "#80bcff",
+              "#66afff",
+              "#4da1ff",
+              "#0079ff",
+              "#006de6",
+              "#0061cc",
+              "#0055b3",
+              "#004999",
+              "#001d3d"
             ]
           },
-          primaryShade: 3,
+          primaryShade: 4,
           primaryColor: "primary",
           defaultRadius: "sm",
           defaultGradient: {
-            deg: 90,
+            deg: 45,
             to: "gradientTo",
             from: "gradientFrom"
-          },
-          components: {
-            Button: {
-              styles: {
-                root: {
-                  borderWidth: 1
-                }
-              }
-            },
-            Chip: {
-              styles: {
-                label: {
-                  borderWidth: 1
-                }
-              }
-            },
-            Input: {
-              styles: {
-                input: {
-                  borderWidth: 1
-                }
-              }
-            },
-            Pagination: {
-              styles: {
-                item: {
-                  borderWidth: 1
-                }
-              }
-            },
-            Switch: {
-              styles: {
-                track: {
-                  borderWidth: 1
-                }
-              }
-            }
-          },
-     
+          }
         }}
       >
          
