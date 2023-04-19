@@ -4,7 +4,7 @@ const Logo = () => {
     return (  
         <Image
             src="./logo.png"
-            alt="Mantine logo"
+            alt="MC Dental Clinic Logo"
             width={267}
 
             height={100}

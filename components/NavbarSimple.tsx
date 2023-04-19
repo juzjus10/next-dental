@@ -1,22 +1,16 @@
-import { useState } from 'react';
-import { createStyles, Navbar, Group, Code, getStylesRef, rem } from '@mantine/core';
+import Logo from '@/components/Logo';
+import { Group, Navbar, createStyles, getStylesRef, rem } from '@mantine/core';
 import {
-  IconLayoutDashboard,
-  IconFingerprint,
-  IconKey,
-  IconSettings,
-  Icon2fa,
-  IconDatabaseImport,
-  IconReceipt2,
-  IconSwitchHorizontal,
-  IconLogout,
-  IconListCheck,
   IconCalendarEvent,
   IconEmpathize,
+  IconLayoutDashboard,
+  IconListCheck,
+  IconLogout,
   IconNurse,
-  IconUsersGroup,
+  IconSwitchHorizontal,
+  IconUsersGroup
 } from '@tabler/icons-react';
-import Logo  from '@/components/Logo';
+import { useState } from 'react';
 const useStyles = createStyles((theme) => ({
   navbar: {
     backgroundColor: theme.fn.variant({ variant: 'filled', color: theme.primaryColor }).background,
@@ -120,18 +114,12 @@ export function NavbarSimple() {
   return (
     <Navbar width={{ sm: 300 }} p="md" className={classes.navbar}>
       <Navbar.Section grow>
-        <Group className={classes.header} position="apart">
-          <Logo  />
-        </Group>
+       
         {links}
       </Navbar.Section>
 
       <Navbar.Section className={classes.footer}>
-        <a href="#" className={classes.link} onClick={(event) => event.preventDefault()}>
-          <IconSwitchHorizontal className={classes.linkIcon} stroke={1.5} />
-          <span>Change account</span>
-        </a>
-
+      
         <a href="#" className={classes.link} onClick={(event) => event.preventDefault()}>
           <IconLogout className={classes.linkIcon} stroke={1.5} />
           <span>Logout</span>

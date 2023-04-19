@@ -23,53 +23,89 @@ export default function App(props: AppProps) {
           colorScheme: "dark",
           colors: {
             primary: [
-              "#fabf9e",
-              "#f8ae86",
-              "#f79e6e",
-              "#f58e56",
-              "#f3722c",
-              "#d9540c",
-              "#c14b0b",
-              "#a9420a",
-              "#913808",
-              "#612605"
-            ],
-            gradientFrom: [
               "#ffee99",
               "#ffea80",
               "#ffe566",
               "#ffe14d",
-              "#ffd60a",
+              "#ffd400",
               "#e6bf00",
               "#ccaa00",
               "#b39500",
-              "#997f00",
-              "#665500"
+              "#967d00",
+              "#665500",
+            ],
+            gradientFrom: [
+              "#d7bfd9",
+              "#cdafcf",
+              "#c3a0c5",
+              "#b990bc",
+              "#9b609f",
+              "#8b568f",
+              "#7c4d7f",
+              "#714674",
+              "#5d3a5f",
+              "#3e2640",
             ],
             gradientTo: [
-              "#99c9ff",
-              "#80bcff",
-              "#66afff",
-              "#4da1ff",
-              "#0079ff",
-              "#006de6",
-              "#0061cc",
-              "#0055b3",
-              "#004999",
-              "#001d3d"
-            ]
+              "#c7b1e7",
+              "#b99ee1",
+              "#ab8adb",
+              "#9d77d5",
+              "#733cc3",
+              "#6836af",
+              "#5c309c",
+              "#512a88",
+              "#432371",
+              "#2e184e",
+            ],
           },
-          primaryShade: 4,
+          primaryShade: 8,
           primaryColor: "primary",
           defaultRadius: "sm",
           defaultGradient: {
-            deg: 45,
+            deg: 90,
             to: "gradientTo",
-            from: "gradientFrom"
-          }
+            from: "gradientFrom",
+          },
+          components: {
+            Button: {
+              styles: {
+                root: {
+                  borderWidth: 1,
+                },
+              },
+            },
+            Chip: {
+              styles: {
+                label: {
+                  borderWidth: 1,
+                },
+              },
+            },
+            Input: {
+              styles: {
+                input: {
+                  borderWidth: 1,
+                },
+              },
+            },
+            Pagination: {
+              styles: {
+                item: {
+                  borderWidth: 1,
+                },
+              },
+            },
+            Switch: {
+              styles: {
+                track: {
+                  borderWidth: 1,
+                },
+              },
+            },
+          },
         }}
       >
-         
         <Component {...pageProps} />
       </MantineProvider>
     </>
