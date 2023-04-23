@@ -11,9 +11,13 @@ import {
   IconUsersGroup
 } from '@tabler/icons-react';
 import { useState } from 'react';
+import router  from 'next/router';
+
 const useStyles = createStyles((theme) => ({
   navbar: {
-    backgroundColor: theme.fn.variant({ variant: 'filled', color: theme.primaryColor }).background,
+    backgroundColor:  theme.colorScheme === "dark"
+    ? theme.colors.dark[6]
+    : theme.colors.gray[0],
   },
 
   version: {
@@ -28,19 +32,15 @@ const useStyles = createStyles((theme) => ({
   header: {
     paddingBottom: theme.spacing.md,
     marginBottom: `calc(${theme.spacing.md} * 1.5)`,
-    borderBottom: `${rem(1)} solid ${theme.fn.lighten(
-      theme.fn.variant({ variant: 'filled', color: theme.primaryColor }).background!,
-      0.1
-    )}`,
+    borderBottom: `${rem(1)} solid ${theme.colorScheme === "dark"
+    ? theme.colors.dark[6]
+    : theme.colors.gray[9]}`,
   },
 
   footer: {
     paddingTop: theme.spacing.md,
     marginTop: theme.spacing.md,
-    borderTop: `${rem(1)} solid ${theme.fn.lighten(
-      theme.fn.variant({ variant: 'filled', color: theme.primaryColor }).background!,
-      0.1
-    )}`,
+    borderTop: `${rem(1)} solid `,
   },
 
   link: {
@@ -49,7 +49,7 @@ const useStyles = createStyles((theme) => ({
     alignItems: 'center',
     textDecoration: 'none',
     fontSize: theme.fontSizes.sm,
-    color: theme.white,
+    color: theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.colors.gray[9],
     padding: `${theme.spacing.xs} ${theme.spacing.sm}`,
     borderRadius: theme.radius.sm,
     fontWeight: 500,
@@ -64,7 +64,7 @@ const useStyles = createStyles((theme) => ({
 
   linkIcon: {
     ref: getStylesRef('icon'),
-    color: theme.white,
+    color: theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.colors.gray[9],
     opacity: 0.75,
     marginRight: theme.spacing.sm,
   },
@@ -83,12 +83,12 @@ const useStyles = createStyles((theme) => ({
 }));
 
 const data = [
-  { link: '', label: 'Dashboard', icon: IconLayoutDashboard },
-  { link: '', label: 'Appointment', icon: IconListCheck },
-  { link: '', label: 'Schedule', icon: IconCalendarEvent },
-  { link: '', label: 'Patient', icon: IconEmpathize },
-  { link: '', label: 'Doctors', icon: IconNurse },
-  { link: '', label: 'Users', icon: IconUsersGroup },
+  { link: '/', label: 'Dashboard', icon: IconLayoutDashboard },
+  { link: '/appointment', label: 'Appointment', icon: IconListCheck },
+  { link: '/schedule', label: 'Schedule', icon: IconCalendarEvent },
+  { link: '/patient', label: 'Patient', icon: IconEmpathize },
+  { link: '/doctors', label: 'Doctors', icon: IconNurse },
+  { link: '/users', label: 'Users', icon: IconUsersGroup },
  // { link: '', label: 'Other Settings', icon: IconSettings },
 ];
 
@@ -104,6 +104,7 @@ export function NavbarSimple() {
       onClick={(event) => {
         event.preventDefault();
         setActive(item.label);
+        router.push(item.link)
       }}
     >
       <item.icon className={classes.linkIcon} stroke={1.5} />
