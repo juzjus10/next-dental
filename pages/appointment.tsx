@@ -70,7 +70,7 @@ const Apointment = () => {
         {accessor: 'action'}
       ]}
       // execute this callback when a row is clicked
-      onRowClick={({ name, party, bornIn }) =>
+      onRowClick={() =>
         alert(`You clicked me`)
       }
     />
