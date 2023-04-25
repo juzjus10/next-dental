@@ -7,74 +7,81 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model appointment_tbl {
-  appointment_no      Int      @default(autoincrement())
-  patient_no          Int
-  treatment           String   @db.VarChar(50)
-  doctor_no           Int
-  appointment_time    DateTime @db.Time(0)
-  date_of_appointment DateTime @db.Date
+model Appointment {
+  id                  Int         @id @default(autoincrement())
+  status              String      @db.VarChar(45)
+  appointment_time    DateTime    @db.Time(0)
+  date_of_appointment DateTime    @db.Date
+  created_at          DateTime    @db.Date
+  patient_id          Int
+  doctor_id           Int
+  doctor              Doctor      @relation(fields: [doctor_id], references: [id])
+  patient             Patient     @relation(fields: [patient_id], references: [id])
+  treatment           Treatment[]
 
-  @@id([appointment_no, patient_no, treatment, doctor_no])
+  @@index([doctor_id], map: "Appointment_doctor_id_fkey")
+  @@index([patient_id], map: "Appointment_patient_id_fkey")
 }
 
-model doctor_tbl {
-  doctor_no   Int      @id @default(autoincrement())
-  doctor_name String   @db.VarChar(20)
-  gender      String   @db.VarChar(20)
-  dob         DateTime @db.Date
-  hire_date   DateTime @db.Date
+model Doctor {
+  id           Int           @id @default(autoincrement())
+  doctor_name  String        @db.VarChar(45)
+  gender       String        @db.VarChar(45)
+  dob          DateTime      @db.Date
+  hire_date    DateTime      @db.Date
+  appointments Appointment[]
+  records      Records?
+  user         User?
 }
 
-model patient_tbl {
-  patient_no        Int      @id @default(autoincrement())
-  patient_name      String   @db.VarChar(50)
-  address           String   @db.LongText
-  age               Int
-  sex               String   @db.VarChar(20)
-  civil_status      String   @db.VarChar(20)
-  bda               DateTime @db.Date
-  mobile_no         Int
-  emergency_contact String   @db.VarChar(20)
-  ec_mobile_no      Int
-  medical_history   String   @db.LongText
+model Patient {
+  id                  Int           @id @default(autoincrement())
+  address             String        @db.LongText
+  age                 Int
+  sex                 String        @db.VarChar(20)
+  civil_status        String        @db.VarChar(20)
+  dob                 DateTime      @db.Date
+  mobile_no           Int
+  emergency_contact   String        @db.VarChar(20)
+  emergency_mobile_no Int
+  medical_history     String        @db.LongText
+  appointments        Appointment[]
+  Records             Records?
+  user                User?
 }
 
-model records_tbl {
-  record_no    Int    @id @default(autoincrement())
-  patient_no   String @db.VarChar(11)
-  patient_name String @db.VarChar(50)
-  doctor_no    Int    @unique(map: "doctor_no")
-  doctor_name  String @unique(map: "doctor_name") @db.VarChar(20)
-  treatment    String @unique(map: "treatment") @db.VarChar(50)
-  cost         Int    @unique(map: "cost")
-  ammount_paid Int
-  balance      Int
-  commission   String @db.LongText
+model Records {
+  id           Int     @id @default(autoincrement())
+  ammount_paid Float   @db.Float
+  balance      Float   @db.Float
+  commission   Float   @db.Float
+  patient_id   Int     @unique
+  doctor_id    Int     @unique
+  doctor       Doctor  @relation(fields: [doctor_id], references: [id])
+  patient      Patient @relation(fields: [patient_id], references: [id])
 }
 
-model reports_tbl {
-  doctor_no       Int
-  patient_no      Int
-  treatment       String @db.VarChar(20)
-  medical_history String @db.LongText
+model Treatment {
+  id             Int         @id
+  treatment      String      @db.VarChar(50)
+  cost           Int
+  appointment_id Int
+  appointment    Appointment @relation(fields: [appointment_id], references: [id])
 
-  @@id([doctor_no, patient_no])
+  @@index([appointment_id], map: "Treatment_appointment_id_fkey")
 }
 
-model treatment_tbl {
-  treatment String @db.VarChar(50)
-  cost      Int
-  ID        Int    @id
-}
-
-model user_tbl {
-  user_id    Int    @id @default(autoincrement())
-  username   String @db.Text
-  password   String @db.Text
-  firstname  String @db.Text
-  lastname   String @db.Text
-  middlename String @db.Text
-  user_level String @db.Text
-  email      String @db.Text
+model User {
+  id         Int      @id
+  username   String   @db.Text
+  password   String   @db.Text
+  firstname  String   @db.Text
+  lastname   String   @db.Text
+  middlename String   @db.Text
+  user_level String   @db.Text
+  email      String   @db.Text
+  patient_id Int?     @unique
+  doctor_id  Int?     @unique
+  doctor     Doctor?  @relation(fields: [doctor_id], references: [id])
+  patient    Patient? @relation(fields: [patient_id], references: [id])
 }
