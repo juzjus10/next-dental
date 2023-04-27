@@ -5,6 +5,7 @@ import { compare, hash } from "bcrypt";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 
 export const nextAuthOptions: NextAuthOptions = {
+ 
   adapter: PrismaAdapter(prisma),
   session: {
     strategy: "jwt",
@@ -12,7 +13,7 @@ export const nextAuthOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
-        credentials: {
+      credentials: {
         username: { label: "Username", type: "text", placeholder: "jsmith" },
         password: { label: "Password", type: "password" },
       },
@@ -36,28 +37,32 @@ export const nextAuthOptions: NextAuthOptions = {
         if (!isPasswordValid) {
           return null;
         }
-        console.log(user);
-        
+
         return user;
       },
-      
     }),
   ],
   callbacks: {
-    jwt : async (token, user) => {
-      console.log('JWT Callback ', user, token);
+    async jwt({ token, user }: any) {
       if (user) {
         token.id = user.id;
+        token.firstname = user.firstname;
+        token.lastname = user.lastname;
+        token.email = user.email;
+        token.user_level = user.user_level;
       }
       return token;
     },
-    session: async (session, user) => {
-      console.log('Session Callback ', user, session);
-      session.id = user.id;
+    async session({session, token}) {
+      if (token) {
+        session.user= token;
+      }
       return session;
+      
     },
+  },
+  jwt: {
+    secret: "tangina",
   },
   debug: true,
 };
-
-

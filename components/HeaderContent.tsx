@@ -24,7 +24,8 @@ import {
   IconSwitchHorizontal,
   IconChevronDown,
 } from "@tabler/icons-react";
-import Logo from "@/components/Logo";
+import { useSession } from "next-auth/react";
+
 
 const useStyles = createStyles((theme) => ({
   header: {
@@ -71,6 +72,7 @@ export function HeaderContent({ user, tabs }: HeaderTabsProps) {
   const { classes, theme, cx } = useStyles();
   const [opened, { toggle }] = useDisclosure(false);
   const [userMenuOpened, setUserMenuOpened] = useState(false);
+  const { data: session } = useSession();
 
   return (
     <div className={classes.header}>
@@ -117,47 +119,17 @@ export function HeaderContent({ user, tabs }: HeaderTabsProps) {
                           : theme.colors.gray[9],
                     }}
                     mr={3}
+                    tt={"capitalize"}
                   >
-                    {"Test name"}
+                    
+                    {`${session?.user?.firstname} ${session?.user?.lastname}`}
                   </Text>
                   <IconChevronDown size={rem(12)} stroke={1.5} />
                 </Group>
               </UnstyledButton>
             </Menu.Target>
             <Menu.Dropdown>
-              <Menu.Item
-                icon={
-                  <IconHeart
-                    size="0.9rem"
-                    stroke={1.5}
-                    color={theme.colors.red[6]}
-                  />
-                }
-              >
-                Liked posts
-              </Menu.Item>
-              <Menu.Item
-                icon={
-                  <IconStar
-                    size="0.9rem"
-                    stroke={1.5}
-                    color={theme.colors.yellow[6]}
-                  />
-                }
-              >
-                Saved posts
-              </Menu.Item>
-              <Menu.Item
-                icon={
-                  <IconMessage
-                    size="0.9rem"
-                    stroke={1.5}
-                    color={theme.colors.blue[6]}
-                  />
-                }
-              >
-                Your comments
-              </Menu.Item>
+              
 
               <Menu.Label>Settings</Menu.Label>
               <Menu.Item icon={<IconSettings size="0.9rem" stroke={1.5} />}>
@@ -168,21 +140,15 @@ export function HeaderContent({ user, tabs }: HeaderTabsProps) {
               >
                 Change account
               </Menu.Item>
-              <Menu.Item icon={<IconLogout size="0.9rem" stroke={1.5} />}>
-                Logout
-              </Menu.Item>
+           
 
               <Menu.Divider />
 
-              <Menu.Label>Danger zone</Menu.Label>
-              <Menu.Item icon={<IconPlayerPause size="0.9rem" stroke={1.5} />}>
-                Pause subscription
-              </Menu.Item>
-              <Menu.Item
-                color="red"
-                icon={<IconTrash size="0.9rem" stroke={1.5} />}
-              >
-                Delete account
+             
+              <Menu.Item 
+              color="red"
+              icon={<IconLogout size="0.9rem" stroke={1.5} />}>
+                Logout
               </Menu.Item>
             </Menu.Dropdown>
           </Menu>

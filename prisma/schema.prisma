@@ -7,7 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model appointment {
+model Appointment {
   id                  Int         @id @default(autoincrement())
   status              String      @db.VarChar(45)
   appointment_time    DateTime    @db.Time(0)
@@ -15,26 +15,26 @@ model appointment {
   created_at          DateTime    @db.Date
   patient_id          Int
   doctor_id           Int
-  doctor              doctor      @relation(fields: [doctor_id], references: [id], map: "Appointment_doctor_id_fkey")
-  patient             patient     @relation(fields: [patient_id], references: [id], map: "Appointment_patient_id_fkey")
-  treatment           treatment[]
+  Doctor              Doctor      @relation(fields: [doctor_id], references: [id])
+  Patient             Patient     @relation(fields: [patient_id], references: [id])
+  Treatment           Treatment[]
 
   @@index([doctor_id], map: "Appointment_doctor_id_fkey")
   @@index([patient_id], map: "Appointment_patient_id_fkey")
 }
 
-model doctor {
+model Doctor {
   id          Int           @id @default(autoincrement())
   doctor_name String        @db.VarChar(45)
   gender      String        @db.VarChar(45)
   dob         DateTime      @db.Date
   hire_date   DateTime      @db.Date
-  appointment appointment[]
-  records     records?
-  user        user?
+  Appointment Appointment[]
+  Records     Records?
+  User        User?
 }
 
-model patient {
+model Patient {
   id                  Int           @id @default(autoincrement())
   address             String        @db.LongText
   age                 Int
@@ -45,33 +45,33 @@ model patient {
   emergency_contact   String        @db.VarChar(20)
   emergency_mobile_no Int
   medical_history     String        @db.LongText
-  appointment         appointment[]
-  records             records?
-  user                user?
+  Appointment         Appointment[]
+  Records             Records?
+  User                User?
 }
 
-model records {
+model Records {
   id           Int     @id @default(autoincrement())
   ammount_paid Float   @db.Float
   balance      Float   @db.Float
   commission   Float   @db.Float
-  patient_id   Int     @unique(map: "Records_patient_id_key")
-  doctor_id    Int     @unique(map: "Records_doctor_id_key")
-  doctor       doctor  @relation(fields: [doctor_id], references: [id], map: "Records_doctor_id_fkey")
-  patient      patient @relation(fields: [patient_id], references: [id], map: "Records_patient_id_fkey")
+  patient_id   Int     @unique
+  doctor_id    Int     @unique
+  Doctor       Doctor  @relation(fields: [doctor_id], references: [id])
+  Patient      Patient @relation(fields: [patient_id], references: [id])
 }
 
-model treatment {
+model Treatment {
   id             Int         @id
   treatment      String      @db.VarChar(50)
   cost           Int
   appointment_id Int
-  appointment    appointment @relation(fields: [appointment_id], references: [id], map: "Treatment_appointment_id_fkey")
+  Appointment    Appointment @relation(fields: [appointment_id], references: [id])
 
   @@index([appointment_id], map: "Treatment_appointment_id_fkey")
 }
 
-model user {
+model User {
   id         Int      @id
   username   String   @db.Text
   password   String   @db.Text
@@ -79,9 +79,9 @@ model user {
   lastname   String   @db.Text
   middlename String   @db.Text
   user_level String   @db.Text
-  email      String   @unique
-  patient_id Int?     @unique(map: "User_patient_id_key")
-  doctor_id  Int?     @unique(map: "User_doctor_id_key")
-  doctor     doctor?  @relation(fields: [doctor_id], references: [id], map: "User_doctor_id_fkey")
-  patient    patient? @relation(fields: [patient_id], references: [id], map: "User_patient_id_fkey")
+  email      String   @db.Text
+  patient_id Int?     @unique
+  doctor_id  Int?     @unique
+  Doctor     Doctor?  @relation(fields: [doctor_id], references: [id])
+  Patient    Patient? @relation(fields: [patient_id], references: [id])
 }
