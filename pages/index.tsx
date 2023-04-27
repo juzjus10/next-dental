@@ -13,9 +13,13 @@ import ApplicationShell from "@/components/Layout";
 import { ColorSwatch } from "@mantine/core";
 import { StatsGrid } from "@/components/StatsGrid";
 import { DatePicker } from "@mantine/dates";
-
+import { requireAuth } from "common/requireAuth";
+import { useSession, } from "next-auth/react";
 export default function IndexPage() {
-  const data = [
+  const { data: session } = useSession();
+  console.log(session);
+  
+  const rows = [
     {
       title: "Requests",
       icon: "user",
@@ -48,7 +52,7 @@ export default function IndexPage() {
   return (
     <ApplicationShell>
       <Paper shadow="sm" p="md">
-        <StatsGrid data={data} />
+        <StatsGrid data={rows} />
 
         <Grid p="lg">
           <Grid.Col span={4}>
@@ -127,3 +131,9 @@ export default function IndexPage() {
     </ApplicationShell>
   );
 }
+
+
+//getServerSideProps
+export const getServerSideProps = requireAuth(async (ctx) => {
+  return { props: {} };
+});

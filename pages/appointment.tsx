@@ -10,31 +10,35 @@ const Apointment = () => {
       treatment: "Dental Cleaning",
       doctor_no: 2001,
       appointment_time: "2023-05-01T09:00:00.000Z",
-      date_of_appointment: "2023-05-01"
+      date_of_appointment: "2023-05-01",
+      created_at: "2021-05-03T14:00:00.000Z"
     },
     {
       appointment_no: 2,
       patient_no: 1002,
-      treatment: "Eye Exam",
+      treatment: "Pasta Filling",
       doctor_no: 2003,
       appointment_time: "2023-05-02T10:30:00.000Z",
-      date_of_appointment: "2023-05-02"
+      date_of_appointment: "2023-05-02",
+      created_at: "2021-05-03T14:00:00.000Z"
     },
     {
       appointment_no: 3,
       patient_no: 1003,
-      treatment: "Physical Therapy",
+      treatment: "Braces Fitting",
       doctor_no: 2004,
       appointment_time: "2023-05-03T14:00:00.000Z",
-      date_of_appointment: "2023-05-03"
+      date_of_appointment: "2023-05-03",
+      created_at: "2021-05-03T14:00:00.000Z"
     },
     {
       appointment_no: 4,
       patient_no: 1004,
-      treatment: "Blood Test",
+      treatment: "Surgey Consultation",
       doctor_no: 2002,
       appointment_time: "2023-05-04T11:15:00.000Z",
-      date_of_appointment: "2023-05-04"
+      date_of_appointment: "2023-05-04",
+      created_at: "2021-05-03T14:00:00.000Z"
     }
   ];
   return (
@@ -66,7 +70,7 @@ const Apointment = () => {
           accessor: 'appointment_time',
          
         },
-        { accessor: 'createdAt' },
+        { accessor: 'created_at' },
         {accessor: 'action'}
       ]}
       // execute this callback when a row is clicked

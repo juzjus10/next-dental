@@ -1,12 +1,13 @@
 import { AppProps } from "next/app";
 import Head from "next/head";
 import { MantineProvider } from "@mantine/core";
-
+import { SessionProvider } from "next-auth/react"; 
 export default function App(props: AppProps) {
   const { Component, pageProps } = props;
 
   return (
     <>
+       <SessionProvider session={pageProps.session}>
       <Head>
         <title>Page title</title>
         <link rel="shortcut icon" href="/favicon.svg" />
@@ -15,12 +16,12 @@ export default function App(props: AppProps) {
           content="minimum-scale=1, initial-scale=1, width=device-width"
         />
       </Head>
-
+   
       <MantineProvider
         withGlobalStyles
         withNormalizeCSS
         theme={{
-          colorScheme: "dark",
+          
           colors: {
             primary: [
               "#ffee99",
@@ -108,6 +109,7 @@ export default function App(props: AppProps) {
       >
         <Component {...pageProps} />
       </MantineProvider>
+      </SessionProvider>
     </>
   );
 }
