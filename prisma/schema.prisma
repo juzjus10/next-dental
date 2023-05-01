@@ -8,13 +8,13 @@ datasource db {
 }
 
 model Appointment {
-  id                  Int         @id @default(autoincrement())
+  id                  String      @id @default(uuid())
   status              String      @db.VarChar(45)
   appointment_time    DateTime    @db.Time(0)
   date_of_appointment DateTime    @db.Date
-  created_at          DateTime    @db.Date
-  patient_id          Int
-  doctor_id           Int
+  created_at          DateTime    @default(now())
+  patient_id          String
+  doctor_id           String
   Doctor              Doctor      @relation(fields: [doctor_id], references: [id])
   Patient             Patient     @relation(fields: [patient_id], references: [id])
   Treatment           Treatment[]
@@ -24,7 +24,7 @@ model Appointment {
 }
 
 model Doctor {
-  id          Int           @id @default(autoincrement())
+  id          String      @id @default(uuid())
   doctor_name String        @db.VarChar(45)
   gender      String        @db.VarChar(45)
   dob         DateTime      @db.Date
@@ -35,7 +35,7 @@ model Doctor {
 }
 
 model Patient {
-  id                  Int           @id @default(autoincrement())
+  id                  String      @id @default(uuid())
   address             String        @db.LongText
   age                 Int
   sex                 String        @db.VarChar(20)
@@ -51,28 +51,28 @@ model Patient {
 }
 
 model Records {
-  id           Int     @id @default(autoincrement())
+  id            String      @id @default(uuid())
   ammount_paid Float   @db.Float
   balance      Float   @db.Float
   commission   Float   @db.Float
-  patient_id   Int     @unique
-  doctor_id    Int     @unique
+  patient_id   String     @unique
+  doctor_id    String     @unique
   Doctor       Doctor  @relation(fields: [doctor_id], references: [id])
   Patient      Patient @relation(fields: [patient_id], references: [id])
 }
 
 model Treatment {
-  id             Int         @id
+  id             String      @id @default(uuid())
   treatment      String      @db.VarChar(50)
   cost           Int
-  appointment_id Int
+  appointment_id String
   Appointment    Appointment @relation(fields: [appointment_id], references: [id])
 
   @@index([appointment_id], map: "Treatment_appointment_id_fkey")
 }
 
 model User {
-  id         Int      @id
+  id         String      @id @default(uuid())
   username   String   @db.Text
   password   String   @db.Text
   firstname  String   @db.Text
@@ -80,8 +80,8 @@ model User {
   middlename String   @db.Text
   user_level String   @db.Text
   email      String   @db.Text
-  patient_id Int?     @unique
-  doctor_id  Int?     @unique
+  patient_id String?     @unique
+  doctor_id  String?     @unique
   Doctor     Doctor?  @relation(fields: [doctor_id], references: [id])
   Patient    Patient? @relation(fields: [patient_id], references: [id])
 }

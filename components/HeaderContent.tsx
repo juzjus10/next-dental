@@ -1,31 +1,24 @@
-import { useState } from "react";
 import {
-  createStyles,
-  Container,
-  Avatar,
-  UnstyledButton,
-  Group,
-  Text,
-  Menu,
-  Tabs,
   Burger,
-  rem,
+  Container,
+  Group,
   Image,
+  Menu,
+  Text,
+  UnstyledButton,
+  createStyles,
+  rem,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
-  IconLogout,
-  IconHeart,
-  IconStar,
-  IconMessage,
-  IconSettings,
-  IconPlayerPause,
-  IconTrash,
-  IconSwitchHorizontal,
   IconChevronDown,
+  IconLogout,
+  IconSettings,
+  IconSwitchHorizontal,
 } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
-
+import { useState } from "react";
+import { ColorSchemeToggle } from "@/components/ColorSchemeToggle";
 
 const useStyles = createStyles((theme) => ({
   header: {
@@ -47,8 +40,6 @@ const useStyles = createStyles((theme) => ({
     borderRadius: theme.radius.sm,
     transition: "background-color 100ms ease",
 
-   
-
     [theme.fn.smallerThan("xs")]: {
       display: "none",
     },
@@ -59,8 +50,6 @@ const useStyles = createStyles((theme) => ({
       display: "none",
     },
   },
-
-
 }));
 
 interface HeaderTabsProps {
@@ -94,64 +83,62 @@ export function HeaderContent({ user, tabs }: HeaderTabsProps) {
             color={theme.white}
           />
 
-          <Menu
-            width={260}
-            position="bottom-end"
-            transitionProps={{ transition: "pop-top-right" }}
-            onClose={() => setUserMenuOpened(false)}
-            onOpen={() => setUserMenuOpened(true)}
-            withinPortal
-          >
-            <Menu.Target>
-              <UnstyledButton
+          <Group>
+            <ColorSchemeToggle />
+            <Menu
+              width={260}
+              position="bottom-end"
+              transitionProps={{ transition: "pop-top-right" }}
+              onClose={() => setUserMenuOpened(false)}
+              onOpen={() => setUserMenuOpened(true)}
+              withinPortal
               
-              >
-                <Group spacing={7}>
-                  {/* <Avatar src={user.image} alt={user.name} radius="xl" size={20} /> */}
-                  <Text
-                    weight={500}
-                    size="sm"
-                    sx={{
-                      lineHeight: 1,
-                      color:
-                        theme.colorScheme === "dark"
-                          ? theme.colors.dark[0]
-                          : theme.colors.gray[9],
-                    }}
-                    mr={3}
-                    tt={"capitalize"}
-                  >
-                    
-                    {`${session?.user?.firstname} ${session?.user?.lastname}`}
-                  </Text>
-                  <IconChevronDown size={rem(12)} stroke={1.5} />
-                </Group>
-              </UnstyledButton>
-            </Menu.Target>
-            <Menu.Dropdown>
-              
+            >
+              <Menu.Target>
+                <UnstyledButton>
+                  <Group spacing={7}>
+                    {/* <Avatar src={user.image} alt={user.name} radius="xl" size={20} /> */}
+                    <Text
+                      weight={500}
+                      size="sm"
+                      sx={{
+                        lineHeight: 1,
+                        color:
+                          theme.colorScheme === "dark"
+                            ? theme.colors.dark[0]
+                            : theme.colors.gray[9],
+                      }}
+                      mr={3}
+                      tt={"capitalize"}
+                    >
+                      {`${session?.user?.firstname} ${session?.user?.lastname}`}
+                    </Text>
+                    <IconChevronDown size={rem(12)} stroke={1.5} />
+                  </Group>
+                </UnstyledButton>
+              </Menu.Target>
+              <Menu.Dropdown>
+                <Menu.Label>Settings</Menu.Label>
+                <Menu.Item icon={<IconSettings size="0.9rem" stroke={1.5} />}>
+                  Account settings
+                </Menu.Item>
+                <Menu.Item
+                  icon={<IconSwitchHorizontal size="0.9rem" stroke={1.5} />}
+                >
+                  Change account
+                </Menu.Item>
 
-              <Menu.Label>Settings</Menu.Label>
-              <Menu.Item icon={<IconSettings size="0.9rem" stroke={1.5} />}>
-                Account settings
-              </Menu.Item>
-              <Menu.Item
-                icon={<IconSwitchHorizontal size="0.9rem" stroke={1.5} />}
-              >
-                Change account
-              </Menu.Item>
-           
+                <Menu.Divider />
 
-              <Menu.Divider />
-
-             
-              <Menu.Item 
-              color="red"
-              icon={<IconLogout size="0.9rem" stroke={1.5} />}>
-                Logout
-              </Menu.Item>
-            </Menu.Dropdown>
-          </Menu>
+                <Menu.Item
+                  color="red"
+                  icon={<IconLogout size="0.9rem" stroke={1.5} />}
+                >
+                  Logout
+                </Menu.Item>
+              </Menu.Dropdown>
+            </Menu>
+          </Group>
         </Group>
       </Container>
     </div>
