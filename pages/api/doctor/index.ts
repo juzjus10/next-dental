@@ -10,9 +10,9 @@ export default async function handler(
   switch (method) {
     case "GET":
       try {
-        const appointment = await prisma.doctor.findMany();
+        const doctor = await prisma.doctor.findMany();
 
-        return res.status(200).json(appointment);
+        return res.status(200).json(doctor);
       } catch (error) {
         console.error(error);
         return res
@@ -21,15 +21,17 @@ export default async function handler(
       }
     case "POST":
       try {
-        const {  doctor_name, gender, dob, hire_date } = req.body;
+        const { firstname, lastname, middlename, gender, dob, hire_date } =
+          req.body;
 
         const id = uuidv4();
 
         const doctor = await prisma.doctor.create({
           data: {
             id,
-
-            doctor_name,
+            firstname,
+            lastname,
+            middlename,
             gender,
             dob,
             hire_date,

@@ -24,8 +24,10 @@ model Appointment {
 }
 
 model Doctor {
-  id          String      @id @default(uuid())
-  doctor_name String        @db.VarChar(45)
+  id          String        @id @default(uuid())
+  firstname   String
+  middlename  String
+  lastname    String
   gender      String        @db.VarChar(45)
   dob         DateTime      @db.Date
   hire_date   DateTime      @db.Date
@@ -35,7 +37,10 @@ model Doctor {
 }
 
 model Patient {
-  id                  String      @id @default(uuid())
+  id                  String        @id @default(uuid())
+  firstname           String
+  middlename          String
+  lastname            String
   address             String        @db.LongText
   age                 Int
   sex                 String        @db.VarChar(20)
@@ -51,12 +56,12 @@ model Patient {
 }
 
 model Records {
-  id            String      @id @default(uuid())
-  ammount_paid Float   @db.Float
+  id           String  @id @default(uuid())
+  amount_paid  Float   @db.Float
   balance      Float   @db.Float
   commission   Float   @db.Float
-  patient_id   String     @unique
-  doctor_id    String     @unique
+  patient_id   String  @unique
+  doctor_id    String  @unique
   Doctor       Doctor  @relation(fields: [doctor_id], references: [id])
   Patient      Patient @relation(fields: [patient_id], references: [id])
 }
@@ -72,7 +77,7 @@ model Treatment {
 }
 
 model User {
-  id         String      @id @default(uuid())
+  id         String   @id @default(uuid())
   username   String   @db.Text
   password   String   @db.Text
   firstname  String   @db.Text
@@ -80,8 +85,8 @@ model User {
   middlename String   @db.Text
   user_level String   @db.Text
   email      String   @db.Text
-  patient_id String?     @unique
-  doctor_id  String?     @unique
+  patient_id String?  @unique
+  doctor_id  String?  @unique
   Doctor     Doctor?  @relation(fields: [doctor_id], references: [id])
   Patient    Patient? @relation(fields: [patient_id], references: [id])
 }

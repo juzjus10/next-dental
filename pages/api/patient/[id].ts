@@ -34,7 +34,11 @@ export default async function handler(
     case "PUT":
       try {
         const {
+          firstname,
+          lastname,
+          middlename,
             address,
+            
           age,
           sex,
           civil_status,
@@ -50,6 +54,9 @@ export default async function handler(
         const patient = await prisma.patient.update({
           where: { id },
           data: {
+            firstname,
+            lastname,
+            middlename,
             address,
             age,
             sex,

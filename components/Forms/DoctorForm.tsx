@@ -21,9 +21,11 @@ import { DateInput } from "@mantine/dates";
 
 // create a type for the initial values of the form
 type DoctorFormValues = {
-  doctor_name: string;
+  firstname: string;
+  middlename: string;
+  lastname: string;
   gender: string;
- 
+
   dob: Date;
   hire_date: Date;
 };
@@ -39,9 +41,11 @@ const DoctorForm = (props: any) => {
 
   const form = useForm<DoctorFormValues>({
     initialValues: {
-      doctor_name: "",
+      firstname: "",
+      middlename: "",
+      lastname: "",
       gender: "",
-    
+
       dob: new Date(),
       hire_date: new Date(),
     },
@@ -78,13 +82,32 @@ const DoctorForm = (props: any) => {
           <Grid>
             <Grid.Col span={12}>
               <Group grow>
-                <TextInput
-                  mt="md"
-                  label="Doctor Name"
-                  placeholder="Doctor Name"
-                  disabled={readOnly}
-                  {...form.getInputProps("doctor_name")}
-                />
+                <Group grow>
+                  <TextInput
+                    mt="md"
+                    label="First Name"
+                    placeholder="First Name"
+                    disabled={readOnly}
+                    {...form.getInputProps("firstname")}
+                  />
+                  <TextInput
+                    mt="md"
+                    label="Middle Name"
+                    placeholder="Middle Name"
+                    disabled={readOnly}
+                    {...form.getInputProps("middlename")}
+                  />
+                  <TextInput
+                    mt="md"
+                    label="Last Name"
+                    placeholder="Last Name"
+                    disabled={readOnly}
+                    {...form.getInputProps("lastname")}
+                  />
+                </Group>
+              </Group>
+
+              <Group grow>
                 <TextInput
                   mt="md"
                   label="Gender"
@@ -92,8 +115,6 @@ const DoctorForm = (props: any) => {
                   disabled={readOnly}
                   {...form.getInputProps("gender")}
                 />
-              </Group>
-              <Group grow>
                 <DateInput
                   mt="md"
                   label="Date of Birth"
@@ -123,7 +144,6 @@ const DoctorForm = (props: any) => {
                     <Button m={5} type="submit">
                       Submit
                     </Button>
-                    
                   </div>
                 </>
               )}

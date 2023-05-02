@@ -22,6 +22,9 @@ export default async function handler(
     case "POST":
       try {
         const {
+          firstname,
+          lastname,
+          middlename,
           address,
           age,
           sex,
@@ -41,6 +44,9 @@ export default async function handler(
         const patient = await prisma.patient.create({
           data: {
             id,
+            firstname,
+            lastname,
+            middlename,
             address,
             age,
             sex,

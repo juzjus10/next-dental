@@ -29,6 +29,9 @@ type PatientFormValues = {
   emergency_contact: string;
   emergency_mobile_no: string;
   medical_history: string;
+  firstname: string;
+  middlename: string;
+  lastname: string;
 };
 const PatientForm = (props: any) => {
   const { close, readOnly, data } = props;
@@ -51,6 +54,9 @@ const PatientForm = (props: any) => {
       emergency_contact: "",
       emergency_mobile_no: "",
       medical_history: "",
+      firstname: "",
+      middlename: "",
+      lastname: "",
     },
   });
 
@@ -81,6 +87,29 @@ const PatientForm = (props: any) => {
     >
       <Grid>
         <Grid.Col span={12}>
+        <Group grow>
+            <TextInput
+              mt="md"
+              label="First Name"
+              placeholder="First Name"
+              disabled={readOnly}
+              {...form.getInputProps("firstname")}
+            />
+            <TextInput
+              mt="md"
+              label="Middle Name"
+              placeholder="Middle Name"
+              disabled={readOnly}
+              {...form.getInputProps("middlename")}
+            />
+            <TextInput
+              mt="md"
+              label="Last Name"
+              placeholder="Last Name"
+              disabled={readOnly}
+              {...form.getInputProps("lastname")}
+            />
+          </Group>
           <Group grow>
             <TextInput
               mt="md"
