@@ -1,15 +1,18 @@
 import React from "react";
 import { Modal, Text, Button, ActionIcon } from "@mantine/core";
 import UsersForm from "@/components/Forms/UsersForm";
+import AppointmentForm from "@/components/Forms/AppointmentForm";
+import PatientForm from "@/components/Forms/PatientForm";
+import DoctorForm from "@/components/Forms/DoctorForm";
 import { useDisclosure } from "@mantine/hooks";
 import { IconEye } from "@tabler/icons-react";
 
 export function FormModal(props: any) {
-  const { title, icon, user } = props;
+  const { title, icon, user, appointment, patient, doctor } = props;
   const [opened, { open, close }] = useDisclosure(false);
 
   //console.log(user);
-  
+
   const renderActionButton = () => {
     if (icon) {
       return (
@@ -17,7 +20,7 @@ export function FormModal(props: any) {
           color="green"
           onClick={(e) => {
             e.stopPropagation();
-             open();
+            open();
           }}
         >
           <IconEye size={16} />
@@ -39,6 +42,7 @@ export function FormModal(props: any) {
         opened={opened}
         onClose={close}
         size="lg"
+        mih={400}
         title={
           <Text
             m={5}
@@ -53,9 +57,37 @@ export function FormModal(props: any) {
         }
         withCloseButton
       >
-        <UsersForm close={close} data={ user ? user : null}  readOnly= {user ? true: false} ></UsersForm>
+        {user && (
+          <UsersForm
+            close={close}
+            data={user ? user : null}
+            readOnly={user.id ? true : false}
+          ></UsersForm>
+        )}
 
-       
+        {appointment && (
+          <AppointmentForm
+            close={close}
+            data={appointment ? appointment : null}
+            readOnly={appointment.id ? true : false}
+          ></AppointmentForm>
+        )}
+
+        {patient && (
+          <PatientForm
+            close={close}
+            data={patient ? patient : null}
+            readOnly={patient.id ? true : false}
+          ></PatientForm>
+        )}
+
+        {doctor && (
+          <DoctorForm
+            close={close}
+            data={doctor ? doctor : null}
+            readOnly={doctor.id ? true : false}
+          ></DoctorForm>
+        )}
       </Modal>
     </>
   );

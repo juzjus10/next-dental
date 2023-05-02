@@ -32,7 +32,7 @@ export default async function handler(
         return res.status(200).json(user);
       } catch (error) {
         console.error(error);
-        return res.status(500).json({ message: "Internal server error" });
+        return res.status(500).json({ message: "Internal server error", error });
       }
       try {
         const {
@@ -92,7 +92,7 @@ export default async function handler(
         res.json(user);
       } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Error Updating User!" });
+        res.status(500).json({ message: "Error Updating User!", error });
       }
       break;
     case "DELETE":
@@ -104,7 +104,7 @@ export default async function handler(
         res.json(user);
       } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Error Deleting User!" });
+        res.status(500).json({ message: "Error Deleting User!", error });
       }
     default:
       return res.status(405).json({ message: "Method not allowed" });

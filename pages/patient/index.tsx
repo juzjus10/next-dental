@@ -1,6 +1,6 @@
 import { FormModal } from "@/components/Forms/FormModal";
 import ApplicationShell from "@/components/Layout";
-import { getAllUsers, deleteUser } from "@/lib/api";
+import { getAllPatients, deletePatient } from "@/lib/api";
 import {
   Group,
   Paper,
@@ -20,7 +20,7 @@ import { useEffect, useState } from "react";
 import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
 import UsersForm from "@/components/Forms/UsersForm";
 import axios from "axios";
-const Users = () => {
+const Patient = () => {
   const [query, setQuery] = useState("");
   const [debouncedQuery] = useDebouncedValue(query, 200);
   const queryClient = useQueryClient();
@@ -31,14 +31,14 @@ const Users = () => {
     data: initialrecord,
     isFetching,
   } = useQuery({
-    queryKey: ["users"],
-    queryFn: getAllUsers,
+    queryKey: ["patient"],
+    queryFn: getAllPatients,
     refetchOnWindowFocus: false,
   });
 
-  const { mutate } = useMutation(deleteUser, {
+  const { mutate } = useMutation(deletePatient, {
     onSuccess: () => {
-      queryClient.invalidateQueries(["users"], { exact: true });
+      queryClient.invalidateQueries(["patient"], { exact: true });
     },
   });
 
@@ -67,19 +67,18 @@ const Users = () => {
     <ApplicationShell>
       <Paper p={10}>
         <Text size={30} weight={700} align="center">
-          {" "}
-          Users List{" "}
+         Patient List
         </Text>
         <Group position="apart" m={10}>
           <TextInput
             sx={{ flexBasis: "40%" }}
-            placeholder="Search users..."
+            placeholder="Search patient..."
             icon={<IconSearch size={16} />}
             value={query}
             onChange={(e) => setQuery(e.currentTarget.value)}
           />
 
-          <FormModal title={"Create User"} user={records}/>
+          <FormModal title={"Create Patient"} patient={records}/>
         </Group>
 
         <DataTable
@@ -103,44 +102,78 @@ const Users = () => {
               hidden: true,
             },
             {
-              accessor: "firstname",
-              title: "First Name",
+              accessor: "address",
+              title: "Address",
               textAlignment: "left",
             },
 
             {
-              accessor: "middlename",
-              title: "Middle Name",
+              accessor: "age",
+              title: "Age",
               textAlignment: "left",
             },
             {
-              accessor: "lastname",
-              title: "Last Name",
+              accessor: "sex",
+              title: "Sex",
               textAlignment: "left",
             },
-
             {
-              accessor: "user_level",
-              title: "User Level",
-              textAlignment: "center",
-              render: (row: any) =>
-                row.user_level == "admin" ? (
-                  <Badge color="violet">{row.user_level}</Badge>
-                ) : (
-                  <Badge>{row.user_level}</Badge>
-                ),
+              accessor: "civil_status",
+              title: "Civil Status",
+              textAlignment: "left",
             },
+            {
+              accessor: "dob",
+              title: "Date of Birth",
+              textAlignment: "left",
+              render : (row : any) => new Date(row.dob).toLocaleDateString()
+            },
+            {
+              accessor: "mobile_no",
+              title: "Mobile Number",
+              textAlignment: "left",
+              
+            },
+            {
+              accessor: "emergency_contact",
+              title: "Emergency Contact Person",
+              textAlignment: "left",
+              
+            },
+            {
+              accessor: "emergency_mobile_no",
+              title: "Emergency Contact Number",
+              textAlignment: "left",
+              
+            },
+            {
+              accessor: "medical_history",
+              title: "Medical History",
+              textAlignment: "left",
+              
+            },
+            // {
+            //   accessor: "civil_status",
+            //   title: "User Level",
+            //   textAlignment: "center",
+            //   render: (row: any) =>
+            //     row.user_level == "admin" ? (
+            //       <Badge color="violet">{row.user_level}</Badge>
+            //     ) : (
+            //       <Badge>{row.user_level}</Badge>
+            //     ),
+            // },
             {
               accessor: "actions",
               title: <Text mr="xs">Actions</Text>,
               textAlignment: "center",
-              render: (user) => (
+              render: (patient) => (
                 // prevent click on row
 
                 <Group spacing={4} position="center" noWrap>
-                  <FormModal title={"View User"} user={user} icon />
+                  <FormModal title={"View Patient"} patient={patient} icon />
 
-                  <ActionIcon color="red" onClick={() => mutate(user.id)}>
+                  <ActionIcon color="red" onClick={() => mutate(patient.id)}>
                     <IconTrash size={16} />
                   </ActionIcon>
                 </Group>
@@ -155,4 +188,4 @@ const Users = () => {
   );
 };
 
-export default Users;
+export default Patient;

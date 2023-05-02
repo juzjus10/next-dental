@@ -1,6 +1,6 @@
 import { FormModal } from "@/components/Forms/FormModal";
 import ApplicationShell from "@/components/Layout";
-import { getAllUsers, deleteUser } from "@/lib/api";
+import {  deleteAppointment, deleteUser, getAllAppointments } from "@/lib/api";
 import {
   Group,
   Paper,
@@ -18,8 +18,8 @@ import { DataTable } from "mantine-datatable";
 import { IconEye, IconEdit, IconTrash, IconSearch } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
-import UsersForm from "@/components/Forms/UsersForm";
-import axios from "axios";
+
+
 const Users = () => {
   const [query, setQuery] = useState("");
   const [debouncedQuery] = useDebouncedValue(query, 200);
@@ -31,14 +31,14 @@ const Users = () => {
     data: initialrecord,
     isFetching,
   } = useQuery({
-    queryKey: ["users"],
-    queryFn: getAllUsers,
+    queryKey: ["appointment"],
+    queryFn: getAllAppointments,
     refetchOnWindowFocus: false,
   });
 
-  const { mutate } = useMutation(deleteUser, {
+  const { mutate } = useMutation(deleteAppointment, {
     onSuccess: () => {
-      queryClient.invalidateQueries(["users"], { exact: true });
+      queryClient.invalidateQueries(["appointment"], { exact: true });
     },
   });
 
@@ -67,19 +67,18 @@ const Users = () => {
     <ApplicationShell>
       <Paper p={10}>
         <Text size={30} weight={700} align="center">
-          {" "}
-          Users List{" "}
+          Appointment List
         </Text>
         <Group position="apart" m={10}>
           <TextInput
             sx={{ flexBasis: "40%" }}
-            placeholder="Search users..."
+            placeholder="Search user"
             icon={<IconSearch size={16} />}
             value={query}
             onChange={(e) => setQuery(e.currentTarget.value)}
           />
 
-          <FormModal title={"Create User"} user={records}/>
+          <FormModal title={"Create Appointment"} appointment={records}/>
         </Group>
 
         <DataTable

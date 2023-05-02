@@ -41,9 +41,9 @@ model Patient {
   sex                 String        @db.VarChar(20)
   civil_status        String        @db.VarChar(20)
   dob                 DateTime      @db.Date
-  mobile_no           Int
+  mobile_no           String        @db.VarChar(20)
   emergency_contact   String        @db.VarChar(20)
-  emergency_mobile_no Int
+  emergency_mobile_no String
   medical_history     String        @db.LongText
   Appointment         Appointment[]
   Records             Records?

@@ -10,46 +10,42 @@ export default async function handler(
   switch (method) {
     case "GET":
       try {
-        const users = await prisma.user.findMany();
+        const appointment = await prisma.appointment.findMany();
 
-        return res.status(200).json(users);
+        return res.status(200).json(appointment);
       } catch (error) {
         console.error(error);
-        return res.status(500).json({ message: "Internal server error", error });
+        return res
+          .status(500)
+          .json({ message: "Internal server error", error });
       }
     case "POST":
       try {
         const {
-          firstname,
-          lastname,
-          middlename,
-          user_level,
-          email,
-          doctor,
-          patient,
-          username,
-          password,
+          status,
+          appointment_time,
+          date_of_appointment,
+          doctor_id,
+          patient_id,
         } = req.body;
 
         const id = uuidv4();
 
-        const user = await prisma.user.create({
+        const user = await prisma.appointment.create({
           data: {
             id,
-            firstname,
-            password: await hash(password, 10),
-            username,
-            lastname,
-            middlename,
-            user_level,
-            email,
+            status,
+            appointment_time,
+            date_of_appointment,
+            patient_id,
+            doctor_id,
           },
         });
 
         res.json(user);
       } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Error Creating User!", error });
+        res.status(500).json({ message: "Error Creating User!" });
       }
       break;
     default:

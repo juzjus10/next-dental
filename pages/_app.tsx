@@ -1,4 +1,4 @@
-import { AppProps } from "next/app";
+import NextApp, { AppContext, AppProps } from "next/app";
 import Head from "next/head";
 import {
   MantineProvider,
@@ -7,10 +7,10 @@ import {
 } from "@mantine/core";
 import { SessionProvider } from "next-auth/react";
 import { useState } from "react";
-import { getCookie, setCookies } from "cookies-next";
+import { getCookie, setCookie, setCookies } from "cookies-next";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient();
 
 export default function App(props: AppProps & { colorScheme: ColorScheme }) {
   const { Component, pageProps } = props;
@@ -22,7 +22,7 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
     const nextColorScheme =
       value || (colorScheme === "dark" ? "light" : "dark");
     setColorScheme(nextColorScheme);
-    setCookies("mantine-color-scheme", nextColorScheme, {
+    setCookie("mantine-color-scheme", nextColorScheme, {
       maxAge: 60 * 60 * 24 * 30,
     });
   };
@@ -141,3 +141,10 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
     </>
   );
 }
+App.getInitialProps = async (appContext: AppContext) => {
+  const appProps = await NextApp.getInitialProps(appContext);
+  return {
+    ...appProps,
+    colorScheme: getCookie('mantine-color-scheme', appContext.ctx) || 'light',
+  };
+};
