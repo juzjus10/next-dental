@@ -103,7 +103,8 @@ const data = [
   // { link: '', label: 'Other Settings', icon: IconSettings },
 ];
 
-export function NavbarSimple() {
+export function NavbarSimple(props: any) {
+  const { opened } = props;
   const { classes, cx } = useStyles();
   const [active, setActive] = useState("Billing");
 
@@ -126,7 +127,7 @@ export function NavbarSimple() {
   ));
 
   return (
-    <Navbar width={{ sm: 300 }} p="md" className={classes.navbar}>
+    <Navbar width={{ sm: 300 }} p="md" className={classes.navbar} hidden={opened} hiddenBreakpoint="sm">
       <Navbar.Section grow>{links}</Navbar.Section>
 
       <Navbar.Section className={classes.footer}>

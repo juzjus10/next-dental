@@ -9,6 +9,7 @@ import { SessionProvider } from "next-auth/react";
 import { useState } from "react";
 import { getCookie, setCookie, setCookies } from "cookies-next";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import router from "next/router";
 
 const queryClient = new QueryClient();
 
@@ -27,12 +28,16 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
     });
   };
 
+  const title = `M.C. Dental Clinic`;
+
+
   return (
     <>
       <SessionProvider session={pageProps.session}>
         <QueryClientProvider client={queryClient}>
           <Head>
-            <title>Page title</title>
+            
+            <title>{title}</title>
             <link rel="shortcut icon" href="/favicon.svg" />
             <meta
               name="viewport"

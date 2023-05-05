@@ -9,7 +9,6 @@ import {
   createStyles,
   rem,
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
 import {
   IconChevronDown,
   IconLogout,
@@ -55,11 +54,13 @@ const useStyles = createStyles((theme) => ({
 interface HeaderTabsProps {
   user: { name: string; image: string };
   tabs: string[];
+  opened: boolean;
+  toggle(): void;
 }
 
-export function HeaderContent({ user, tabs }: HeaderTabsProps) {
+export function HeaderContent({ user, tabs, opened, toggle }: HeaderTabsProps) {
   const { classes, theme, cx } = useStyles();
-  const [opened, { toggle }] = useDisclosure(false);
+  
   const [userMenuOpened, setUserMenuOpened] = useState(false);
   const { data: session } = useSession();
 
