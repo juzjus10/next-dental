@@ -18,6 +18,7 @@ import { DataTable } from "mantine-datatable";
 import { IconEye, IconEdit, IconTrash, IconSearch } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
+import { requireAuth } from "common/requireAuth";
 
 
 const Doctor = () => {
@@ -164,3 +165,8 @@ const Doctor = () => {
 };
 
 export default Doctor;
+
+
+export const getServerSideProps = requireAuth(async (ctx) => {
+  return { props: {} };
+});

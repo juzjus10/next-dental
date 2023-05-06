@@ -20,6 +20,7 @@ import { useEffect, useState } from "react";
 import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
 import UsersForm from "@/components/Forms/UsersForm";
 import axios from "axios";
+import { requireAuth } from "common/requireAuth";
 const Patient = () => {
   const [query, setQuery] = useState("");
   const [debouncedQuery] = useDebouncedValue(query, 200);
@@ -189,3 +190,7 @@ const Patient = () => {
 };
 
 export default Patient;
+
+export const getServerSideProps = requireAuth(async (ctx) => {
+  return { props: {} };
+});

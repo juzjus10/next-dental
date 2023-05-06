@@ -81,8 +81,7 @@ const DoctorForm = (props: any) => {
         >
           <Grid>
             <Grid.Col span={12}>
-              <Group grow>
-                <Group grow>
+              
                   <TextInput
                     mt="md"
                     label="First Name"
@@ -104,10 +103,9 @@ const DoctorForm = (props: any) => {
                     disabled={readOnly}
                     {...form.getInputProps("lastname")}
                   />
-                </Group>
-              </Group>
+              
 
-              <Group grow>
+              
                 <TextInput
                   mt="md"
                   label="Gender"
@@ -129,23 +127,12 @@ const DoctorForm = (props: any) => {
                   disabled={readOnly}
                   {...form.getInputProps("hire_date")}
                 />
-              </Group>
+           
 
               {!readOnly && (
-                <>
-                  <div
-                    style={{
-                      //place in bottom right corner
-                      position: "absolute",
-                      bottom: 10,
-                      right: 10,
-                    }}
-                  >
-                    <Button m={5} type="submit">
-                      Submit
-                    </Button>
-                  </div>
-                </>
+                <Button mt={20} type="submit" fullWidth>
+                  Submit
+                </Button>
               )}
             </Grid.Col>
           </Grid>

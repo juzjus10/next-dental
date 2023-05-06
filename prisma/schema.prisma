@@ -56,14 +56,14 @@ model Patient {
 }
 
 model Records {
-  id           String  @id @default(uuid())
-  amount_paid  Float   @db.Float
-  balance      Float   @db.Float
-  commission   Float   @db.Float
-  patient_id   String  @unique
-  doctor_id    String  @unique
-  Doctor       Doctor  @relation(fields: [doctor_id], references: [id])
-  Patient      Patient @relation(fields: [patient_id], references: [id])
+  id          String  @id @default(uuid())
+  amount_paid Float   @db.Float
+  balance     Float   @db.Float
+  commission  Float   @db.Float
+  patient_id  String  @unique
+  doctor_id   String  @unique
+  Doctor      Doctor  @relation(fields: [doctor_id], references: [id])
+  Patient     Patient @relation(fields: [patient_id], references: [id])
 }
 
 model Treatment {
@@ -89,4 +89,12 @@ model User {
   doctor_id  String?  @unique
   Doctor     Doctor?  @relation(fields: [doctor_id], references: [id])
   Patient    Patient? @relation(fields: [patient_id], references: [id])
+}
+
+model Settings {
+  id              String @id @default(uuid())
+  operating_hours String
+  clinic_name     String
+  clinic_address  String
+  clinic_contact  String
 }

@@ -133,7 +133,6 @@ export default function IndexPage() {
 }
 
 
-//getServerSideProps
 export const getServerSideProps = requireAuth(async (ctx) => {
   return { props: {} };
 });

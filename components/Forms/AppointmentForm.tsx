@@ -32,7 +32,7 @@ const AppointmentForm = (props: any) => {
 
   const form = useForm({
     initialValues: {
-      status: "",
+      status: "pending",
       appointment_time: "",
       date_of_appointment: "",
       patient: {
@@ -41,12 +41,12 @@ const AppointmentForm = (props: any) => {
         middlename: "",
         lastname: "",
       },
-      doctor: {
-        doctor_id: "",
-        firstname: "",
-        middlename: "",
-        lastname: "",
-      },
+      // doctor: {
+      //   doctor_id: "",
+      //   firstname: "",
+      //   middlename: "",
+      //   lastname: "",
+      // },
     },
 
     transformValues: (values) => ({
@@ -108,7 +108,7 @@ const AppointmentForm = (props: any) => {
             />
           </Group>
 
-          <Title order={4} pt={7}>
+          {/* <Title order={4} pt={7}>
             Doctor Details
           </Title>
           <Group grow>
@@ -130,8 +130,8 @@ const AppointmentForm = (props: any) => {
               disabled={readOnly}
               {...form.getInputProps("doctor.lastname")}
             />
-          </Group>
-          <Select
+          </Group> */}
+          {/* <Select
             mt="md"
             label="Status"
             placeholder="Pick one"
@@ -142,7 +142,7 @@ const AppointmentForm = (props: any) => {
             ]}
             disabled={readOnly}
             {...form.getInputProps("user_level")}
-          />
+          /> */}
        
 
           <TextInput

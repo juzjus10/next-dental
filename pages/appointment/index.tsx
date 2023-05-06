@@ -18,9 +18,10 @@ import { DataTable } from "mantine-datatable";
 import { IconEye, IconEdit, IconTrash, IconSearch } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
+import { requireAuth } from "common/requireAuth";
 
 
-const Users = () => {
+const Appointment = () => {
   const [query, setQuery] = useState("");
   const [debouncedQuery] = useDebouncedValue(query, 200);
   const queryClient = useQueryClient();
@@ -154,4 +155,8 @@ const Users = () => {
   );
 };
 
-export default Users;
+export default Appointment;
+
+export const getServerSideProps = requireAuth(async (ctx) => {
+  return { props: {} };
+});

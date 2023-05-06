@@ -15,9 +15,10 @@ import {
   IconSettings,
   IconSwitchHorizontal,
 } from "@tabler/icons-react";
-import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { ColorSchemeToggle } from "@/components/ColorSchemeToggle";
+import  headerLogoBlack from 'public/header-logo.png'
+import headerLogoWhite from 'public/header-logo-white.png'
 
 const useStyles = createStyles((theme) => ({
   header: {
@@ -52,24 +53,24 @@ const useStyles = createStyles((theme) => ({
 }));
 
 interface HeaderTabsProps {
-  user: { name: string; image: string };
-  tabs: string[];
   opened: boolean;
   toggle(): void;
+  session: any;
 }
 
-export function HeaderContent({ user, tabs, opened, toggle }: HeaderTabsProps) {
+export function HeaderContent({  opened, toggle, session}: HeaderTabsProps) {
   const { classes, theme, cx } = useStyles();
   
   const [userMenuOpened, setUserMenuOpened] = useState(false);
-  const { data: session } = useSession();
+  
 
+  
   return (
     <div className={classes.header}>
       <Container>
         <Group position="apart">
           <Image
-            src="./header-logo.png"
+            src={theme.colorScheme === "dark" ? headerLogoWhite.src : headerLogoBlack.src}
             alt="MC Dental Clinic Logo"
             width={50}
             height={50}
@@ -86,7 +87,7 @@ export function HeaderContent({ user, tabs, opened, toggle }: HeaderTabsProps) {
 
           <Group>
             <ColorSchemeToggle />
-            <Menu
+           { session && <Menu
               width={260}
               position="bottom-end"
               transitionProps={{ transition: "pop-top-right" }}
@@ -112,7 +113,7 @@ export function HeaderContent({ user, tabs, opened, toggle }: HeaderTabsProps) {
                       mr={3}
                       tt={"capitalize"}
                     >
-                      {`${session?.user?.firstname} ${session?.user?.lastname}`}
+                      {`${session?.user?.firstname || ''} ${session?.user?.lastname || ''}`}
                     </Text>
                     <IconChevronDown size={rem(12)} stroke={1.5} />
                   </Group>
@@ -138,7 +139,7 @@ export function HeaderContent({ user, tabs, opened, toggle }: HeaderTabsProps) {
                   Logout
                 </Menu.Item>
               </Menu.Dropdown>
-            </Menu>
+            </Menu>}
           </Group>
         </Group>
       </Container>
