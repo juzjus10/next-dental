@@ -17,8 +17,9 @@ import {
 } from "@tabler/icons-react";
 import { useState } from "react";
 import { ColorSchemeToggle } from "@/components/ColorSchemeToggle";
-import  headerLogoBlack from 'public/header-logo.png'
-import headerLogoWhite from 'public/header-logo-white.png'
+import headerLogoBlack from "public/header-logo.png";
+import headerLogoWhite from "public/header-logo-white.png";
+import router from "next/router";
 
 const useStyles = createStyles((theme) => ({
   header: {
@@ -58,19 +59,21 @@ interface HeaderTabsProps {
   session: any;
 }
 
-export function HeaderContent({  opened, toggle, session}: HeaderTabsProps) {
+export function HeaderContent({ opened, toggle, session }: HeaderTabsProps) {
   const { classes, theme, cx } = useStyles();
-  
-  const [userMenuOpened, setUserMenuOpened] = useState(false);
-  
 
-  
+  const [userMenuOpened, setUserMenuOpened] = useState(false);
+
   return (
     <div className={classes.header}>
       <Container>
         <Group position="apart">
           <Image
-            src={theme.colorScheme === "dark" ? headerLogoWhite.src : headerLogoBlack.src}
+            src={
+              theme.colorScheme === "dark"
+                ? headerLogoWhite.src
+                : headerLogoBlack.src
+            }
             alt="MC Dental Clinic Logo"
             width={50}
             height={50}
@@ -87,59 +90,67 @@ export function HeaderContent({  opened, toggle, session}: HeaderTabsProps) {
 
           <Group>
             <ColorSchemeToggle />
-           { session && <Menu
-              width={260}
-              position="bottom-end"
-              transitionProps={{ transition: "pop-top-right" }}
-              onClose={() => setUserMenuOpened(false)}
-              onOpen={() => setUserMenuOpened(true)}
-              withinPortal
-              
-            >
-              <Menu.Target>
-                <UnstyledButton>
-                  <Group spacing={7}>
-                    {/* <Avatar src={user.image} alt={user.name} radius="xl" size={20} /> */}
-                    <Text
-                      weight={500}
-                      size="sm"
-                      sx={{
-                        lineHeight: 1,
-                        color:
-                          theme.colorScheme === "dark"
-                            ? theme.colors.dark[0]
-                            : theme.colors.gray[9],
-                      }}
-                      mr={3}
-                      tt={"capitalize"}
-                    >
-                      {`${session?.user?.firstname || ''} ${session?.user?.lastname || ''}`}
-                    </Text>
-                    <IconChevronDown size={rem(12)} stroke={1.5} />
-                  </Group>
-                </UnstyledButton>
-              </Menu.Target>
-              <Menu.Dropdown>
-                <Menu.Label>Settings</Menu.Label>
-                <Menu.Item icon={<IconSettings size="0.9rem" stroke={1.5} />}>
-                  Account settings
-                </Menu.Item>
-                <Menu.Item
-                  icon={<IconSwitchHorizontal size="0.9rem" stroke={1.5} />}
-                >
-                  Change account
-                </Menu.Item>
+            {session && (
+              <Menu
+                width={260}
+                position="bottom-end"
+                transitionProps={{ transition: "pop-top-right" }}
+                onClose={() => setUserMenuOpened(false)}
+                onOpen={() => setUserMenuOpened(true)}
+                withinPortal
+              >
+                <Menu.Target>
+                  <UnstyledButton>
+                    <Group spacing={7}>
+                      {/* <Avatar src={user.image} alt={user.name} radius="xl" size={20} /> */}
+                      <Text
+                        weight={500}
+                        size="sm"
+                        sx={{
+                          lineHeight: 1,
+                          color:
+                            theme.colorScheme === "dark"
+                              ? theme.colors.dark[0]
+                              : theme.colors.gray[9],
+                        }}
+                        mr={3}
+                        tt={"capitalize"}
+                      >
+                        {`${session?.user?.firstname || ""} ${
+                          session?.user?.lastname || ""
+                        }`}
+                      </Text>
+                      <IconChevronDown size={rem(12)} stroke={1.5} />
+                    </Group>
+                  </UnstyledButton>
+                </Menu.Target>
+                <Menu.Dropdown>
+                  <Menu.Label>Settings</Menu.Label>
+                  <Menu.Item
+                    icon={<IconSettings size="0.9rem" stroke={1.5} />}
+                    onClick={() => {
+                      router.push("/settings");
+                    }}
+                  >
+                    Account settings
+                  </Menu.Item>
+                  <Menu.Item
+                    icon={<IconSwitchHorizontal size="0.9rem" stroke={1.5} />}
+                  >
+                    Change account
+                  </Menu.Item>
 
-                <Menu.Divider />
+                  <Menu.Divider />
 
-                <Menu.Item
-                  color="red"
-                  icon={<IconLogout size="0.9rem" stroke={1.5} />}
-                >
-                  Logout
-                </Menu.Item>
-              </Menu.Dropdown>
-            </Menu>}
+                  <Menu.Item
+                    color="red"
+                    icon={<IconLogout size="0.9rem" stroke={1.5} />}
+                  >
+                    Logout
+                  </Menu.Item>
+                </Menu.Dropdown>
+              </Menu>
+            )}
           </Group>
         </Group>
       </Container>
