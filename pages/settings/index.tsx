@@ -26,6 +26,7 @@ import UsersForm from "@/components/Forms/UsersForm";
 import axios from "axios";
 import { requireAuth } from "common/requireAuth";
 import moment from "moment";
+import {getAllSettings, updateSettings} from "@/lib/api";
 
 // generate a time string from 12:00 AM to 11:30 PM
 function generateTime() {
@@ -41,10 +42,9 @@ function generateTime() {
   return times;
 }
 
-const Patient = () => {
-  const [query, setQuery] = useState("");
-  const [debouncedQuery] = useDebouncedValue(query, 200);
+const Settings = () => {
   const queryClient = useQueryClient();
+
 
   const [time, setTime] = useState({
     opens: "8:00 AM",
@@ -57,16 +57,17 @@ const Patient = () => {
     data: initialrecord,
     isFetching,
   } = useQuery({
-    queryKey: ["patient"],
-    queryFn: getAllPatients,
+    queryKey: ["settings"],
+    queryFn: getAllSettings,
     refetchOnWindowFocus: false,
   });
 
-  const { mutate } = useMutation(deletePatient, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(["patient"], { exact: true });
-    },
-  });
+  //mutate function
+
+  const mutation = useMutation((data: any) =>
+  axios.put(`/api/settings/${data.id}`, data)
+);
+
 
   const [records, setRecords] = useState(initialrecord || []);
 
@@ -257,8 +258,12 @@ const Patient = () => {
   );
 };
 
-export default Patient;
+export default Settings;
 
 export const getServerSideProps = requireAuth(async (ctx) => {
+
+
+  
+
   return { props: {} };
 });

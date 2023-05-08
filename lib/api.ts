@@ -91,3 +91,16 @@ export async function deleteDoctor(id: string) {
   const doctor = await axios.delete(`/api/doctor/${id}`);
   return doctor.data;
 }
+
+// Setting API
+
+export async function getAllSettings() {
+  const settings = await axios.get("/api/setting");
+
+  return settings.data;
+}
+
+export async function updateSettings(id: string, data: any) {
+  const settings = await axios.put(`/api/settings/${id}`, data);
+  return settings.data;
+}
