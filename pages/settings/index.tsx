@@ -81,11 +81,11 @@ const Patient = () => {
           <Grid.Col
             span={8}
             sx={(theme) => ({
-              borderRight: `${rem(1)} solid ${
-                theme.colorScheme === "dark"
-                  ? theme.colors.dark[4]
-                  : theme.colors.gray[2]
-              }`,
+              // borderRight: `${rem(1)} solid ${
+              //   theme.colorScheme === "dark"
+              //     ? theme.colors.dark[4]
+              //     : theme.colors.gray[2]
+              // }`,
               borderBottom: `${rem(1)} solid ${
                 theme.colorScheme === "dark"
                   ? theme.colors.dark[4]
@@ -125,11 +125,11 @@ const Patient = () => {
           <Grid.Col
             span={8}
             sx={(theme) => ({
-              borderRight: `${rem(1)} solid ${
-                theme.colorScheme === "dark"
-                  ? theme.colors.dark[4]
-                  : theme.colors.gray[2]
-              }`,
+              // borderRight: `${rem(1)} solid ${
+              //   theme.colorScheme === "dark"
+              //     ? theme.colors.dark[4]
+              //     : theme.colors.gray[2]
+              // }`,
               borderBottom: `${rem(1)} solid ${
                 theme.colorScheme === "dark"
                   ? theme.colors.dark[4]
@@ -179,11 +179,11 @@ const Patient = () => {
           <Grid.Col
             span={8}
             sx={(theme) => ({
-              borderRight: `${rem(1)} solid ${
-                theme.colorScheme === "dark"
-                  ? theme.colors.dark[4]
-                  : theme.colors.gray[2]
-              }`,
+              // borderRight: `${rem(1)} solid ${
+              //   theme.colorScheme === "dark"
+              //     ? theme.colors.dark[4]
+              //     : theme.colors.gray[2]
+              // }`,
               borderBottom: `${rem(1)} solid ${
                 theme.colorScheme === "dark"
                   ? theme.colors.dark[4]
@@ -219,11 +219,11 @@ const Patient = () => {
           <Grid.Col
             span={8}
             sx={(theme) => ({
-              borderRight: `${rem(1)} solid ${
-                theme.colorScheme === "dark"
-                  ? theme.colors.dark[4]
-                  : theme.colors.gray[2]
-              }`,
+              // borderRight: `${rem(1)} solid ${
+              //   theme.colorScheme === "dark"
+              //     ? theme.colors.dark[4]
+              //     : theme.colors.gray[2]
+              // }`,
               borderBottom: `${rem(1)} solid ${
                 theme.colorScheme === "dark"
                   ? theme.colors.dark[4]
