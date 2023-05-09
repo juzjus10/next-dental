@@ -9,7 +9,7 @@ import { SessionProvider } from "next-auth/react";
 import { useState } from "react";
 import { getCookie, setCookie, setCookies } from "cookies-next";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import router from "next/router";
+import { Notifications } from "@mantine/notifications";
 
 const queryClient = new QueryClient();
 
@@ -30,13 +30,11 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
 
   const title = `M.C. Dental Clinic`;
 
-
   return (
     <>
       <SessionProvider session={pageProps.session}>
         <QueryClientProvider client={queryClient}>
           <Head>
-            
             <title>{title}</title>
             <link rel="shortcut icon" href="/favicon.svg" />
             <meta
@@ -44,6 +42,7 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
               content="minimum-scale=1, initial-scale=1, width=device-width"
             />
           </Head>
+         
           <ColorSchemeProvider
             colorScheme={colorScheme}
             toggleColorScheme={toggleColorScheme}
@@ -138,6 +137,7 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
                 },
               }}
             >
+               <Notifications />
               <Component {...pageProps} />
             </MantineProvider>
           </ColorSchemeProvider>
@@ -150,6 +150,6 @@ App.getInitialProps = async (appContext: AppContext) => {
   const appProps = await NextApp.getInitialProps(appContext);
   return {
     ...appProps,
-    colorScheme: getCookie('mantine-color-scheme', appContext.ctx) || 'light',
+    colorScheme: getCookie("mantine-color-scheme", appContext.ctx) || "light",
   };
 };

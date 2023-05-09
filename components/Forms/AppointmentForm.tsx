@@ -15,8 +15,13 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { createAppointment } from "@/lib/api";
 import { ReactPropTypes, useEffect } from "react";
-import { DateInput, DatePicker, DateTimePicker, TimeInput } from "@mantine/dates";
-import moment from 'moment';
+import {
+  DateInput,
+  DatePicker,
+  DateTimePicker,
+  TimeInput,
+} from "@mantine/dates";
+import moment from "moment";
 
 const AppointmentForm = (props: any) => {
   const { close, readOnly, data } = props;
@@ -28,25 +33,16 @@ const AppointmentForm = (props: any) => {
     },
   });
 
-  
-
   const form = useForm({
     initialValues: {
       status: "pending",
       appointment_time: "",
       date_of_appointment: "",
-      patient: {
-        patient_id: "",
-        firstname: "",
-        middlename: "",
-        lastname: "",
-      },
-      // doctor: {
-      //   doctor_id: "",
-      //   firstname: "",
-      //   middlename: "",
-      //   lastname: "",
-      // },
+
+      patient_id: "",
+      firstname: "",
+      middlename: "",
+      lastname: "",
     },
 
     transformValues: (values) => ({
@@ -56,9 +52,8 @@ const AppointmentForm = (props: any) => {
     }),
   });
   useEffect(() => {
-    console.log(form.values)
-   // console.log(  form.getTransformedValues())
-  
+    console.log(form.values);
+    // console.log(  form.getTransformedValues())
   }, [form.values]);
 
   useEffect(() => {
@@ -77,34 +72,31 @@ const AppointmentForm = (props: any) => {
     <form
       onSubmit={form.onSubmit((values) => {
         handleSubmit(values);
-       // console.log(values);
-        
+        // console.log(values);
+
         close();
       })}
     >
       <Grid>
         <Grid.Col span={12}>
-          <Title order={4} pt={7}>
-            Patient Details
-          </Title>
           <Group grow>
             <TextInput
               label="First Name"
               placeholder="First Name"
               disabled={readOnly}
-              {...form.getInputProps("patient.firstname")}
+              {...form.getInputProps("firstname")}
             />
             <TextInput
               label="Middle Name"
               placeholder="Middle Name"
               disabled={readOnly}
-              {...form.getInputProps("patient.middlename")}
+              {...form.getInputProps("middlename")}
             />
             <TextInput
               label="Last Name"
               placeholder="Last Name"
               disabled={readOnly}
-              {...form.getInputProps("patient.lastname")}
+              {...form.getInputProps("lastname")}
             />
           </Group>
 
@@ -143,7 +135,14 @@ const AppointmentForm = (props: any) => {
             disabled={readOnly}
             {...form.getInputProps("user_level")}
           /> */}
-       
+
+          <TextInput
+            mt="md"
+            label="Address"
+            placeholder="Address"
+            disabled={readOnly}
+            {...form.getInputProps("address")}
+          />
 
           <TextInput
             mt="md"
@@ -153,7 +152,41 @@ const AppointmentForm = (props: any) => {
             disabled={readOnly}
             {...form.getInputProps("email")}
           />
-             <DateTimePicker
+         
+          <Group grow>
+          <TextInput
+            mt="md"
+            label="Age"
+            placeholder="Age"
+            disabled={readOnly}
+            {...form.getInputProps("age")}
+          />
+            <Select
+              mt="md"
+              label="Sex"
+              placeholder="Pick one"
+              data={[
+                { value: "male", label: "Male" },
+                { value: "female", label: "Female" },
+              ]}
+              {...form.getInputProps("sex")}
+            ></Select>
+            <Select
+              mt="md"
+              label="Civil Status"
+              placeholder="Pick one"
+              data={[
+                { value: "single", label: "Single" },
+                { value: "married", label: "Married" },
+                { value: "widowed", label: "Widowed" },
+                { value: "separated", label: "Separated" },
+                { value: "divorced", label: "Divorced" },
+              ]}
+              {...form.getInputProps("sex")}
+            ></Select>
+          </Group>
+
+          <DateTimePicker
             mt="md"
             clearable
             label="Date and Time of Appointment "

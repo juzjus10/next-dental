@@ -95,7 +95,7 @@ export async function deleteDoctor(id: string) {
 // Setting API
 
 export async function getAllSettings() {
-  const settings = await axios.get("/api/setting");
+  const settings = await axios.get("/api/settings");
 
   return settings.data;
 }
