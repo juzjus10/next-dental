@@ -7,9 +7,9 @@ import {
   SegmentedControl,
   Select,
   TextInput,
+  Textarea,
   Title,
 } from "@mantine/core";
-import { useForm } from "@mantine/form";
 import { IconStethoscope, IconWheelchair } from "@tabler/icons-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
@@ -23,8 +23,8 @@ import {
 } from "@mantine/dates";
 import moment from "moment";
 
-const AppointmentForm = (props: any) => {
-  const { close, readOnly, data } = props;
+const SecondStep = (props: any) => {
+  const { close, readOnly, data, form } = props;
   const queryClient = useQueryClient();
 
   const { mutate } = useMutation((data) => createAppointment(data), {
@@ -33,24 +33,7 @@ const AppointmentForm = (props: any) => {
     },
   });
 
-  const form = useForm({
-    initialValues: {
-      status: "pending",
-      appointment_time: "",
-      date_of_appointment: "",
-
-      patient_id: "",
-      firstname: "",
-      middlename: "",
-      lastname: "",
-    },
-
-    transformValues: (values) => ({
-      ...values,
-      appointment_time: values.date_of_appointment,
-      // appointment_time: moment(values.date_of_appointment).format("h:mm a").toLocaleString(),
-    }),
-  });
+  
   useEffect(() => {
     console.log(form.values);
     // console.log(  form.getTransformedValues())
@@ -70,15 +53,18 @@ const AppointmentForm = (props: any) => {
   };
   return (
     <form
-      onSubmit={form.onSubmit((values) => {
+      onSubmit={form.onSubmit((values: any) => {
         handleSubmit(values);
         // console.log(values);
 
         close();
       })}
     >
+      <Title size={20} mt="md" weight={400}>
+        Patient Details
+      </Title>
       <Grid>
-        <Grid.Col span={12}>
+        <Grid.Col span={12} mt="md">
           <Group grow>
             <TextInput
               label="First Name"
@@ -100,67 +86,39 @@ const AppointmentForm = (props: any) => {
             />
           </Group>
 
-          {/* <Title order={4} pt={7}>
-            Doctor Details
-          </Title>
-          <Group grow>
-            <TextInput
-              label="First Name"
-              placeholder="First Name"
-              disabled={readOnly}
-              {...form.getInputProps("doctor.firstname")}
-            />
-            <TextInput
-              label="Middle Name"
-              placeholder="Middle Name"
-              disabled={readOnly}
-              {...form.getInputProps("doctor.middlename")}
-            />
-            <TextInput
-              label="Last Name"
-              placeholder="Last Name"
-              disabled={readOnly}
-              {...form.getInputProps("doctor.lastname")}
-            />
-          </Group> */}
-          {/* <Select
-            mt="md"
-            label="Status"
-            placeholder="Pick one"
-            data={[
-              { value: "pending", label: "Pending" },
-              { value: "finished", label: "Finished" },
-              { value: "followUp", label: "Follow-up" },
-            ]}
-            disabled={readOnly}
-            {...form.getInputProps("user_level")}
-          /> */}
-
           <TextInput
             mt="md"
             label="Address"
-            placeholder="Address"
+            placeholder="Street, Barangay, City, Province"
             disabled={readOnly}
             {...form.getInputProps("address")}
           />
-
-          <TextInput
-            mt="md"
-            label="Email"
-            placeholder="email@domain.com"
-            type="email"
-            disabled={readOnly}
-            {...form.getInputProps("email")}
-          />
-         
           <Group grow>
-          <TextInput
-            mt="md"
-            label="Age"
-            placeholder="Age"
-            disabled={readOnly}
-            {...form.getInputProps("age")}
-          />
+            <TextInput
+              mt="md"
+              label="Email"
+              placeholder="email@domain.com"
+              type="email"
+              disabled={readOnly}
+              {...form.getInputProps("email")}
+            />
+            <TextInput
+              mt="md"
+              label="Contact Number"
+              placeholder="(+63) 912 345 6789"
+              disabled={readOnly}
+              {...form.getInputProps("mobile_no")}
+            />
+          </Group>
+
+          <Group grow>
+            <TextInput
+              mt="md"
+              label="Age"
+              placeholder="Age"
+              disabled={readOnly}
+              {...form.getInputProps("age")}
+            />
             <Select
               mt="md"
               label="Sex"
@@ -185,14 +143,47 @@ const AppointmentForm = (props: any) => {
               {...form.getInputProps("sex")}
             ></Select>
           </Group>
+          <DateInput
+            mt="md"
+            clearable
+            label="Date of Birth"
+            placeholder="MM/DD/YYYY"
+            {...form.getInputProps("dob")}
+          />
+          <Title size={20} mt="md" weight={400}>
+            Emergency Details
+          </Title>
+          <Group grow>
+            <TextInput
+              mt="md"
+              label="Emergency Contact Name"
+              placeholder="John Doe"
+              disabled={readOnly}
+              {...form.getInputProps("emergency_contact")}
+            />
+            <TextInput
+              mt="md"
+              label="Emergency Contact Number"
+              placeholder="(+63) 912 345 6789"
+              disabled={readOnly}
+              {...form.getInputProps("emergency_mobile_no")}
+            />
+          </Group>
+          <Textarea
+            mt="md"
+            label="Medical History"
+            placeholder="sickness, allergies, etc."
+            {...form.getInputProps("medical_history")}
+          ></Textarea>
 
-          <DateTimePicker
+          {/* <DateTimePicker
             mt="md"
             clearable
             label="Date and Time of Appointment "
             placeholder="MM/DD/YYYY"
             {...form.getInputProps("date_of_appointment")}
-          />
+          /> */}
+
           {/* <DateInput 
             mt="md"
             clearable
@@ -223,4 +214,4 @@ const AppointmentForm = (props: any) => {
   );
 };
 
-export default AppointmentForm;
+export default SecondStep;

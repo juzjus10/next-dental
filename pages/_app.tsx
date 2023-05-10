@@ -138,7 +138,7 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
               }}
             >
                <Notifications />
-              <Component {...pageProps} />
+              <Component {...pageProps}  /> 
             </MantineProvider>
           </ColorSchemeProvider>
         </QueryClientProvider>

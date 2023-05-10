@@ -33,6 +33,9 @@ async function main() {
     
     },
   });
+
+  console.log(`Created settings with id: ${settings.id}`);
+  
 }
 
 main()

@@ -23,12 +23,17 @@ import { DataTable } from "mantine-datatable";
 import { IconEye, IconEdit, IconTrash, IconSearch } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
-import DoctorForm from "@/components/Forms/DoctorForm";
-import AppointmentForm from "@/components/Forms/AppointmentForm";
-import clinicImage from "public/clinic.jpg";
+
+
+
+import { useForm } from "@mantine/form";
+
+import FirstStep from "@/components/Appointment/FirstStep";
+import SecondStep from "@/components/Appointment/SecondStep";
+import moment from "moment";
 
 const Users = () => {
-  const [active, setActive] = useState(1);
+  const [active, setActive] = useState(0);
   const [highestStepVisited, setHighestStepVisited] = useState(active);
 
   const handleStepChange = (nextStep: number) => {
@@ -46,30 +51,55 @@ const Users = () => {
   const shouldAllowSelectStep = (step: number) =>
     highestStepVisited >= step && active !== step;
 
+  useEffect(() => {
+    console.log(active);
+  }, [active]);
+
   const [query, setQuery] = useState("");
   const [debouncedQuery] = useDebouncedValue(query, 200);
   const queryClient = useQueryClient();
 
-  const { mutate } = useMutation(deleteAppointment, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(["appointment"], { exact: true });
+  
+  const form = useForm({
+    initialValues: {
+      status: "pending",
+      appointment_time: "",
+      date_of_appointment: "",
+
+      patient_id: "",
+      firstname: "",
+      middlename: "",
+      lastname: "",
+      address: "",
+      sex: "",
+      civil_status: "",
+      dob: "",
+      mobile_no: "",
+      emergency_contact: "",
+      emergency_mobile_no: "",
+      medical_history: "",
     },
+
+    transformValues: (values) => ({
+      ...values,
+      age: moment().diff(values.dob, "years"),
+     
+    }),
   });
 
+  useEffect(() => {
+    console.log("form.values", form.values);
+    
+  }, [form.values]);
+
+  
   return (
     <ApplicationShell>
-      <Container my="md">
+      <Container my="md" size="lg" >
         <Grid>
-          {/* <Grid.Col span={12} sm={6}>
-            <Image
-              src={clinicImage.src}
-              radius={10}
-              fit="contain"
-              height="100%"
-            />
-          </Grid.Col> */}
+        
           <Grid.Col span={12}>
-            <Paper p={10} radius={10}>
+            <Paper p={10} radius={10} withBorder>
               <Text size={30} weight={700} align="center">
                 Book an Appointment
               </Text>
@@ -80,22 +110,22 @@ const Users = () => {
                   breakpoint="sm"
                 >
                   <Stepper.Step
-                    label="First step"
-                    description="Create an account"
+                    label="Date & Time"
+                    description="Select date and time"
                     allowStepSelect={shouldAllowSelectStep(0)}
                   >
-                    <AppointmentForm data={[]} />
+                    <FirstStep form={form} />
                   </Stepper.Step>
                   <Stepper.Step
-                    label="Second step"
-                    description="Verify email"
+                    label="Personal Info"
+                    description="Fill up personal details"
                     allowStepSelect={shouldAllowSelectStep(1)}
                   >
-                    {/* <Content>Step 2 content: Verify email</Content> */}
+                    <SecondStep data={[]} form={form} />
                   </Stepper.Step>
                   <Stepper.Step
-                    label="Final step"
-                    description="Get full access"
+                    label="Email Confirmation"
+                    description="Confirm your email"
                     allowStepSelect={shouldAllowSelectStep(2)}
                   >
                     {/* <Content>Step 3 content: Get full access</Content> */}
