@@ -11,7 +11,7 @@ type Props = {
 export default function Layout({ children }: Props) {
   const [opened, { toggle }] = useDisclosure(false);
   const { data: session } = useSession();
-  console.log(session);
+ //console.log(session);
 
   return (
     <AppShell

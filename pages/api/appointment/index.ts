@@ -7,12 +7,41 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const { method } = req;
+  const { appointment_time, date_of_appointment, status } = req.body;
+
   switch (method) {
     case "GET":
       try {
-        const appointment = await prisma.appointment.findMany();
+        const existingAppointment = await prisma.appointment.findFirst({
+          where: {
+            date_of_appointment: {
+              equals: new Date(date_of_appointment),
+            },
+            appointment_time: {
+              equals: appointment_time,
+            },
+          },
+        });
+        if (existingAppointment) {
+          return res
+            .status(409)
+            .json({
+              message:
+                "Appointment already exists for the given date and time.",
+            });
+        }
 
-        return res.status(200).json(appointment);
+        const id = uuidv4();
+        // Create a new appointment
+        const appointment = await prisma.appointment.create({
+          data: {
+            id,
+            date_of_appointment: new Date(date_of_appointment),
+            appointment_time,
+            status,
+          },
+        });
+        return res.status(201).json(appointment);
       } catch (error) {
         console.error(error);
         return res
