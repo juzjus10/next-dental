@@ -104,21 +104,29 @@ const Doctor = () => {
             },
            
             {
-              accessor: "doctor_name",
-              title: "Doctor Name",
+              accessor: "firstname",
+              title: "First Name",
+              textAlignment: "left",
+            },
+            {
+              accessor: "middlename",
+              title: "Last Name",
+              textAlignment: "left",
+            },
+            {
+              accessor: "lastname",
+              title: "Last Name",
               textAlignment: "left",
             },
          
+          
             {
-              accessor: "age",
-              title: "Age",
+              accessor: "dob",
+              title: "Date of Birth",
               textAlignment: "left",
+              render : (row : any) => new Date(row.dob).toLocaleDateString()
             },
-            {
-              accessor: "sex",
-              title: "Sex",
-              textAlignment: "left",
-            },
+          
           
           
             {
