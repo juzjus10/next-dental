@@ -12,36 +12,11 @@ export default async function handler(
   switch (method) {
     case "GET":
       try {
-        const existingAppointment = await prisma.appointment.findFirst({
-          where: {
-            date_of_appointment: {
-              equals: new Date(date_of_appointment),
-            },
-            appointment_time: {
-              equals: appointment_time,
-            },
-          },
+        const appointments = await prisma.appointment.findMany({
+          orderBy: { date_of_appointment: "asc" },
+          include: { Patient: true, Doctor: true },
         });
-        if (existingAppointment) {
-          return res
-            .status(409)
-            .json({
-              message:
-                "Appointment already exists for the given date and time.",
-            });
-        }
-
-        const id = uuidv4();
-        // Create a new appointment
-        const appointment = await prisma.appointment.create({
-          data: {
-            id,
-            date_of_appointment: new Date(date_of_appointment),
-            appointment_time,
-            status,
-          },
-        });
-        return res.status(201).json(appointment);
+        return res.status(200).json(appointments);
       } catch (error) {
         console.error(error);
         return res
@@ -50,28 +25,48 @@ export default async function handler(
       }
     case "POST":
       try {
-        const {
-          status,
-          appointment_time,
-          date_of_appointment,
-          doctor_id,
-          patient_id,
-        } = req.body;
+        const { status, appointment_time, date_of_appointment } = req.body;
 
         const id = uuidv4();
 
-        const user = await prisma.appointment.create({
-          data: {
-            id,
-            status,
-            appointment_time,
-            date_of_appointment,
-            patient_id,
-            doctor_id,
+       // console.log(req.body);
+
+        const existingAppointment = await prisma.appointment.findFirst({
+          where: {
+            AND: 
+              {
+                date_of_appointment: {
+                  equals: new Date(date_of_appointment),
+                },
+                appointment_time: {
+                  equals: appointment_time,
+                },
+              },
+              
+            
           },
         });
 
-        res.json(user);
+       // console.log(existingAppointment);
+
+        if (!existingAppointment) {
+          // create appointment
+          const appointment = await prisma.appointment.create({
+            data: {
+              id,
+              status,
+              appointment_time,
+              date_of_appointment,
+            },
+          });
+
+          return res
+            .status(200)
+            .json({ message: "Appointment created!", appointment });
+        }
+        return res.status(409).json({
+          message: "Appointment already exists for the given date and time.",
+        });
       } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Error Creating User!" });

@@ -24,7 +24,7 @@ import { IconEye, IconEdit, IconTrash, IconSearch } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
 
-
+import {createAppointment} from "@/lib/api";
 
 import { useForm } from "@mantine/form";
 
@@ -32,17 +32,27 @@ import FirstStep from "@/components/Appointment/FirstStep";
 import SecondStep from "@/components/Appointment/SecondStep";
 import moment from "moment";
 
-const Users = () => {
+const CreateAppointment = () => {
   const [active, setActive] = useState(0);
   const [highestStepVisited, setHighestStepVisited] = useState(active);
 
-  const handleStepChange = (nextStep: number) => {
+  const handleStepChange = async (nextStep: number) => {
     const isOutOfBounds = nextStep > 3 || nextStep < 0;
 
     if (isOutOfBounds) {
       return;
     }
 
+    if (nextStep === 1) {  //first step
+     const {appointment_time, date_of_appointment, status} = form.values;
+      if(!appointment_time || !date_of_appointment){
+        return;
+      }
+
+      const  data  = await createAppointment({appointment_time, date_of_appointment, status});
+      console.log(data);
+    
+    }
     setActive(nextStep);
     setHighestStepVisited((hSC) => Math.max(hSC, nextStep));
   };
@@ -51,9 +61,6 @@ const Users = () => {
   const shouldAllowSelectStep = (step: number) =>
     highestStepVisited >= step && active !== step;
 
-  useEffect(() => {
-    console.log(active);
-  }, [active]);
 
   const [query, setQuery] = useState("");
   const [debouncedQuery] = useDebouncedValue(query, 200);
@@ -158,4 +165,4 @@ const Users = () => {
   );
 };
 
-export default Users;
+export default CreateAppointment;

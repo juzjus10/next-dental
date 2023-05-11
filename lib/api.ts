@@ -1,5 +1,5 @@
 import axios from "axios";
-import { prisma } from "./prisma";
+import { notifications } from "@mantine/notifications";
 
 // Users API
 export async function getAllUsers() {
@@ -32,8 +32,17 @@ export async function getAllAppointments() {
 }
 
 export async function createAppointment(data: any) {
-  const appointment = await axios.post("/api/appointment", data);
-  return appointment.data;
+  try {
+    const response = await axios.post("/api/appointment", data);
+    return response.data;
+  } catch (error: any) {
+    notifications.show({
+      title: "Error",
+      color: "red",
+      message: error.response.data.message,
+    });
+    throw error;
+  }
 }
 
 export async function updateAppointment(id: string, data: any) {

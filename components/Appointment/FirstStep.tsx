@@ -23,7 +23,7 @@ import {
 } from "@tabler/icons-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { createAppointment } from "@/lib/api";
+import { checkAppointment, createAppointment } from "@/lib/api";
 import { ReactPropTypes, useEffect } from "react";
 import {
   DateInput,
@@ -40,7 +40,7 @@ const FirstStep = (props: any) => {
   const { close, readOnly, form } = props;
   const queryClient = useQueryClient();
 
-  const { mutate } = useMutation((data) => createAppointment(data), {
+  const { mutate } = useMutation((data) => checkAppointment(data), {
     onSuccess: () => {
       queryClient.invalidateQueries(["appointment"]);
     },
@@ -64,7 +64,7 @@ const FirstStep = (props: any) => {
   };
   return (
     <form
-      onSubmit={form.onSubmit((values) => {
+      onSubmit={form.onSubmit((values : any) => {
         handleSubmit(values);
         // console.log(values);
 
@@ -85,7 +85,7 @@ const FirstStep = (props: any) => {
             {...form.getInputProps("appointment_time")}
           />
 
-          {!readOnly && (
+          {/* {!readOnly && (
             <Button
               mt={20}
               type="submit"
@@ -95,7 +95,7 @@ const FirstStep = (props: any) => {
             >
               Submit
             </Button>
-          )}
+          )} */}
         </Grid.Col>
         <Grid.Col
           span={12}

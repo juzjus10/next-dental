@@ -39,9 +39,7 @@ const SecondStep = (props: any) => {
     // console.log(  form.getTransformedValues())
   }, [form.values]);
 
-  useEffect(() => {
-    form.setValues(data);
-  }, [data]);
+ 
 
   const handleSubmit = (values: any) => {
     try {
