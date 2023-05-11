@@ -50,6 +50,9 @@ const CreateAppointment = () => {
       }
 
       const  data  = await createAppointment({appointment_time, date_of_appointment, status});
+      if (!data) {
+        return;
+      }
       console.log(data);
     
     }

@@ -25,7 +25,7 @@ export default async function handler(
       }
     case "POST":
       try {
-        const { status, appointment_time, date_of_appointment } = req.body;
+        // const { status, appointment_time, date_of_appointment } = req.body;
 
         const id = uuidv4();
 

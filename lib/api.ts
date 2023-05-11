@@ -34,14 +34,20 @@ export async function getAllAppointments() {
 export async function createAppointment(data: any) {
   try {
     const response = await axios.post("/api/appointment", data);
+    notifications.show({
+      title: "Appointment Created",
+      color: "green",
+      message: "Appointment created successfully",
+    });
     return response.data;
   } catch (error: any) {
-    notifications.show({
-      title: "Error",
-      color: "red",
-      message: error.response.data.message,
-    });
-    throw error;
+    if (error.response) {
+      notifications.show({
+        title: "Error",
+        color: "red",
+        message: error.response.data.message,
+      });
+    }
   }
 }
 
