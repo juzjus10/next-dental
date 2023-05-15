@@ -23,7 +23,7 @@ import {
 } from "@tabler/icons-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { checkAppointment, createAppointment } from "@/lib/api";
+import { createAppointment } from "@/lib/api";
 import { ReactPropTypes, useEffect } from "react";
 import {
   DateInput,
@@ -35,55 +35,55 @@ import moment from "moment";
 import clinicImage from "public/clinic.jpg";
 import { getAllSettings } from "@/lib/api";
 import { ContactIconsList } from "@/components/Appointment/ContactIcons";
+import { generateTime, generateTimeFromRange } from "@/utils/generateTime";
 
 const FirstStep = (props: any) => {
-  const { close, readOnly, form } = props;
+  const { setDateValidated, form } = props;
   const queryClient = useQueryClient();
 
-  const { mutate } = useMutation((data) => checkAppointment(data), {
-    onSuccess: () => {
-      queryClient.invalidateQueries(["appointment"]);
-    },
-  });
   //get all settings using react query
   const { data: settings, isLoading } = useQuery({
     queryKey: ["settings"],
     queryFn: getAllSettings,
     refetchOnWindowFocus: false,
   });
-  
 
-  const handleSubmit = (values: any) => {
-    // try {
-    //   const newAppointment = mutate(values);
-    //   console.log("New Appointment created:", newAppointment);
-    // } catch (error) {
-    //   console.error("Error creating Appointment:", error);
-    // }
-    console.log(values);
-  };
+  console.log(settings);
+
   return (
-    <form
-      onSubmit={form.onSubmit((values : any) => {
-        handleSubmit(values);
-        // console.log(values);
-
-        close();
-      })}
-    >
+    <form>
       <Grid>
         <Grid.Col span={12} mt="md" md={6} px={20}>
           <DateInput
-            clearable
+            mt="md"
+            
+            variant="filled"
+            value={form.values.appointment.date_of_appointment}
             label="Date of Appointment "
             placeholder="MM/DD/YYYY"
-            {...form.getInputProps("date_of_appointment")}
+            onChange={(e: any) => {
+              
+
+              form.setFieldValue("appointment.date_of_appointment", new Date(e));
+              setDateValidated(false);
+            }}
           />
-          <TimeInput
-            mt="md"
-            label="Time of Appointment "
-            {...form.getInputProps("appointment_time")}
-          />
+          {settings && (
+            <Select
+              mt="md"
+              variant="filled"
+              value={form.values.appointment.appointment_time}
+              data={generateTimeFromRange(
+                settings[0]?.opening_time,
+                settings[0]?.closing_time
+              )}
+              onChange={(e) => {
+                form.setFieldValue("appointment.appointment_time", e);
+                setDateValidated(false)}}
+              label="Time of Appointment"
+            
+            />
+          )}
 
           {/* {!readOnly && (
             <Button
@@ -105,6 +105,10 @@ const FirstStep = (props: any) => {
             borderRadius: theme.radius.lg,
             padding: rem(20),
             border: `2px dashed ${theme.colors[theme.primaryColor][8]}`,
+          //  backgroundColor: theme.colors.gray[9],
+            // create a  yellow outer glow
+            boxShadow: theme.colorScheme === "dark" ? "none" : `10px 7px 10px 0px ${theme.colors.yellow[4]}`,
+
           })}
         >
           {settings && (

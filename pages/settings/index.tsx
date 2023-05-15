@@ -25,24 +25,10 @@ import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
 import UsersForm from "@/components/Forms/UsersForm";
 import axios from "axios";
 import { requireAuth } from "common/requireAuth";
-import moment from "moment";
 import { getAllSettings, updateSettings } from "@/lib/api";
 import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
-
-// generate a time string from 12:00 AM to 11:30 PM
-function generateTime() {
-  let times = [];
-  let time = moment("12:00 AM", "h:mm A");
-  const endTime = moment("11:50 PM", "h:mm A");
-
-  while (time <= endTime) {
-    times.push(time.format("h:mm A"));
-    time = time.add(30, "minutes");
-  }
-
-  return times;
-}
+import { generateTime } from "@/utils/generateTime";
 
 const Settings = () => {
   const queryClient = useQueryClient();

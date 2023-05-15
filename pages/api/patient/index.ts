@@ -1,8 +1,16 @@
 import { prisma } from "@/lib/prisma";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { v4 as uuidv4 } from "uuid";
-import { hash } from "bcrypt";
 import moment from "moment";
+import Joi from "joi";
+import { type } from "os";
+
+const schema = Joi.object({
+  firstName: Joi.string().required(),
+  lastName: Joi.string().required(),
+  email: Joi.string().email().required(),
+  dob: Joi.date().required(),
+});
 
 export default async function handler(
   req: NextApiRequest,
@@ -17,7 +25,9 @@ export default async function handler(
         return res.status(200).json(patient);
       } catch (error) {
         console.error(error);
-        return res.status(500).json({ message: "Internal server error", error });
+        return res
+          .status(500)
+          .json({ message: "Internal server error", error });
       }
     case "POST":
       try {
@@ -36,14 +46,20 @@ export default async function handler(
           medical_history,
         } = req.body;
 
-        const id = uuidv4();
+        // validate the request body against the schema
+        const { error, value } = schema.validate(req.body, {
+          abortEarly: false,
+        });
+        if (error) {
+          return res.status(400).json({
+            message: "Validation error",
+            details: error.details.map((d) => d.message),
+          });
+        }
 
-        // log type of dob
-        console.log(typeof dob);
-        console.log(req.body.dob);
         const patient = await prisma.patient.create({
           data: {
-            id,
+            id: uuidv4(),
             firstname,
             lastname,
             middlename,
@@ -51,7 +67,7 @@ export default async function handler(
             age,
             sex,
             civil_status,
-            dob: moment(dob).toDate(),
+            dob: new Date(dob),
             mobile_no,
             emergency_contact,
             emergency_mobile_no,
@@ -59,7 +75,7 @@ export default async function handler(
           },
         });
 
-        res.json(patient);
+        res.status(200).json({ message: "Patient created", patient });
       } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Error Creating Patient!", error });

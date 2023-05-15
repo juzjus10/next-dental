@@ -1,6 +1,6 @@
 import { FormModal } from "@/components/Forms/FormModal";
 import ApplicationShell from "@/components/Layout";
-import { deleteAppointment, deleteUser, getAllAppointments } from "@/lib/api";
+import { checkAppointment, deleteAppointment, deleteUser, getAllAppointments } from "@/lib/api";
 import {
   Group,
   Paper,
@@ -24,7 +24,7 @@ import { IconEye, IconEdit, IconTrash, IconSearch } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
 
-import {createAppointment} from "@/lib/api";
+import { createAppointment } from "@/lib/api";
 
 import { useForm } from "@mantine/form";
 
@@ -34,7 +34,59 @@ import moment from "moment";
 
 const CreateAppointment = () => {
   const [active, setActive] = useState(0);
+  const [dateValidated, setDateValidated] = useState(false);
   const [highestStepVisited, setHighestStepVisited] = useState(active);
+  const [patientExists, setPatientExists] = useState(false);
+
+  // Allow the user to freely go back and forth between visited steps.
+  const shouldAllowSelectStep = (step: number) =>
+    highestStepVisited >= step && active !== step;
+
+  const [query, setQuery] = useState("");
+  const [debouncedQuery] = useDebouncedValue(query, 200);
+  const queryClient = useQueryClient();
+
+  const form = useForm({
+    initialValues: {
+      // Appointment
+      appointment: {
+        id: "",
+        status: "pending",
+        appointment_time: "",
+        date_of_appointment: "",
+      },
+      patient: {
+        patient_id: "",
+        firstname: "",
+        middlename: "",
+        lastname: "",
+        address: "",
+        sex: "",
+        civil_status: "",
+        dob: "",
+        mobile_no: "",
+        emergency_contact: "",
+        emergency_mobile_no: "",
+        medical_history: "",
+      },
+
+      // Patient
+    },
+
+    transformValues: (values) => ({
+      ...values,
+      age: moment().diff(values.patient.dob, "years"),
+    }),
+
+    // validate: {
+    //   firstname: (value) => value.trim().length > 0 || "Required",
+    //   lastname: (value) => value.trim().length > 0 || "Required",
+    //   dob: (value) => value.trim().length > 0 || "Required",
+
+    //   date_of_appointment: (value) => value.trim().length > 0 || "Required",
+    //   appointment_time: (value) => value.trim().length > 0 || "Required",
+    // }
+  });
 
   const handleStepChange = async (nextStep: number) => {
     const isOutOfBounds = nextStep > 3 || nextStep < 0;
@@ -42,72 +94,47 @@ const CreateAppointment = () => {
     if (isOutOfBounds) {
       return;
     }
-
-    if (nextStep === 1) {  //first step
-     const {appointment_time, date_of_appointment, status} = form.values;
-      if(!appointment_time || !date_of_appointment){
+    if (nextStep === 1) {
+    }
+    if (nextStep === 2 && !dateValidated) {
+      //first step
+      const { appointment_time, date_of_appointment, status } = form.values.appointment;
+      if (!appointment_time || !date_of_appointment) {
         return;
       }
 
-      const  data  = await createAppointment({appointment_time, date_of_appointment, status});
+      const data = await checkAppointment({
+        appointment_time,
+        date_of_appointment,
+        status,
+      });
+      console.log("data", data);
       if (!data) {
         return;
       }
-      console.log(data);
-    
+
+      // const { appointment } = data;
+      // const { id } = appointment;
+
+      // form.setFieldValue("appointment.id", id);
+
+      console.log(form.values);
+      setDateValidated(true);
     }
     setActive(nextStep);
     setHighestStepVisited((hSC) => Math.max(hSC, nextStep));
   };
 
-  // Allow the user to freely go back and forth between visited steps.
-  const shouldAllowSelectStep = (step: number) =>
-    highestStepVisited >= step && active !== step;
-
-
-  const [query, setQuery] = useState("");
-  const [debouncedQuery] = useDebouncedValue(query, 200);
-  const queryClient = useQueryClient();
-
-  
-  const form = useForm({
-    initialValues: {
-      status: "pending",
-      appointment_time: "",
-      date_of_appointment: "",
-
-      patient_id: "",
-      firstname: "",
-      middlename: "",
-      lastname: "",
-      address: "",
-      sex: "",
-      civil_status: "",
-      dob: "",
-      mobile_no: "",
-      emergency_contact: "",
-      emergency_mobile_no: "",
-      medical_history: "",
-    },
-
-    transformValues: (values) => ({
-      ...values,
-      age: moment().diff(values.dob, "years"),
-     
-    }),
-  });
-
   useEffect(() => {
     console.log("form.values", form.values);
-    
-  }, [form.values]);
 
-  
+    console.log("dateValidated", dateValidated);
+  }, [form.values, dateValidated]);
+
   return (
     <ApplicationShell>
-      <Container my="md" size="lg" >
+      <Container my="md" size="lg">
         <Grid>
-        
           <Grid.Col span={12}>
             <Paper p={10} radius={10} withBorder>
               <Text size={30} weight={700} align="center">
@@ -120,31 +147,26 @@ const CreateAppointment = () => {
                   breakpoint="sm"
                 >
                   <Stepper.Step
-                    label="Date & Time"
-                    description="Select date and time"
+                   label="Personal Info"
+                   description="Fill up personal details"
                     allowStepSelect={shouldAllowSelectStep(0)}
                   >
-                    <FirstStep form={form} />
+                    <SecondStep data={[]} form={form} patientExists={patientExists} setPatientExists={setPatientExists}/>
                   </Stepper.Step>
                   <Stepper.Step
-                    label="Personal Info"
-                    description="Fill up personal details"
+                   label="Date & Time"
+                   description="Select date and time"
+                    
                     allowStepSelect={shouldAllowSelectStep(1)}
                   >
-                    <SecondStep data={[]} form={form} />
-                  </Stepper.Step>
-                  <Stepper.Step
-                    label="Email Confirmation"
-                    description="Confirm your email"
-                    allowStepSelect={shouldAllowSelectStep(2)}
-                  >
-                    {/* <Content>Step 3 content: Get full access</Content> */}
+                    <FirstStep
+                      form={form}
+                      setDateValidated={setDateValidated}
+                    />
                   </Stepper.Step>
 
                   <Stepper.Completed>
-                    {/* <Content>
-                      Completed, click back button to get to previous step
-                    </Content> */}
+                    <Text>Appointment Created</Text>
                   </Stepper.Completed>
                 </Stepper>
 

@@ -31,6 +31,7 @@
     "bcrypt-cli": "^1.1.0",
     "cookies-next": "^2.1.1",
     "dayjs": "^1.11.7",
+    "joi": "^17.9.2",
     "mantine-datatable": "^2.4.16",
     "moment": "^2.29.4",
     "next": "13.4.1",

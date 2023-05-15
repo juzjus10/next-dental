@@ -45,7 +45,7 @@ model Patient {
   age                 Int
   sex                 String        @db.VarChar(20)
   civil_status        String        @db.VarChar(20)
-  dob                 DateTime      @db.Date
+  dob                 DateTime      @db.DateTime
   mobile_no           String        @db.VarChar(20)
   emergency_contact   String        @db.VarChar(20)
   emergency_mobile_no String

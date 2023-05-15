@@ -50,7 +50,25 @@ export async function createAppointment(data: any) {
     }
   }
 }
-
+export async function checkAppointment(data: any) {
+  try {
+    const response = await axios.post("/api/appointment", data);
+    notifications.show({
+      title: "Appointment Status",
+      color: "green",
+      message: response.data.message,
+    });
+    return response.data;
+  } catch (error: any) {
+    if (error.response) {
+      notifications.show({
+        title: "Error",
+        color: "red",
+        message: error.response.data.message,
+      });
+    }
+  }
+}
 export async function updateAppointment(id: string, data: any) {
   const appointment = await axios.put(`/api/appointment/${id}`, data);
   return appointment.data;
@@ -72,6 +90,26 @@ export async function getAllPatients() {
 export async function createPatient(data: any) {
   const patient = await axios.post("/api/patient", data);
   return patient.data;
+}
+
+export async function checkPatient(data: any) {
+  try {
+    const response = await axios.post("/api/patient/check-existing", data);
+    notifications.show({
+      title: "Patient Status",
+      color: "green",
+      message: response.data.message,
+    });
+    return response.data;
+  } catch (error: any) {
+    if (error.response) {
+      notifications.show({
+        title: "Error",
+        color: "red",
+        message: error.response.data.message,
+      });
+    }
+  }
 }
 
 export async function updatePatient(id: string, data: any) {

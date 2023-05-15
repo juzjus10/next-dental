@@ -51,25 +51,25 @@ export default async function handler(
 
         if (!existingAppointment) {
           // create appointment
-          const appointment = await prisma.appointment.create({
-            data: {
-              id,
-              status,
-              appointment_time,
-              date_of_appointment,
-            },
-          });
+          // const appointment = await prisma.appointment.create({
+          //   data: {
+          //     id,
+          //     status,
+          //     appointment_time,
+          //     date_of_appointment,
+          //   },
+          // });
 
           return res
             .status(200)
-            .json({ message: "Appointment created!", appointment });
+            .json({ message: "Appointment available!" });
         }
         return res.status(409).json({
           message: "Appointment already exists for the given date and time.",
         });
       } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Error Creating User!" });
+        res.status(500).json({ message: "Error Creating Appointment!" });
       }
       break;
     default:
