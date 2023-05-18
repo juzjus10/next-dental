@@ -65,6 +65,7 @@ const CreateAppointment = () => {
         civil_status: "",
         dob: "",
         mobile_no: "",
+        email: "",
         emergency_contact: "",
         emergency_mobile_no: "",
         medical_history: "",

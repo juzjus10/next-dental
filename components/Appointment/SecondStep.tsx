@@ -10,7 +10,7 @@ import {
   Textarea,
   Title,
 } from "@mantine/core";
-import { IconStethoscope, IconWheelchair } from "@tabler/icons-react";
+import { IconAt, IconStethoscope, IconWheelchair } from "@tabler/icons-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { checkPatient, createAppointment } from "@/lib/api";
@@ -36,7 +36,7 @@ const SecondStep = (props: any) => {
         dob: form.values.patient.dob,
       },
     },
-    200
+    400
   );
 
   useShallowEffect(() => {
@@ -55,16 +55,27 @@ const SecondStep = (props: any) => {
         console.log(response);
 
         if (response.message === "You already have a record in the database") {
-
           const { patient } = response;
-          form.setFieldValue("patient.id", patient.id); 
+          // clear the form patient object
+          form.setFieldValue("patient", {});
+          // form.setFieldValue("patient.dob", form.values.patient.dob);
+          // form.setFieldValue("patient.id", patient.id);
+          form.setValues({
+            ...form.values,
+            patient: {
+              id: patient.id,
+              dob: form.values.patient.dob,
+              firstname: form.values.patient.firstname,
+              middlename: form.values.patient.middlename,
+              lastname: form.values.patient.lastname,
+            },
+          })
           setPatientExists(true);
         } else if (response.message === "Patient does not exist") {
-          form.setFieldValue("patient.id", ""); 
+          form.setFieldValue("patient.id", "");
           setPatientExists(false);
         }
 
-        
         console.log(patientExists);
       }
     };
@@ -112,18 +123,28 @@ const SecondStep = (props: any) => {
               placeholder="MM/DD/YYYY"
               {...form.getInputProps("patient.dob")}
             />
-            
           </Group>
 
           {!patientExists && (
             <>
+            <Group grow >
             <TextInput
-              mt="md"
-              label="Contact Number"
-              placeholder="(+63) 912 345 6789"
-              disabled={readOnly}
-              {...form.getInputProps("patient.mobile_no")}
-            />
+                mt="md"
+                label="Email"
+                placeholder="email@domain.com"
+                disabled={readOnly}
+                {...form.getInputProps("patient.email")}
+                icon={<IconAt size="1rem" />}
+              />
+              <TextInput
+                mt="md"
+                label="Contact Number"
+                placeholder="(+63) 912 345 6789"
+                disabled={readOnly}
+                {...form.getInputProps("patient.mobile_no")}
+              />
+            </Group>
+           
               <TextInput
                 mt="md"
                 label="Address"
@@ -190,7 +211,6 @@ const SecondStep = (props: any) => {
               ></Textarea>
             </>
           )}
-
         </Grid.Col>
       </Grid>
     </form>

@@ -28,6 +28,7 @@ CREATE TABLE `Patient` (
     `address` LONGTEXT NOT NULL,
     `age` INTEGER NOT NULL,
     `sex` VARCHAR(20) NOT NULL,
+    `email` VARCHAR(50) NOT NULL,
     `civil_status` VARCHAR(20) NOT NULL,
     `dob` DATE NOT NULL,
     `mobile_no` INTEGER NOT NULL,

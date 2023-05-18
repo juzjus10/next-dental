@@ -99,6 +99,7 @@ export async function checkPatient(data: any) {
       title: "Patient Status",
       color: "green",
       message: response.data.message,
+      icon: "👋",
     });
     return response.data;
   } catch (error: any) {
@@ -106,6 +107,7 @@ export async function checkPatient(data: any) {
       notifications.show({
         title: "Error",
         color: "red",
+        icon: "🙁",
         message: error.response.data.message,
       });
     }

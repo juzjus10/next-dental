@@ -42,6 +42,7 @@ model Patient {
   middlename          String
   lastname            String
   address             String        @db.LongText
+  email               String
   age                 Int
   sex                 String        @db.VarChar(20)
   civil_status        String        @db.VarChar(20)
@@ -92,10 +93,10 @@ model User {
 }
 
 model Settings {
-  id              String @id @default(cuid())
-  opening_time    String?
-  closing_time    String?
-  clinic_name     String
-  clinic_address  String
-  clinic_contact  String
+  id             String  @id @default(cuid())
+  opening_time   String?
+  closing_time   String?
+  clinic_name    String
+  clinic_address String
+  clinic_contact String
 }
