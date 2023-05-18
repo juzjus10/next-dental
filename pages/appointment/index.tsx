@@ -103,29 +103,41 @@ const Appointment = () => {
               hidden: true,
             },
             {
-              accessor: "firstname",
+              accessor: "Patient.firstname",
               title: "First Name",
               textAlignment: "left",
             },
 
             {
-              accessor: "middlename",
+              accessor: "Patient.middlename",
               title: "Middle Name",
               textAlignment: "left",
             },
             {
-              accessor: "lastname",
+              accessor: "Patient.lastname",
               title: "Last Name",
               textAlignment: "left",
             },
-
             {
-              accessor: "user_level",
-              title: "User Level",
+              accessor: "appointment_time",
+              title: "Time of Appointment",
+              textAlignment: "left",
+            },
+            {
+              accessor: "date_of_appointment",
+              title: "Date of Appointment",
+              textAlignment: "left",
+              render: (row: any) => (
+               new Date(row.date_of_appointment).toLocaleDateString()
+              )
+            },
+            {
+              accessor: "status",
+              title: "Status",
               textAlignment: "center",
               render: (row: any) =>
-                row.user_level == "admin" ? (
-                  <Badge color="violet">{row.user_level}</Badge>
+                row.status == "pending" ? (
+                  <Badge color="yellow">{row.status}</Badge>
                 ) : (
                   <Badge>{row.user_level}</Badge>
                 ),

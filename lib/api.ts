@@ -52,7 +52,7 @@ export async function createAppointment(data: any) {
 }
 export async function checkAppointment(data: any) {
   try {
-    const response = await axios.post("/api/appointment", data);
+    const response = await axios.post("/api/appointment/check-existing", data);
     notifications.show({
       title: "Appointment Status",
       color: "green",

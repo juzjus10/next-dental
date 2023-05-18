@@ -1,6 +1,11 @@
 import { FormModal } from "@/components/Forms/FormModal";
 import ApplicationShell from "@/components/Layout";
-import { checkAppointment, deleteAppointment, deleteUser, getAllAppointments } from "@/lib/api";
+import {
+  checkAppointment,
+  deleteAppointment,
+  deleteUser,
+  getAllAppointments,
+} from "@/lib/api";
 import {
   Group,
   Paper,
@@ -28,8 +33,8 @@ import { createAppointment } from "@/lib/api";
 
 import { useForm } from "@mantine/form";
 
-import FirstStep from "@/components/Appointment/FirstStep";
-import SecondStep from "@/components/Appointment/SecondStep";
+import FirstStep from "@/components/Appointment/SecondStep";
+import SecondStep from "@/components/Appointment/FirstStep";
 import moment from "moment";
 
 const CreateAppointment = () => {
@@ -56,7 +61,7 @@ const CreateAppointment = () => {
         date_of_appointment: "",
       },
       patient: {
-        patient_id: "",
+        id: "",
         firstname: "",
         middlename: "",
         lastname: "",
@@ -99,7 +104,8 @@ const CreateAppointment = () => {
     }
     if (nextStep === 2 && !dateValidated) {
       //first step
-      const { appointment_time, date_of_appointment, status } = form.values.appointment;
+      const { appointment_time, date_of_appointment, status } =
+        form.values.appointment;
       if (!appointment_time || !date_of_appointment) {
         return;
       }
@@ -109,10 +115,29 @@ const CreateAppointment = () => {
         date_of_appointment,
         status,
       });
-      console.log("data", data);
-      if (!data) {
-        return;
-      }
+      console.log("Appointment Data", data);
+
+      if (!data) return;
+
+      const response = await createAppointment(form.values);
+
+      if (!response) return;
+
+      console.log("Appointment", response);
+
+      const { patient_id, id } = response.appointment;
+
+      form.setValues({
+        ...form.values,
+        appointment: {
+          ...form.values.appointment,
+          id,
+        },
+        patient: {
+          ...form.values.patient,
+          id: patient_id,
+        },
+      });
 
       // const { appointment } = data;
       // const { id } = appointment;
@@ -148,16 +173,20 @@ const CreateAppointment = () => {
                   breakpoint="sm"
                 >
                   <Stepper.Step
-                   label="Personal Info"
-                   description="Fill up personal details"
+                    label="Personal Info"
+                    description="Fill up personal details"
                     allowStepSelect={shouldAllowSelectStep(0)}
                   >
-                    <SecondStep data={[]} form={form} patientExists={patientExists} setPatientExists={setPatientExists}/>
+                    <SecondStep
+                      data={[]}
+                      form={form}
+                      patientExists={patientExists}
+                      setPatientExists={setPatientExists}
+                    />
                   </Stepper.Step>
                   <Stepper.Step
-                   label="Date & Time"
-                   description="Select date and time"
-                    
+                    label="Date & Time"
+                    description="Select date and time"
                     allowStepSelect={shouldAllowSelectStep(1)}
                   >
                     <FirstStep

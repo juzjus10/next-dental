@@ -1,7 +1,7 @@
 import React from "react";
 import { Modal, Text, Button, ActionIcon } from "@mantine/core";
 import UsersForm from "@/components/Forms/UsersForm";
-import AppointmentForm from "@/components/Appointment/SecondStep";
+import AppointmentForm from "@/components/Appointment/FirstStep";
 import PatientForm from "@/components/Forms/PatientForm";
 import DoctorForm from "@/components/Forms/DoctorForm";
 import { useDisclosure } from "@mantine/hooks";

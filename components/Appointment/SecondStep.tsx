@@ -1,215 +1,120 @@
+import { ContactIconsList } from "@/components/Appointment/ContactIcons";
+import { getAllSettings } from "@/lib/api";
+import { generateTimeFromRange } from "@/utils/generateTime";
 import {
-  Box,
-  Button,
-  Center,
-  Grid,
-  Group,
-  SegmentedControl,
-  Select,
-  TextInput,
-  Textarea,
-  Title,
+  Grid, Select, rem
 } from "@mantine/core";
-import { IconAt, IconStethoscope, IconWheelchair } from "@tabler/icons-react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
-import { checkPatient, createAppointment } from "@/lib/api";
-import { ReactPropTypes, useEffect } from "react";
 import {
-  DateInput,
-  DatePicker,
-  DateTimePicker,
-  TimeInput,
+  DateInput
 } from "@mantine/dates";
-import moment from "moment";
-import { useDebouncedValue, useShallowEffect } from "@mantine/hooks";
+import {
+  IconDentalBroken,
+  IconMapPin,
+  IconPhone,
+  IconSun
+} from "@tabler/icons-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const SecondStep = (props: any) => {
-  const { readOnly, patientExists, setPatientExists, form } = props;
+  const { setDateValidated, form } = props;
   const queryClient = useQueryClient();
 
-  const [debounced] = useDebouncedValue(
-    {
-      patient: {
-        firstname: form.values.patient.firstname,
-        lastname: form.values.patient.lastname,
-        dob: form.values.patient.dob,
-      },
-    },
-    400
-  );
+  //get all settings using react query
+  const { data: settings, isLoading } = useQuery({
+    queryKey: ["settings"],
+    queryFn: getAllSettings,
+    refetchOnWindowFocus: false,
+  });
 
-  useShallowEffect(() => {
-    const checkPatientExists = async () => {
-      const { patient } = form.values;
-
-      const { firstname, lastname, dob } = patient;
-
-      if (firstname && lastname && dob) {
-        const response = await checkPatient({
-          firstname,
-          lastname,
-          dob,
-        });
-
-        console.log(response);
-
-        if (response.message === "You already have a record in the database") {
-          const { patient } = response;
-          // clear the form patient object
-          form.setFieldValue("patient", {});
-          // form.setFieldValue("patient.dob", form.values.patient.dob);
-          // form.setFieldValue("patient.id", patient.id);
-          form.setValues({
-            ...form.values,
-            patient: {
-              id: patient.id,
-              dob: form.values.patient.dob,
-              firstname: form.values.patient.firstname,
-              middlename: form.values.patient.middlename,
-              lastname: form.values.patient.lastname,
-            },
-          })
-          setPatientExists(true);
-        } else if (response.message === "Patient does not exist") {
-          form.setFieldValue("patient.id", "");
-          setPatientExists(false);
-        }
-
-        console.log(patientExists);
-      }
-    };
-
-    checkPatientExists();
-  }, [
-    debounced.patient.firstname,
-    debounced.patient.lastname,
-    debounced.patient.dob,
-  ]);
+  console.log(settings);
 
   return (
     <form>
-      <Title size={20} mt="md" weight={400}>
-        Patient Details
-      </Title>
       <Grid>
-        <Grid.Col span={12} mt="md">
-          <Group grow>
-            <TextInput
-              label="First Name"
-              placeholder="First Name"
-              disabled={readOnly}
-              {...form.getInputProps("patient.firstname")}
-            />
-            <TextInput
-              label="Middle Name"
-              placeholder="Middle Name"
-              disabled={readOnly}
-              {...form.getInputProps("patient.middlename")}
-            />
-            <TextInput
-              label="Last Name"
-              placeholder="Last Name"
-              disabled={readOnly}
-              {...form.getInputProps("patient.lastname")}
-            />
-          </Group>
+        <Grid.Col span={12} mt="md" md={6} px={20}>
+          <DateInput
+            mt="md"
+            
+            variant="filled"
+            value={form.values.appointment.date_of_appointment}
+            label="Date of Appointment "
+            placeholder="MM/DD/YYYY"
+            onChange={(e: any) => {
+              
 
-          <Group grow>
-            <DateInput
+              form.setFieldValue("appointment.date_of_appointment", new Date(e));
+              setDateValidated(false);
+            }}
+          />
+          {settings && (
+            <Select
               mt="md"
-              clearable
-              label="Date of Birth"
-              placeholder="MM/DD/YYYY"
-              {...form.getInputProps("patient.dob")}
+              variant="filled"
+              value={form.values.appointment.appointment_time}
+              data={generateTimeFromRange(
+                settings[0]?.opening_time,
+                settings[0]?.closing_time
+              )}
+              onChange={(e) => {
+                form.setFieldValue("appointment.appointment_time", e);
+                setDateValidated(false)}}
+              label="Time of Appointment"
+            
             />
-          </Group>
+          )}
 
-          {!patientExists && (
-            <>
-            <Group grow >
-            <TextInput
-                mt="md"
-                label="Email"
-                placeholder="email@domain.com"
-                disabled={readOnly}
-                {...form.getInputProps("patient.email")}
-                icon={<IconAt size="1rem" />}
-              />
-              <TextInput
-                mt="md"
-                label="Contact Number"
-                placeholder="(+63) 912 345 6789"
-                disabled={readOnly}
-                {...form.getInputProps("patient.mobile_no")}
-              />
-            </Group>
-           
-              <TextInput
-                mt="md"
-                label="Address"
-                placeholder="Street, Barangay, City, Province"
-                disabled={readOnly}
-                {...form.getInputProps("patient.address")}
-              />
-              <Group grow>
-                <TextInput
-                  mt="md"
-                  label="Age"
-                  placeholder="Age"
-                  disabled={readOnly}
-                  {...form.getInputProps("patient.age")}
-                />
-                <Select
-                  mt="md"
-                  label="Sex"
-                  placeholder="Pick one"
-                  data={[
-                    { value: "male", label: "Male" },
-                    { value: "female", label: "Female" },
-                  ]}
-                  {...form.getInputProps("patient.sex")}
-                ></Select>
-                <Select
-                  mt="md"
-                  label="Civil Status"
-                  placeholder="Pick one"
-                  data={[
-                    { value: "single", label: "Single" },
-                    { value: "married", label: "Married" },
-                    { value: "widowed", label: "Widowed" },
-                    { value: "separated", label: "Separated" },
-                    { value: "divorced", label: "Divorced" },
-                  ]}
-                  {...form.getInputProps("patient.civil_status")}
-                ></Select>
-              </Group>
-              <Title size={20} mt="md" weight={400}>
-                Emergency Details
-              </Title>
-              <Group grow>
-                <TextInput
-                  mt="md"
-                  label="Emergency Contact Name"
-                  placeholder="John Doe"
-                  disabled={readOnly}
-                  {...form.getInputProps("patient.emergency_contact")}
-                />
-                <TextInput
-                  mt="md"
-                  label="Emergency Contact Number"
-                  placeholder="(+63) 912 345 6789"
-                  disabled={readOnly}
-                  {...form.getInputProps("patient.emergency_mobile_no")}
-                />
-              </Group>
-              <Textarea
-                mt="md"
-                label="Medical History"
-                placeholder="sickness, allergies, etc."
-                {...form.getInputProps("patient.medical_history")}
-              ></Textarea>
-            </>
+          {/* {!readOnly && (
+            <Button
+              mt={20}
+              type="submit"
+              sx={{
+                float: "right",
+              }}
+            >
+              Submit
+            </Button>
+          )} */}
+        </Grid.Col>
+        <Grid.Col
+          span={12}
+          mt="md"
+          md={6}
+          sx={(theme) => ({
+            borderRadius: theme.radius.lg,
+            padding: rem(20),
+            border: `2px dashed ${theme.colors[theme.primaryColor][8]}`,
+          //  backgroundColor: theme.colors.gray[9],
+            // create a  yellow outer glow
+            boxShadow: theme.colorScheme === "dark" ? "none" : `10px 7px 10px 0px ${theme.colors.yellow[4]}`,
+
+          })}
+        >
+          {settings && (
+            <ContactIconsList
+              variant="white"
+              data={[
+                {
+                  title: "Clinic",
+                  description: settings[0]?.clinic_name,
+                  icon: IconDentalBroken,
+                },
+                {
+                  title: "Phone",
+                  description: settings[0]?.clinic_contact,
+                  icon: IconPhone,
+                },
+                {
+                  title: "Address",
+                  description: settings[0]?.clinic_address,
+                  icon: IconMapPin,
+                },
+                {
+                  title: "Working Hours",
+                  description: `${settings[0]?.opening_time} - ${settings[0]?.closing_time}`,
+                  icon: IconSun,
+                },
+              ]}
+            />
           )}
         </Grid.Col>
       </Grid>

@@ -1,7 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { v4 as uuidv4 } from "uuid";
+import { v4 as uuid } from "uuid";
 import { hash } from "bcrypt";
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -17,61 +18,60 @@ export default async function handler(
           include: { Patient: true, Doctor: true },
         });
         return res.status(200).json(appointments);
-      } catch (error) {
+      } catch (error : any) {
         console.error(error);
         return res
           .status(500)
-          .json({ message: "Internal server error", error });
+          .json({ message: "Internal server error", error: error.message });
       }
     case "POST":
       try {
-        // const { status, appointment_time, date_of_appointment } = req.body;
+        const { patient, appointment: newAppointment } = req.body;
 
-        const id = uuidv4();
+        console.log(patient);
 
-       // console.log(req.body);
+        if (patient.id) {
+          console.log("Patient has an ID, connecting to existing patient");
 
-        const existingAppointment = await prisma.appointment.findFirst({
-          where: {
-            AND: 
-              {
-                date_of_appointment: {
-                  equals: new Date(date_of_appointment),
-                },
-                appointment_time: {
-                  equals: appointment_time,
-                },
+          newAppointment.id = uuid();
+          const appointment = await prisma.appointment.create({
+            data: {
+              ...newAppointment,
+              Patient: {
+                connect: { id: patient.id },
               },
-              
-            
-          },
-        });
+            },
+          });
 
-       // console.log(existingAppointment);
+          return res.status(200).json({ appointment });
+        } else {
+          console.log("Patient has no ID, creating new patient");
 
-        if (!existingAppointment) {
-          // create appointment
-          // const appointment = await prisma.appointment.create({
-          //   data: {
-          //     id,
-          //     status,
-          //     appointment_time,
-          //     date_of_appointment,
-          //   },
-          // });
+          patient.id = uuid();
+          const newPatient = await prisma.patient.create({
+            data: {
+              ...patient,
+            },
+          });
 
-          return res
-            .status(200)
-            .json({ message: "Appointment available!" });
+          newAppointment.id = uuid();
+          const appointment = await prisma.appointment.create({
+            data: {
+              ...newAppointment,
+              Patient: {
+                connect: { id: newPatient.id },
+              },
+            },
+          });
+
+          return res.status(200).json({ appointment });
         }
-        return res.status(409).json({
-          message: "Appointment already exists for the given date and time.",
-        });
-      } catch (error) {
+      } catch (error: any) {
         console.error(error);
-        res.status(500).json({ message: "Error Creating Appointment!" });
+        return res
+          .status(500)
+          .json({ message: "Error Creating Appointment!", error: error.message });
       }
-      break;
     default:
       return res.status(405).json({ message: "Method not allowed" });
   }
