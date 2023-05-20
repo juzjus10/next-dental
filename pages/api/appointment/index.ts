@@ -1,7 +1,11 @@
 import { prisma } from "@/lib/prisma";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { v4 as uuid } from "uuid";
-import { hash } from "bcrypt";
+import axios from "axios";
+import { render } from "@react-email/render";
+import { AppointmentEmail } from "@/components/EmailTemplate/AppointmentEmail";
+
+const sendInBlueKey = process.env.SIB_API_KEY;
 
 export default async function handler(
   req: NextApiRequest,
@@ -18,7 +22,7 @@ export default async function handler(
           include: { Patient: true, Doctor: true },
         });
         return res.status(200).json(appointments);
-      } catch (error : any) {
+      } catch (error: any) {
         console.error(error);
         return res
           .status(500)
@@ -27,6 +31,11 @@ export default async function handler(
     case "POST":
       try {
         const { patient, appointment: newAppointment } = req.body;
+
+        const { appointment_time, date_of_appointment } = newAppointment;
+       const emailHtml = render(
+            AppointmentEmail({ appointment_time, date_of_appointment })
+          );
 
         console.log(patient);
 
@@ -43,7 +52,10 @@ export default async function handler(
             },
           });
 
-          return res.status(200).json({ appointment });
+         
+          const emailResponse = await sendEmail(patient, emailHtml);
+          console.log(emailResponse.response);
+          return res.status(200).json({ appointment, emailResponse });
         } else {
           console.log("Patient has no ID, creating new patient");
 
@@ -63,16 +75,50 @@ export default async function handler(
               },
             },
           });
+         
+          const emailResponse = await sendEmail(newPatient, emailHtml);
 
-          return res.status(200).json({ appointment });
+          console.log(emailResponse.response);
+
+          return res.status(200).json({ appointment, emailResponse });
         }
       } catch (error: any) {
         console.error(error);
-        return res
-          .status(500)
-          .json({ message: "Error Creating Appointment!", error: error.message });
+        return res.status(500).json({
+          message: "Error Creating Appointment!",
+          error: error.message,
+        });
       }
     default:
       return res.status(405).json({ message: "Method not allowed" });
   }
+}
+
+async function sendEmail(newPatient: any, htmlContent: any) {
+  const response = await axios.post(
+    "https://api.sendinblue.com/v3/smtp/email",
+    {
+      sender: {
+        name: "M.C. Dental Clinic",
+        email: "email@mcdental.com",
+      },
+      to: [
+        {
+          email: newPatient.email,
+          name: `${newPatient.firstname} ${newPatient.middlename} ${newPatient.lastname}`,
+        },
+      ],
+      subject: `Appointment Confirmation`,
+      htmlContent: htmlContent,
+    },
+    {
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "api-key": sendInBlueKey,
+      },
+    }
+  );
+
+  return response.data;
 }

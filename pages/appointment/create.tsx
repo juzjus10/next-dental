@@ -36,6 +36,8 @@ import { useForm } from "@mantine/form";
 import FirstStep from "@/components/Appointment/SecondStep";
 import SecondStep from "@/components/Appointment/FirstStep";
 import moment from "moment";
+import Completed from "@/components/Appointment/Completed";
+import AppointmentEmail from "@/components/EmailTemplate/AppointmentEmail";
 
 const CreateAppointment = () => {
   const [active, setActive] = useState(0);
@@ -139,13 +141,11 @@ const CreateAppointment = () => {
         },
       });
 
-      // const { appointment } = data;
-      // const { id } = appointment;
-
-      // form.setFieldValue("appointment.id", id);
-
+      
       console.log(form.values);
       setDateValidated(true);
+
+
     }
     setActive(nextStep);
     setHighestStepVisited((hSC) => Math.max(hSC, nextStep));
@@ -171,6 +171,7 @@ const CreateAppointment = () => {
                   active={active}
                   onStepClick={setActive}
                   breakpoint="sm"
+                  p={20}
                 >
                   <Stepper.Step
                     label="Personal Info"
@@ -196,7 +197,7 @@ const CreateAppointment = () => {
                   </Stepper.Step>
 
                   <Stepper.Completed>
-                    <Text>Appointment Created</Text>
+                    <Completed email={form.values.patient.email} />
                   </Stepper.Completed>
                 </Stepper>
 
@@ -213,6 +214,7 @@ const CreateAppointment = () => {
                 </Group>
               </Box>
             </Paper>
+          
           </Grid.Col>
         </Grid>
       </Container>
