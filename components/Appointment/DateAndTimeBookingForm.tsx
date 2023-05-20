@@ -15,7 +15,7 @@ import {
 } from "@tabler/icons-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-const SecondStep = (props: any) => {
+const DateAndTimeBookingForm = (props: any) => {
   const { setDateValidated, form } = props;
   const queryClient = useQueryClient();
 
@@ -34,7 +34,7 @@ const SecondStep = (props: any) => {
         <Grid.Col span={12} mt="md" md={6} px={20}>
           <DateInput
             mt="md"
-            
+            minDate={new Date()}
             variant="filled"
             value={form.values.appointment.date_of_appointment}
             label="Date of Appointment "
@@ -122,4 +122,4 @@ const SecondStep = (props: any) => {
   );
 };
 
-export default SecondStep;
+export default DateAndTimeBookingForm;

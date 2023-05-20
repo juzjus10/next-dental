@@ -33,8 +33,8 @@ import { createAppointment } from "@/lib/api";
 
 import { useForm } from "@mantine/form";
 
-import FirstStep from "@/components/Appointment/SecondStep";
-import SecondStep from "@/components/Appointment/FirstStep";
+import PatientBookingForm from "@/components/Appointment/PatientBookingForm";
+import DateAndTimeBookingForm from "@/components/Appointment/DateAndTimeBookingForm";
 import moment from "moment";
 import Completed from "@/components/Appointment/Completed";
 import AppointmentEmail from "@/components/EmailTemplate/AppointmentEmail";
@@ -141,11 +141,8 @@ const CreateAppointment = () => {
         },
       });
 
-      
       console.log(form.values);
       setDateValidated(true);
-
-
     }
     setActive(nextStep);
     setHighestStepVisited((hSC) => Math.max(hSC, nextStep));
@@ -178,7 +175,7 @@ const CreateAppointment = () => {
                     description="Fill up personal details"
                     allowStepSelect={shouldAllowSelectStep(0)}
                   >
-                    <SecondStep
+                    <PatientBookingForm
                       data={[]}
                       form={form}
                       patientExists={patientExists}
@@ -190,7 +187,7 @@ const CreateAppointment = () => {
                     description="Select date and time"
                     allowStepSelect={shouldAllowSelectStep(1)}
                   >
-                    <FirstStep
+                    <DateAndTimeBookingForm
                       form={form}
                       setDateValidated={setDateValidated}
                     />
@@ -214,7 +211,6 @@ const CreateAppointment = () => {
                 </Group>
               </Box>
             </Paper>
-          
           </Grid.Col>
         </Grid>
       </Container>

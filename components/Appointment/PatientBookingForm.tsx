@@ -14,7 +14,7 @@ import { IconAt } from "@tabler/icons-react";
 import { useQueryClient } from "@tanstack/react-query";
 
 
-const FirstStep = (props: any) => {
+const PatientBookingForm = (props: any) => {
   const { readOnly, patientExists, setPatientExists, form } = props;
   const queryClient = useQueryClient();
 
@@ -209,4 +209,4 @@ const FirstStep = (props: any) => {
   );
 };
 
-export default FirstStep;
+export default PatientBookingForm;

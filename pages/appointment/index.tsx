@@ -1,6 +1,6 @@
 import { FormModal } from "@/components/Forms/FormModal";
 import ApplicationShell from "@/components/Layout";
-import {  deleteAppointment, deleteUser, getAllAppointments } from "@/lib/api";
+import { deleteAppointment, deleteUser, getAllAppointments } from "@/lib/api";
 import {
   Group,
   Paper,
@@ -19,7 +19,6 @@ import { IconEye, IconEdit, IconTrash, IconSearch } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
 import { requireAuth } from "common/requireAuth";
-
 
 const Appointment = () => {
   const [query, setQuery] = useState("");
@@ -48,7 +47,7 @@ const Appointment = () => {
   useEffect(() => {
     if (!initialrecord) return;
     setRecords(
-      initialrecord.filter(({ firstname, lastname } : any) => {
+      initialrecord.filter(({ firstname, lastname }: any) => {
         if (
           debouncedQuery !== "" &&
           !`${firstname} ${lastname}`
@@ -79,7 +78,7 @@ const Appointment = () => {
             onChange={(e) => setQuery(e.currentTarget.value)}
           />
 
-          <FormModal title={"Create Appointment"} appointment={records}/>
+          <FormModal title={"Create Appointment"} appointment={records} />
         </Group>
 
         <DataTable
@@ -92,16 +91,14 @@ const Appointment = () => {
           highlightOnHover
           fetching={isFetching}
           records={records}
-          // define columns
           columns={[
             {
               accessor: "id",
-              // this column has a custom title
-              title: "ID",
-              // right-align column
+              title: "ID",        
               textAlignment: "left",
               hidden: true,
             },
+            
             {
               accessor: "Patient.firstname",
               title: "First Name",
@@ -127,9 +124,19 @@ const Appointment = () => {
               accessor: "date_of_appointment",
               title: "Date of Appointment",
               textAlignment: "left",
-              render: (row: any) => (
-               new Date(row.date_of_appointment).toLocaleDateString()
-              )
+              render: (row: any) =>
+                new Date(row.date_of_appointment).toLocaleDateString(),
+            },
+            {
+              accessor: "Doctor.firstname",
+              title: "Doctor First Name",
+              textAlignment: "left",
+             
+            },
+            {
+              accessor: "Doctor.lastname",
+              title: "Doctor Last Name",
+              textAlignment: "left", 
             },
             {
               accessor: "status",
@@ -139,20 +146,28 @@ const Appointment = () => {
                 row.status == "pending" ? (
                   <Badge color="yellow">{row.status}</Badge>
                 ) : (
-                  <Badge>{row.user_level}</Badge>
+                  <Badge>{row.status}</Badge>
                 ),
             },
+          
             {
               accessor: "actions",
               title: <Text mr="xs">Actions</Text>,
               textAlignment: "center",
-              render: (user) => (
+              render: (appointment) => (
                 // prevent click on row
 
                 <Group spacing={4} position="center" noWrap>
-                  <FormModal title={"View User"} user={user} icon />
+                  <FormModal
+                    title={"View Appointment"}
+                    appointment={appointment}
+                    icon
+                  />
 
-                  <ActionIcon color="red" onClick={() => mutate(user.id)}>
+                  <ActionIcon
+                    color="red"
+                    onClick={() => mutate(appointment.id)}
+                  >
                     <IconTrash size={16} />
                   </ActionIcon>
                 </Group>
