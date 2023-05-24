@@ -27,6 +27,8 @@ export async function deleteUser(id: string) {
 
 export async function getAllAppointments() {
   const appointments = await axios.get("/api/appointment");
+  //convert all date strings to date objects
+  
 
   return appointments.data;
 }
@@ -70,8 +72,13 @@ export async function checkAppointment(data: any) {
   }
 }
 export async function updateAppointment(id: string, data: any) {
-  const appointment = await axios.put(`/api/appointment/${id}`, data);
-  return appointment.data;
+  const response = await axios.put(`/api/appointment/${id}`, data);
+  notifications.show({
+    title: "Appointment Updated",
+    color: "green",
+    message: response.data.message,
+  });
+  return response.data;
 }
 
 export async function deleteAppointment(id: string) {

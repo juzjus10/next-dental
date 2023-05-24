@@ -41,7 +41,7 @@ export default async function handler(
           doctor_id,
           patient_id,
         } = req.body;
-
+        console.log("doctor_id", doctor_id);
         const id = req.query.id as string;
 
         const appointment = await prisma.appointment.update({

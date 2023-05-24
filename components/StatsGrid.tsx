@@ -18,11 +18,13 @@ import { useEffect, useState } from "react";
 
 const useStyles = createStyles((theme) => ({
   root: {
-    padding: `calc(${theme.spacing.md} * 1.5)`,
+    //padding: `calc(${theme.spacing.md} * 1.5)`,
+    paddingTop: `calc(${theme.spacing.md} * 1.5)`,
+    paddingBottom: `calc(${theme.spacing.md} * 1.5)`,
   },
 
   value: {
-    fontSize: rem(24),
+    fontSize: rem(38),
     fontWeight: 700,
     lineHeight: 1,
   },
@@ -42,6 +44,7 @@ const useStyles = createStyles((theme) => ({
 
   title: {
     fontWeight: 700,
+    fontSize: rem(18),
     textTransform: "uppercase",
   },
 }));
@@ -66,71 +69,56 @@ export function StatsGrid({ appointments }: StatsGridProps) {
       icon: "user",
       value: 0,
       diff: 0,
-      description: "This is a description",
+      description: "Total number of appointment requests",
     },
     {
       title: "Pending",
       icon: "pending",
       value: 0,
       diff: 0,
-      description: "This is a description",
+      description: "Pending appointment requests",
     },
     {
       title: "Completed",
       icon: "complete",
       value: 0,
       diff: 0,
-      description: "This is a description",
+      description: "Completed appointments this month",
     },
     {
       title: "Cancelled",
       icon: "cancel",
       value: 0,
       diff: 0,
-      description: "This is a description",
+      description: "Appointments cancelled this month",
     },
   ]);
-
+  interface Appointment {
+    status: string;
+    // add other properties here
+  }
   useEffect(() => {
     if (!appointments) return;
 
-    // find row with title "Requests" and update value
-    const requestsRow = rows.find(
-      (row: { title: string }) => row.title === "Requests"
-    );
-    if (!requestsRow) return;
-    requestsRow.value = appointments.length;
-
-    // find row with title "Pending" and update value
-    const pendingRow = rows.find(
-      (row: { title: string }) => row.title === "Pending"
-    );
-    if (!pendingRow) return;
-    pendingRow.value = appointments.filter(
-      (appointment: { status: string }) => appointment.status === "pending"
-    ).length;
-
-    // find row with title "Completed" and update value
-    const completedRow = rows.find(
-      (row: { title: string }) => row.title === "Completed"
-    );
-    if (!completedRow) return;
-    completedRow.value = appointments.filter(
-      (appointment: { status: string }) => appointment.status === "completed"
-    ).length;
-
-    // find row with title "Cancelled" and update value
-    const cancelledRow = rows.find(
-      (row: { title: string }) => row.title === "Cancelled"
-    );
-    if (!cancelledRow) return;
-    cancelledRow.value = appointments.filter(
-      (appointment: { status: string }) => appointment.status === "cancelled"
-    ).length;
+    const rowsToUpdate = [
+      { title: "Requests", filter: () => true },
+      { title: "Pending", filter: (appointment: { status: string }) => appointment.status === "pending" },
+      { title: "Completed", filter: (appointment: { status: string }) => appointment.status === "completed" },
+      { title: "Cancelled", filter: (appointment: { status: string }) => appointment.status === "cancelled" },
+    ];
+    
+    rowsToUpdate.forEach(({ title, filter }) => {
+      const row = rows.find(({ title: rowTitle }) => rowTitle === title);
+      if (!row) return;
+      const count = appointments.reduce((acc: string, appointment: Appointment) => {
+        return acc + (filter(appointment) ? 1 : 0);
+      }, 0);
+      row.value = count;
+    });
   }, [appointments]);
 
   const stats = rows.map((stat) => {
-    const Icon = icons[stat.icon];
+    const Icon = icons[stat.icon as keyof typeof icons];
     const DiffIcon = stat.diff > 0 ? IconArrowUpRight : IconArrowDownRight;
 
     return (
