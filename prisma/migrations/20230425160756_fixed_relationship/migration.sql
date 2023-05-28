@@ -42,9 +42,9 @@ CREATE TABLE `Patient` (
 -- CreateTable
 CREATE TABLE `Records` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `ammount_paid` FLOAT NOT NULL,
-    `balance` FLOAT NOT NULL,
-    `commission` FLOAT NOT NULL,
+    `procedure` TEXT NOT NULL,
+    `doctor_notes` TEXT NOT NULL,
+    `date` DATE NOT NULL,
     `patient_id` INTEGER NOT NULL,
     `doctor_id` INTEGER NOT NULL,
 

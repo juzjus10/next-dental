@@ -19,6 +19,7 @@ export default async function handler(
           where: { id },
             include: {
                 Appointment: true,
+                Records: true,
             },
         });
 

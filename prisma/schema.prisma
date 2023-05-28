@@ -11,7 +11,7 @@ model Appointment {
   id                  String      @id @default(uuid())
   status              String      @db.VarChar(45)
   appointment_time    String
-  date_of_appointment DateTime    @db.DateTime
+  date_of_appointment DateTime    @db.DateTime(0)
   created_at          DateTime    @default(now())
   patient_id          String?
   doctor_id           String?
@@ -46,7 +46,7 @@ model Patient {
   age                 Int
   sex                 String        @db.VarChar(20)
   civil_status        String        @db.VarChar(20)
-  dob                 DateTime      @db.DateTime
+  dob                 DateTime      @db.DateTime(0)
   mobile_no           String        @db.VarChar(20)
   emergency_contact   String        @db.VarChar(20)
   emergency_mobile_no String
@@ -57,14 +57,14 @@ model Patient {
 }
 
 model Records {
-  id          String  @id @default(uuid())
-  amount_paid Float   @db.Float
-  balance     Float   @db.Float
-  commission  Float   @db.Float
-  patient_id  String  @unique
-  doctor_id   String  @unique
-  Doctor      Doctor  @relation(fields: [doctor_id], references: [id])
-  Patient     Patient @relation(fields: [patient_id], references: [id])
+  id           String   @id @default(uuid())
+  procedure    String
+  date         DateTime @db.DateTime(0)
+  doctor_notes String
+  patient_id   String   @unique
+  doctor_id    String   @unique
+  Doctor       Doctor   @relation(fields: [doctor_id], references: [id])
+  Patient      Patient  @relation(fields: [patient_id], references: [id])
 }
 
 model Treatment {

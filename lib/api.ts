@@ -94,6 +94,11 @@ export async function getAllPatients() {
   return patients.data;
 }
 
+export async function getPatient(id: string) {
+  const patient = await axios.get(`/api/patient/${id}`);
+  return patient.data;  
+}
+
 export async function createPatient(data: any) {
   const patient = await axios.post("/api/patient", data);
   return patient.data;
@@ -165,4 +170,33 @@ export async function getAllSettings() {
 export async function updateSettings(id: string, data: any) {
   const settings = await axios.put(`/api/settings/${id}`, data);
   return settings.data;
+}
+
+
+// Records APi
+
+export async function getAllRecords() {
+  const records = await axios.get("/api/records");
+
+  return records.data;
+}
+
+export async function getRecord(id: string) {
+  const record = await axios.get(`/api/records/${id}`);
+  return record.data;
+}
+
+export async function createRecord(data: any) {
+  const record = await axios.post("/api/records", data);
+  return record.data;
+}
+
+export async function updateRecord(id: string, data: any) {
+  const record = await axios.put(`/api/records/${id}`, data);
+  return record.data;
+}
+
+export async function deleteRecord(id: string) {
+  const record = await axios.delete(`/api/records/${id}`);
+  return record.data;
 }

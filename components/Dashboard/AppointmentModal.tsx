@@ -12,6 +12,7 @@ import {
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { isSameDay } from "date-fns";
 import { useEffect, useState } from "react";
+import { useRouter } from 'next/router';
 
 const AppointmentModal = ({
   appointment,
@@ -20,6 +21,7 @@ const AppointmentModal = ({
   appointment: any;
   close: any;
 }) => {
+  const router = useRouter();
   const [status, setStatus] = useState(appointment.status);
   const queryClient = useQueryClient();
   const [doctor, setDoctor] = useState(appointment.doctor_id);
@@ -177,7 +179,10 @@ const AppointmentModal = ({
             color="blue"
             variant="light"
             size="sm"
-            onClick={() => setStatus("Proceeded")}
+            onClick={() => 
+            {
+              router.push(`/patient/${appointment.Patient.id}`);
+            }}
           >
             Proceed
           </Button>

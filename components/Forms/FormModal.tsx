@@ -4,11 +4,12 @@ import UsersForm from "@/components/Forms/UsersForm";
 import AppointmentForm from "@/components/Forms/AppointmentForm";
 import PatientForm from "@/components/Forms/PatientForm";
 import DoctorForm from "@/components/Forms/DoctorForm";
+import RecordForm from "@/components/Forms/RecordForm";
 import { useDisclosure } from "@mantine/hooks";
 import { IconEye } from "@tabler/icons-react";
 
 export function FormModal(props: any) {
-  const { title, icon, user, appointment, patient, doctor } = props;
+  const { title, icon, user, appointment, patient, doctor, record} = props;
   const [opened, { open, close }] = useDisclosure(false);
 
   //console.log(user);
@@ -87,6 +88,14 @@ export function FormModal(props: any) {
             data={doctor ? doctor : null}
             readOnly={doctor.id ? true : false}
           ></DoctorForm>
+        )}
+
+        {record && (
+          <RecordForm
+            close={close}
+            data={record ? doctor : null}
+            readOnly={record.id ? true : false}
+          ></RecordForm>
         )}
       </Modal>
     </>

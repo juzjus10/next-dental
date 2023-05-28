@@ -21,7 +21,9 @@ import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
 import UsersForm from "@/components/Forms/UsersForm";
 import axios from "axios";
 import { requireAuth } from "common/requireAuth";
+import { useRouter } from "next/router";
 const Patient = () => {
+  const router = useRouter();
   const [query, setQuery] = useState("");
   const [debouncedQuery] = useDebouncedValue(query, 200);
   const queryClient = useQueryClient();
@@ -182,7 +184,9 @@ const Patient = () => {
             },
           ]}
           // execute this callback when a row is clicked
-          onRowClick={(row) => console.log(row)}
+          onRowClick={(row) => {
+            router.push(`/patient/${row.id}`);
+          }}
         />
       </Paper>
     </ApplicationShell>
