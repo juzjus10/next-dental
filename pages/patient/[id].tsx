@@ -69,7 +69,7 @@ const UsersInfo = (props: any) => {
            
           }}
         >
-          {/* {patient && <FormModal title={"Add Record"} record={patient.Records}/>} */}
+          {patient && <FormModal title={"Add Record"} record={patient.Records}   patientId={patient.id}/>}
         </div>
        
         {patient && (
@@ -89,7 +89,8 @@ const UsersInfo = (props: any) => {
                   if (
                     key !== "id" &&
                     key !== "Appointment" &&
-                    key !== "medical_history"
+                    key !== "medical_history" &&
+                    key !== "Records"
                   ) {
                     if (key === "dob") {
                       return (
@@ -161,10 +162,16 @@ const UsersInfo = (props: any) => {
                     accessor: "date",
                     title: "Date",
                     textAlignment: "left",
+                    render: (record: any) => (
+                      <Text component="span" color="yellow">
+                        {new Date(record.date).toLocaleDateString()}
+                      </Text>
+                    ),
+                    
                   },
                   {
-                    accessor: "Doctor",
-                    title: "Doctor ",
+                    accessor: "doctor_notes",
+                    title: "Doctor Notes ",
                     textAlignment: "left",
                   },
                   {

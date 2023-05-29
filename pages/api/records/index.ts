@@ -6,12 +6,10 @@ import Joi from "joi";
 import { type } from "os";
 
 const schema = Joi.object({
-  amount_paid: Joi.number().required(),
-  balance: Joi.number().required(),
-  commission: Joi.number().required(),
-  patient_id: Joi.string().required(),
-  doctor_id: Joi.string().required(),
-  
+  procedure: Joi.string().required(),
+  doctor_notes: Joi.string().required(),
+  date: Joi.date().required(),
+  patientId: Joi.string().required(),
 });
 
 export default async function handler(
@@ -33,8 +31,7 @@ export default async function handler(
       }
     case "POST":
       try {
-        const { amount_paid, balance, commission, patient_id, doctor_id } =
-          req.body;
+        const { procedure, doctor_notes, date, patientId } = req.body;
 
         // validate the request body against the schema
         const { error, value } = schema.validate(req.body, {
@@ -50,11 +47,10 @@ export default async function handler(
         const record = await prisma.records.create({
           data: {
             id: uuidv4(),
-            amount_paid,
-            balance,
-            commission,
-            patient_id,
-            doctor_id,
+            procedure,
+            doctor_notes,
+            date,
+            patient_id: patientId,
           },
         });
 

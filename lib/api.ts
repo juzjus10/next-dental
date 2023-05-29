@@ -187,8 +187,23 @@ export async function getRecord(id: string) {
 }
 
 export async function createRecord(data: any) {
-  const record = await axios.post("/api/records", data);
-  return record.data;
+  try {
+    const record = await axios.post("/api/records", data);
+    return record.data;
+  } catch (error: any) {
+    if (error.response && error.response.status === 400) {
+      const { details } = error.response.data;
+      details.forEach((detail: string) => {
+        notifications.show({
+          title: 'Validation Error',
+          message: detail,
+          color: 'red',
+        });
+      });
+    } else {
+      throw error;
+    }
+  }
 }
 
 export async function updateRecord(id: string, data: any) {

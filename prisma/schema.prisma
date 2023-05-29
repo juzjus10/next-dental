@@ -32,7 +32,6 @@ model Doctor {
   dob         DateTime      @db.Date
   hire_date   DateTime      @db.Date
   Appointment Appointment[]
-  Records     Records?
   User        User?
 }
 
@@ -52,7 +51,7 @@ model Patient {
   emergency_mobile_no String
   medical_history     String        @db.LongText
   Appointment         Appointment[]
-  Records             Records?
+  Records             Records[]
   User                User?
 }
 
@@ -61,9 +60,9 @@ model Records {
   procedure    String
   date         DateTime @db.DateTime(0)
   doctor_notes String
-  patient_id   String   @unique
-  doctor_id    String   @unique
-  Doctor       Doctor   @relation(fields: [doctor_id], references: [id])
+  patient_id   String   
+
+ 
   Patient      Patient  @relation(fields: [patient_id], references: [id])
 }
 

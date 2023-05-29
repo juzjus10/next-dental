@@ -24,11 +24,11 @@ import {
     procedure: string;
     date: Date;
     doctor_notes: string;
-    patient_id: string;
-    doctor_id: string;
+    patientId: string;
+   
   };
   const RecordForm = (props: any) => {
-    const { close, readOnly, data } = props;
+    const { close, readOnly, data, patientId } = props;
     const queryClient = useQueryClient();
   
     const { mutate } = useMutation((recordData) => createRecord(recordData), {
@@ -42,8 +42,8 @@ import {
         procedure: "",
         date: new Date(),
         doctor_notes: "",
-        patient_id: "",
-        doctor_id: "",
+        patientId: "",
+     
         
       },
     });
@@ -52,10 +52,12 @@ import {
       // convert date string to Date object
       if (data) {
         form.setValues({
-          ...data,
-          patient_id: data.Patient.id,
-            doctor_id: data.Doctor.id,
+          
+          patientId,
         });
+
+        console.log(form.values);
+        
       }
     }, [data]);
   
@@ -69,7 +71,7 @@ import {
     };
     return (
       <>
-        <Paper mih={500}>
+        <Paper mih={400}>
           <form
             onSubmit={form.onSubmit((values) => {
               handleSubmit(values);
@@ -79,23 +81,23 @@ import {
             <Grid>
               <Grid.Col span={12}>
                 
-                    <NumberInput
+                    <TextInput
                       mt="md"
-                      label="Amount Paid"
+                      label="Procedure"
                       disabled={readOnly}
-                      {...form.getInputProps("amount_paid")}
+                      {...form.getInputProps("procedure")}
                     />
-                    <NumberInput
+                    <Textarea
                       mt="md"
-                      label="Balance"
+                      label="Doctor Notes"
                       disabled={readOnly}
-                      {...form.getInputProps("balance")}
+                      {...form.getInputProps("doctor_notes")}
                     />
-                    <NumberInput
+                    <DateInput
                       mt="md"
-                      label="Commission"
+                      label="Date"
                       disabled={readOnly}
-                      {...form.getInputProps("commission")}
+                      {...form.getInputProps("date")}
                     />
                 
   

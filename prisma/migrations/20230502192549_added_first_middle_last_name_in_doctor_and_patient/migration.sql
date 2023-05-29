@@ -17,6 +17,3 @@ ALTER TABLE `patient` ADD COLUMN `firstname` VARCHAR(191) NULL,
     ADD COLUMN `lastname` VARCHAR(191) NULL,
     ADD COLUMN `middlename` VARCHAR(191) NULL;
 
--- AlterTable
-ALTER TABLE `records` DROP COLUMN `ammount_paid`,
-    ADD COLUMN `amount_paid` FLOAT NOT NULL;

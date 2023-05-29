@@ -9,10 +9,10 @@ import { useDisclosure } from "@mantine/hooks";
 import { IconEye } from "@tabler/icons-react";
 
 export function FormModal(props: any) {
-  const { title, icon, user, appointment, patient, doctor, record} = props;
+  const { title, icon, user, appointment, patient, doctor, record, patientId} = props;
   const [opened, { open, close }] = useDisclosure(false);
 
-  //console.log(user);
+  //console.log(patientId);
 
   const renderActionButton = () => {
     if (icon) {
@@ -90,10 +90,11 @@ export function FormModal(props: any) {
           ></DoctorForm>
         )}
 
-        {record && (
+        {record  && patientId && (
           <RecordForm
             close={close}
-            data={record ? doctor : null}
+            data={record}
+            patientId={patientId}
             readOnly={record.id ? true : false}
           ></RecordForm>
         )}
