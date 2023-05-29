@@ -52,6 +52,8 @@ const DoctorForm = (props: any) => {
   });
 
   useEffect(() => {
+    console.log("data", data);
+    
     // convert date string to Date object
     if (data.dob || data.hire_date) {
       form.setValues({

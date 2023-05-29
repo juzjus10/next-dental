@@ -8,6 +8,8 @@ import RecordForm from "@/components/Forms/RecordForm";
 import { useDisclosure } from "@mantine/hooks";
 import { IconEye } from "@tabler/icons-react";
 
+
+
 export function FormModal(props: any) {
   const { title, icon, user, appointment, patient, doctor, record, patientId} = props;
   const [opened, { open, close }] = useDisclosure(false);
@@ -90,10 +92,10 @@ export function FormModal(props: any) {
           ></DoctorForm>
         )}
 
-        {record  && patientId && (
+        {record && patientId && (
           <RecordForm
             close={close}
-            data={record}
+            data={record ? record : null}
             patientId={patientId}
             readOnly={record.id ? true : false}
           ></RecordForm>

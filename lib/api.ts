@@ -181,7 +181,7 @@ export async function getAllRecords() {
   return records.data;
 }
 
-export async function getRecord(id: string) {
+export async function getRecordByID(id: string) {
   const record = await axios.get(`/api/records/${id}`);
   return record.data;
 }

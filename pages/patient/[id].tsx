@@ -1,6 +1,11 @@
 import { FormModal } from "@/components/Forms/FormModal";
 import ApplicationShell from "@/components/Layout";
-import { getPatient, updatePatient } from "@/lib/api";
+import {
+  deleteRecord,
+  getPatient,
+  getRecordByID,
+  updatePatient,
+} from "@/lib/api";
 import {
   Group,
   Paper,
@@ -15,7 +20,7 @@ import {
   Title,
   Card,
 } from "@mantine/core";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
 import { DataTable } from "mantine-datatable";
 import { IconEye, IconEdit, IconTrash, IconSearch } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
@@ -30,29 +35,37 @@ const UsersInfo = (props: any) => {
   const queryClient = useQueryClient();
 
   //create a query to get patient info by id
-  const { data: patient, isFetching } = useQuery(
-    ["patient", { id }],
-    () => getPatient(id as string),
-    {
+  const [patientQuery, recordQuery] = useQueries({
+    queries:[{
+      queryKey: ["patient", { id }],
+      queryFn: () => getPatient(id as string),
       enabled: !!id,
-    }
-  );
+    },
+    {
+      queryKey: ["record", { id }],
+      queryFn: () => getRecordByID(id as string),
+      enabled: !!id,
+    }],
+  })
+  const patient = patientQuery.data;
+  const record = recordQuery.data;
 
-  const { mutate } = useMutation((data: any) => updatePatient(data.id, data), {
+  const { mutate } = useMutation((data: any) => deleteRecord(data.id), {
     onSuccess: () => {
-      queryClient.invalidateQueries(["patient"]);
+      queryClient.invalidateQueries(["record"]);
     },
   });
 
-  const [records, setRecords] = useState(patient || []);
+  const [records, setRecords] = useState(record || []);
 
   useEffect(() => {
-    if (!patient) return;
-    setRecords(patient);
+    if (!record) return;
+    console.log("Record: ", record);
+    setRecords(record);
   }, [debouncedQuery, patient]);
 
-  
-  console.log(records);
+ 
+    
 
   return (
     <ApplicationShell>
@@ -66,12 +79,17 @@ const UsersInfo = (props: any) => {
             display: "flex",
             justifyContent: "flex-end",
             alignItems: "center",
-           
           }}
         >
-          {patient && <FormModal title={"Add Record"} record={patient.Records}   patientId={patient.id}/>}
+          {record && patient && (
+            <FormModal
+              title={"Add Record"}
+              record={record}
+              patientId={patient.id}
+            />
+          )}
         </div>
-       
+
         {patient && (
           <Grid mt={10} ml={5}>
             <Grid.Col span={12} md={4}>
@@ -133,72 +151,77 @@ const UsersInfo = (props: any) => {
               </Card>
             </Grid.Col>
             <Grid.Col span={12} md={8}>
-              <DataTable
-                mih={200}
-                withBorder
-                borderRadius="sm"
-                withColumnBorders
-                striped
-                highlightOnHover
-                fetching={isFetching}
-                records={patient.Records}
-                // define columns
-                columns={[
-                  {
-                    accessor: "id",
-                    // this column has a custom title
-                    title: "ID",
-                    // right-align column
-                    textAlignment: "left",
-                    hidden: true,
-                  },
-                  {
-                    accessor: "procedure",
-                    title: "Procedure",
-                    textAlignment: "left",
-                  },
+              {record && (
+                <DataTable
+                  mih={200}
+                  withBorder
+                  borderRadius="sm"
+                  withColumnBorders
+                  striped
+                  highlightOnHover
+                 // fetching={isFetching}
+                  records={records}
+                  // define columns
+                
+                  columns={[
+                    {
+                      accessor: "id",
+                      // this column has a custom title
+                      title: "ID",
+                      // right-align column
+                      textAlignment: "left",
+                      hidden: true,
+                    },
+                    {
+                      accessor: "procedure",
+                      title: "Procedure",
+                      textAlignment: "left",
+                    },
 
-                  {
-                    accessor: "date",
-                    title: "Date",
-                    textAlignment: "left",
-                    render: (record: any) => (
-                      <Text component="span" color="yellow">
-                        {new Date(record.date).toLocaleDateString()}
-                      </Text>
-                    ),
-                    
-                  },
-                  {
-                    accessor: "doctor_notes",
-                    title: "Doctor Notes ",
-                    textAlignment: "left",
-                  },
-                  {
-                    accessor: "actions",
-                    title: <Text mr="xs">Actions</Text>,
-                    textAlignment: "center",
-                    render: (patient: any) => (
-                      // prevent click on row
-
-                      <Group spacing={4} position="center" noWrap>
-                        <FormModal
-                          title={"View Patient"}
-                          record={patient.Records}
-                          icon
-                        />
-
-                        <ActionIcon
-                          color="red"
-                          onClick={() => mutate(patient.id)}
-                        >
-                          <IconTrash size={16} />
-                        </ActionIcon>
-                      </Group>
-                    ),
-                  },
-                ]}
-              />
+                    {
+                      accessor: "date",
+                      title: "Date",
+                      textAlignment: "left",
+                      render: (record: any) => (
+                        <Text component="span" color="yellow">
+                          {new Date(record.date).toLocaleDateString()}
+                        </Text>
+                      ),
+                    },
+                    {
+                      accessor: "doctor_notes",
+                      title: "Doctor Notes ",
+                      textAlignment: "left",
+                    },
+                    {
+                      accessor: "actions",
+                      title: <Text mr="xs">Actions</Text>,
+                      textAlignment: "center",
+                      render: (record: any) => (
+                        // prevent click on row
+                        
+                        <Group spacing={4} position="center" noWrap>
+                          <FormModal
+                            title={"View Record"}
+                            record={record}
+                            patientId={patient.id}
+                            icon
+                          />
+                         
+                         
+                      
+                          <ActionIcon
+                            color="red"
+                            onClick={() => mutate(record.id)}
+                          >
+                            <IconTrash size={16} />
+                          </ActionIcon>
+                        </Group>
+                      ),
+                    },
+                  ]}
+                />
+              )}
             </Grid.Col>
           </Grid>
         )}
