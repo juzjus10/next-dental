@@ -7,6 +7,7 @@ import {
   IconListCheck,
   IconLogout,
   IconNurse,
+  IconSettings,
   IconSwitchHorizontal,
   IconUsersGroup,
 } from "@tabler/icons-react";
@@ -96,11 +97,11 @@ const useStyles = createStyles((theme) => ({
 const data = [
   { link: "/", label: "Dashboard", icon: IconLayoutDashboard },
   { link: "/appointment", label: "Appointment", icon: IconListCheck },
-  { link: "/schedule", label: "Schedule", icon: IconCalendarEvent },
+  // { link: "/schedule", label: "Schedule", icon: IconCalendarEvent },
   { link: "/patient", label: "Patient", icon: IconEmpathize },
   { link: "/doctors", label: "Doctors", icon: IconNurse },
   { link: "/users", label: "Users", icon: IconUsersGroup },
-  // { link: '', label: 'Other Settings', icon: IconSettings },
+   { link: '/settings', label: 'Settings', icon: IconSettings },
 ];
 
 export function NavbarSimple(props: any) {

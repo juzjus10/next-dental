@@ -25,11 +25,17 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { isSameDay, parseISO } from "date-fns";
 import { Icon24Hours, IconChecklist, IconDental } from "@tabler/icons-react";
 import TimelineSchedule from "@/components/Dashboard/TimelineSchedule";
+import { useRouter } from "next/router";
 
-export default function IndexPage() {
+export default function IndexPage(props: any) {
+  const router = useRouter();
+  const { date_of_appointment } = router.query;
+
   const { data: session } = useSession();
   const queryClient = useQueryClient();
-  const [date, setDate] = useState<Date | null>(new Date());
+  const [date, setDate] = useState<Date | null>(
+    date_of_appointment ? new Date(date_of_appointment) : null
+  );
 
   const [completedAppointment, setCompletedAppointment] = useState<any>(0);
 
@@ -147,9 +153,7 @@ export default function IndexPage() {
           </div>
         </Group>
 
-      
-          <TimelineSchedule appointments={appointments} date={date} />
-       
+        <TimelineSchedule appointments={appointments} date={date} />
       </Paper>
 
       {/* {appointments?.map(

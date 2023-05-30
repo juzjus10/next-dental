@@ -34,6 +34,7 @@ export default async function handler(
             message: "You already have a record in the database",
             patient: {
               id: existingPatient.id,
+              email: existingPatient.email,
             },
           });
         }

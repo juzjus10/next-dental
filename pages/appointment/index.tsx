@@ -12,6 +12,7 @@ import {
   Modal,
   Divider,
   Badge,
+  Select,
 } from "@mantine/core";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { DataTable } from "mantine-datatable";
@@ -19,12 +20,69 @@ import { IconEye, IconEdit, IconTrash, IconSearch } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
 import { requireAuth } from "common/requireAuth";
+import { useRouter } from "next/router";
+
+type FilterType = "day" | "week" | "month";
+
+function filterAppointmentsByDate(
+  appointments: any,
+  filterType: FilterType
+): any {
+  const now = new Date();
+  const filteredAppointments = appointments.filter((appointment: any) => {
+    const appointmentDate = new Date(appointment.date_of_appointment);
+    switch (filterType) {
+      case "day":
+        return appointmentDate.getDate() === now.getDate();
+      case "week":
+        const weekStart = new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate() - now.getDay()
+        );
+        const weekEnd = new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate() - now.getDay() + 6
+        );
+        return appointmentDate >= weekStart && appointmentDate <= weekEnd;
+      case "month":
+        return appointmentDate.getMonth() === now.getMonth();
+      default:
+        return true;
+    }
+  });
+  return filteredAppointments;
+}
+
+type StatusType = "pending" | "completed" | "cancel";
+
+function filterAppointmentsByStatus(
+  appointments: any,
+  status: StatusType
+): any {
+  const filteredAppointments = appointments.filter((appointment: any) => {
+    switch (status) {
+      case "pending":
+        return appointment.status === "pending";
+      case "completed":
+        return appointment.status === "completed";
+      case "cancel":
+        return appointment.status === "cancel";
+      default:
+        return true;
+    }
+  });
+  return filteredAppointments;
+}
 
 const Appointment = () => {
   const [query, setQuery] = useState("");
   const [debouncedQuery] = useDebouncedValue(query, 200);
   const queryClient = useQueryClient();
-
+  const [filter, setFilter] = useState("day");
+  const [statusFilter, setStatusFilter] = useState("pending");
+  const router = useRouter();
   const {
     isError,
     error,
@@ -59,7 +117,17 @@ const Appointment = () => {
         return true;
       })
     );
-  }, [debouncedQuery, initialrecord]);
+
+    console.log("filter", filter);
+
+    if (filter !== "all") {
+      setRecords(filterAppointmentsByDate(initialrecord, filter));
+    }
+
+    if (statusFilter !== "all") {
+      setRecords(filterAppointmentsByStatus(initialrecord, statusFilter));
+    }
+  }, [debouncedQuery, initialrecord, filter]);
 
   console.log(records);
 
@@ -78,7 +146,37 @@ const Appointment = () => {
             onChange={(e) => setQuery(e.currentTarget.value)}
           />
 
-          <FormModal title={"Create Appointment"} appointment={records} />
+          <Select
+            value={filter}
+            onChange={(e) => setFilter(e)}
+            data={[
+              { value: "day", label: "Day" },
+              { value: "week", label: "Week" },
+              { value: "month", label: "Month" },
+            ]}
+          ></Select>
+
+            <Select  
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e)}
+            data={[
+              { value: "pending", label: "Pending" },
+              { value: "completed", label: "Completed" },
+              { value: "cancel", label: "Cancel" },
+            ]}
+          ></Select>
+
+         
+
+          <Button
+            variant="light"
+            radius="xl"
+            onClick={() => {
+              router.push("/appointment/create");
+            }}
+          >
+            Create Appointment
+          </Button>
         </Group>
 
         <DataTable
@@ -91,14 +189,17 @@ const Appointment = () => {
           highlightOnHover
           fetching={isFetching}
           records={records}
+          onRowClick={(row) => {
+            router.push(`/?date_of_appointment=${row.date_of_appointment}`);
+          }}
           columns={[
             {
               accessor: "id",
-              title: "ID",        
+              title: "ID",
               textAlignment: "left",
               hidden: true,
             },
-            
+
             {
               accessor: "Patient.firstname",
               title: "First Name",
@@ -131,25 +232,35 @@ const Appointment = () => {
               accessor: "Doctor.firstname",
               title: "Doctor First Name",
               textAlignment: "left",
-             
             },
             {
               accessor: "Doctor.lastname",
               title: "Doctor Last Name",
-              textAlignment: "left", 
+              textAlignment: "left",
             },
             {
               accessor: "status",
               title: "Status",
               textAlignment: "center",
-              render: (row: any) =>
-                row.status == "pending" ? (
-                  <Badge color="yellow">{row.status}</Badge>
-                ) : (
-                  <Badge>{row.status}</Badge>
-                ),
+              render: (row: any) => {
+                let color = "";
+                switch (row.status) {
+                  case "pending":
+                    color = "yellow";
+                    break;
+                  case "completed":
+                    color = "green";
+                    break;
+                  case "cancel":
+                    color = "red";
+                    break;
+                  default:
+                    color = "gray";
+                }
+                return <Badge color={color}>{row.status}</Badge>;
+              },
             },
-          
+
             {
               accessor: "actions",
               title: <Text mr="xs">Actions</Text>,
@@ -174,8 +285,6 @@ const Appointment = () => {
               ),
             },
           ]}
-          // execute this callback when a row is clicked
-          onRowClick={(row) => console.log(row)}
         />
       </Paper>
     </ApplicationShell>

@@ -58,6 +58,7 @@ const PatientBookingForm = (props: any) => {
               firstname: form.values.patient.firstname,
               middlename: form.values.patient.middlename,
               lastname: form.values.patient.lastname,
+              email: patient.email,
             },
           })
           setPatientExists(true);

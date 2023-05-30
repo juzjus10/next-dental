@@ -104,7 +104,7 @@ export function StatsGrid({ appointments }: StatsGridProps) {
       { title: "Requests", filter: () => true },
       { title: "Pending", filter: (appointment: { status: string }) => appointment.status === "pending" },
       { title: "Completed", filter: (appointment: { status: string }) => appointment.status === "completed" },
-      { title: "Cancelled", filter: (appointment: { status: string }) => appointment.status === "cancelled" },
+      { title: "Cancelled", filter: (appointment: { status: string }) => appointment.status === "cancel" },
     ];
     
     rowsToUpdate.forEach(({ title, filter }) => {
