@@ -22,14 +22,23 @@ To install the Next Dental project, please follow these steps:
 
 6. Install the Prisma CLI globally on the new computer using `npm install -g prisma`.
 
+   
 7. Run the following command to create the database:
 
      ```prisma db push```
-8.  Start the development server by running the following command:
+   
+8. Run the following command to allow prisma to seed the database:    
+
+ 
+      ```npm install -g ts-node```
+
+      ```prisma db seed```
+      
+9.  Start the development server by running the following command:
 	
     ```npm run dev```
     
-9. Open a web browser and go to `http://localhost:3000` to see your Next.js app in action!
+10. Open a web browser and go to `http://localhost:3000` to see your Next.js app in action!
 
 
 
