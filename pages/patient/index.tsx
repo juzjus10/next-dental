@@ -22,6 +22,9 @@ import UsersForm from "@/components/Forms/UsersForm";
 import axios from "axios";
 import { requireAuth } from "common/requireAuth";
 import { useRouter } from "next/router";
+import PatientForm from "@/components/Forms/PatientForm";
+import {modals } from "@mantine/modals";
+
 const Patient = () => {
   const router = useRouter();
   const [query, setQuery] = useState("");
@@ -174,7 +177,22 @@ const Patient = () => {
                 // prevent click on row
 
                 <Group spacing={4} position="center" noWrap>
-                  <FormModal title={"View Patient"} patient={patient} icon />
+                  <ActionIcon
+                    color="green"
+                    onClick={(e) => {
+                      
+                      e.stopPropagation();
+                      modals.open({
+                        title: "Patient Details",
+                        children: <PatientForm
+                        data={patient ? patient : null}
+                        readOnly={patient.id ? true : false}
+                      ></PatientForm>,
+                      })
+                    }}
+                  >
+                    <IconEye size={16} />
+                  </ActionIcon>
 
                   <ActionIcon color="red" onClick={() => mutate(patient.id)}>
                     <IconTrash size={16} />

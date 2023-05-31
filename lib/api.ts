@@ -100,8 +100,23 @@ export async function getPatient(id: string) {
 }
 
 export async function createPatient(data: any) {
-  const patient = await axios.post("/api/patient", data);
+  try {
+    const patient = await axios.post("/api/patient", data);
   return patient.data;
+  } catch (error: any) {
+    if (error.response && error.response.status === 400) {
+      const { details } = error.response.data;
+      details.forEach((detail: string) => {
+        notifications.show({
+          title: 'Validation Error',
+          message: detail,
+          color: 'red',
+        });
+      });
+    } else {
+      throw error;
+    }
+  }
 }
 
 export async function checkPatient(data: any) {

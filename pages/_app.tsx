@@ -10,6 +10,8 @@ import { useState } from "react";
 import { getCookie, setCookie, setCookies } from "cookies-next";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Notifications } from "@mantine/notifications";
+import { ModalsProvider } from '@mantine/modals';
+
 
 const queryClient = new QueryClient();
 
@@ -137,9 +139,12 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
                 },
               }}
             >
+                 <ModalsProvider>
                <Notifications />
-              <Component {...pageProps}  /> 
+              <Component {...pageProps}  />
+              </ModalsProvider> 
             </MantineProvider>
+            
           </ColorSchemeProvider>
         </QueryClientProvider>
       </SessionProvider>

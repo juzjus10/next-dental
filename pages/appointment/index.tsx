@@ -21,7 +21,8 @@ import { useEffect, useState } from "react";
 import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
 import { requireAuth } from "common/requireAuth";
 import { useRouter } from "next/router";
-
+import { modals } from "@mantine/modals";
+import AppointmentForm from "@/components/Forms/AppointmentForm";
 type FilterType = "day" | "week" | "month";
 
 function filterAppointmentsByDate(
@@ -156,7 +157,7 @@ const Appointment = () => {
             ]}
           ></Select>
 
-            <Select  
+          <Select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e)}
             data={[
@@ -165,8 +166,6 @@ const Appointment = () => {
               { value: "cancel", label: "Cancel" },
             ]}
           ></Select>
-
-         
 
           <Button
             variant="light"
@@ -269,15 +268,29 @@ const Appointment = () => {
                 // prevent click on row
 
                 <Group spacing={4} position="center" noWrap>
-                  <FormModal
-                    title={"View Appointment"}
-                    appointment={appointment}
-                    icon
-                  />
+                  <ActionIcon
+                    color="green"
+                    onClick={(e) => {
+                      
+                      e.stopPropagation();
+                      modals.open({
+                        title: "Appointment Details",
+                        children: <AppointmentForm
+                        data={appointment ? appointment : null}
+                        readOnly={appointment.id ? true : false}
+                      ></AppointmentForm>,
+                      })
+                    }}
+                  >
+                    <IconEye size={16} />
+                  </ActionIcon>
 
                   <ActionIcon
                     color="red"
-                    onClick={() => mutate(appointment.id)}
+                    onClick={(e: any) => {
+                      e.stopPropagation();
+                      mutate(appointment.id);
+                    }}
                   >
                     <IconTrash size={16} />
                   </ActionIcon>

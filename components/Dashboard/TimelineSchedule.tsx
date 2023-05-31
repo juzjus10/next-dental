@@ -23,10 +23,24 @@ import { useEffect, useMemo, useState } from "react";
 import { useMantineTheme } from "@mantine/core";
 import Appointment from "pages/appointment";
 import AppointmentModal from "@/components/Dashboard/AppointmentModal";
+import { updateAppointment } from "@/lib/api";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const TimeLineItem = ({ appointment }: any) => {
   const appointmentDate = new Date(appointment.date_of_appointment);
   const [opened, { open, close }] = useDisclosure(false);
+
+  const queryClient = useQueryClient();
+  const { mutate } = useMutation(
+    (data: any) => {
+      return updateAppointment(data.id, data);
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["appointment"]);
+      },
+    }
+  );
   const theme = useMantineTheme();
   return (
     <>
@@ -45,12 +59,12 @@ const TimeLineItem = ({ appointment }: any) => {
             <Badge>
               {appointment.status === "pending" ? (
                 <Text size="sm" p={5}>
-                  Pending
+                  {appointment.status}
                 </Text>
               ) : appointment.status === "completed" ? (
-                <Text color="green">Completed</Text>
+                <Text color="green" size="sm" p={5}>{appointment.status}</Text>
               ) : (
-                <Text color="yellow" />
+                <Text color="yellow" size="sm" p={5}>{appointment.status}</Text>
               )}
             </Badge>
 
@@ -87,10 +101,18 @@ const TimeLineItem = ({ appointment }: any) => {
             <Button m={5} radius="sm" variant="light" onClick={open}>
               View Details
             </Button>
-            <Button m={5} radius="sm" variant="light" color="green">
+            <Button m={5} radius="sm" variant="light" color="green" onClick={
+              () => {
+                mutate({id: appointment.id, status: "completed"})
+              }
+            }>
               Complete
             </Button>
-            <Button m={5} radius="sm" variant="light" color="red">
+            <Button m={5} radius="sm" variant="light" color="red" onClick={
+              () => {
+                mutate({id: appointment.id, status: "cancel"})
+              }
+            }>
               Cancel
             </Button>
           </div>

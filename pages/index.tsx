@@ -63,6 +63,18 @@ export default function IndexPage(props: any) {
       );
       setAppointmentCount(filteredAppointments.length);
     }
+
+    // get the number of completed appointments and set it to completedAppointment
+    if (appointments) {
+      const filteredAppointments = appointments.filter(
+        (appointment: { date_of_appointment: string; date: Date }) =>
+          isSameDay(parseISO(appointment.date_of_appointment), date) &&
+          appointment.status === "completed"
+      );
+      setCompletedAppointment(filteredAppointments.length);
+    }
+    
+    
   }, [date, appointments]);
 
   return (

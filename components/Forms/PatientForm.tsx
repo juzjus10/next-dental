@@ -32,6 +32,7 @@ type PatientFormValues = {
   firstname: string;
   middlename: string;
   lastname: string;
+  email: string;
 };
 const PatientForm = (props: any) => {
   const { close, readOnly, data } = props;
@@ -57,6 +58,7 @@ const PatientForm = (props: any) => {
       firstname: "",
       middlename: "",
       lastname: "",
+      email: "",
     },
   });
 
@@ -157,6 +159,14 @@ const PatientForm = (props: any) => {
             disabled={readOnly}
             {...form.getInputProps("mobile_no")}
           />
+           <TextInput
+              mt="md"
+              type="email"
+              label="Email"
+              placeholder="domain@host.com"
+              disabled={readOnly}
+              {...form.getInputProps("email")}
+            />
 
           <Group grow>
             <TextInput

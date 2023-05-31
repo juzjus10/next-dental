@@ -6,10 +6,19 @@ import Joi from "joi";
 import { type } from "os";
 
 const schema = Joi.object({
-  firstName: Joi.string().required(),
-  lastName: Joi.string().required(),
-  email: Joi.string().email().required(),
+  firstname: Joi.string().required(),
+  lastname: Joi.string().required(),
   dob: Joi.date().required(),
+  email: Joi.string().email().optional(),
+  middlename: Joi.string().optional(),
+  address: Joi.string().optional(),
+  age: Joi.number().optional(),
+  sex: Joi.string().optional(),
+  civil_status: Joi.string().optional(),
+  mobile_no: Joi.string().optional(),
+  emergency_contact: Joi.string().optional(),
+  emergency_mobile_no: Joi.string().optional(),
+  medical_history: Joi.string().optional(),
 });
 
 export default async function handler(
@@ -44,6 +53,7 @@ export default async function handler(
           emergency_contact,
           emergency_mobile_no,
           medical_history,
+          email
         } = req.body;
 
         // validate the request body against the schema
@@ -66,6 +76,7 @@ export default async function handler(
             address,
             age,
             sex,
+            email,
             civil_status,
             dob: new Date(dob),
             mobile_no,
