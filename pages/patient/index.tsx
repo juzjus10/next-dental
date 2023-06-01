@@ -119,6 +119,25 @@ const Patient = () => {
               hidden: true,
             },
             {
+              accessor: "firstname",
+              title: "First Name",
+              textAlignment: "left",
+            },
+            {
+              accessor: "middlename",
+              title: "Middle Name",
+              textAlignment: "left",
+
+            },
+            {
+              accessor: "lastname",
+              title: "Last Name",
+              textAlignment: "left",
+
+            },
+
+            
+            {
               accessor: "address",
               title: "Address",
               textAlignment: "left",
