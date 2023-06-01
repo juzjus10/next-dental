@@ -23,7 +23,8 @@ import axios from "axios";
 import { requireAuth } from "common/requireAuth";
 import { useRouter } from "next/router";
 import PatientForm from "@/components/Forms/PatientForm";
-import {modals } from "@mantine/modals";
+import { modals } from "@mantine/modals";
+import { exportToPdf } from "@/utils/exportToPdf";
 
 const Patient = () => {
   const router = useRouter();
@@ -53,7 +54,7 @@ const Patient = () => {
   useEffect(() => {
     if (!initialrecord) return;
     setRecords(
-      initialrecord.filter(({ firstname, lastname } : any) => {
+      initialrecord.filter(({ firstname, lastname }: any) => {
         if (
           debouncedQuery !== "" &&
           !`${firstname} ${lastname}`
@@ -73,7 +74,7 @@ const Patient = () => {
     <ApplicationShell>
       <Paper p={10}>
         <Text size={30} weight={700} align="center">
-         Patient List
+          Patient List
         </Text>
         <Group position="apart" m={10}>
           <TextInput
@@ -83,11 +84,21 @@ const Patient = () => {
             value={query}
             onChange={(e) => setQuery(e.currentTarget.value)}
           />
-
-          <FormModal title={"Create Patient"} patient={records}/>
+          <Button
+            variant="light"
+            radius="xl"
+            color="red"
+            onClick={() => {
+              exportToPdf('#patient-table', `Patient-${new Date()}`);
+            }}
+          >
+            Save as PDF
+          </Button>
+          <FormModal title={"Create Patient"} patient={records} />
         </Group>
 
         <DataTable
+          id="patient-table"
           m={10}
           mih={200}
           withBorder
@@ -132,31 +143,27 @@ const Patient = () => {
               accessor: "dob",
               title: "Date of Birth",
               textAlignment: "left",
-              render : (row : any) => new Date(row.dob).toLocaleDateString()
+              render: (row: any) => new Date(row.dob).toLocaleDateString(),
             },
             {
               accessor: "mobile_no",
               title: "Mobile Number",
               textAlignment: "left",
-              
             },
             {
               accessor: "emergency_contact",
               title: "Emergency Contact Person",
               textAlignment: "left",
-              
             },
             {
               accessor: "emergency_mobile_no",
               title: "Emergency Contact Number",
               textAlignment: "left",
-              
             },
             {
               accessor: "medical_history",
               title: "Medical History",
               textAlignment: "left",
-              
             },
             // {
             //   accessor: "civil_status",
@@ -180,15 +187,16 @@ const Patient = () => {
                   <ActionIcon
                     color="green"
                     onClick={(e) => {
-                      
                       e.stopPropagation();
                       modals.open({
                         title: "Patient Details",
-                        children: <PatientForm
-                        data={patient ? patient : null}
-                        readOnly={patient.id ? true : false}
-                      ></PatientForm>,
-                      })
+                        children: (
+                          <PatientForm
+                            data={patient ? patient : null}
+                            readOnly={patient.id ? true : false}
+                          ></PatientForm>
+                        ),
+                      });
                     }}
                   >
                     <IconEye size={16} />

@@ -23,7 +23,11 @@ import { requireAuth } from "common/requireAuth";
 import { useRouter } from "next/router";
 import { modals } from "@mantine/modals";
 import AppointmentForm from "@/components/Forms/AppointmentForm";
+import { exportToPdf } from "@/utils/exportToPdf";
+
+
 type FilterType = "day" | "week" | "month";
+
 
 function filterAppointmentsByDate(
   appointments: any,
@@ -170,6 +174,17 @@ const Appointment = () => {
           <Button
             variant="light"
             radius="xl"
+            color="red"
+            onClick={() => {
+              exportToPdf( "#appointment-table",`Appointment-${new Date()}`);
+            }}
+          >
+            Save as PDF
+          </Button>
+
+          <Button
+            variant="light"
+            radius="xl"
             onClick={() => {
               router.push("/appointment/create");
             }}
@@ -179,6 +194,7 @@ const Appointment = () => {
         </Group>
 
         <DataTable
+          id="appointment-table"
           m={10}
           mih={200}
           withBorder
@@ -271,15 +287,16 @@ const Appointment = () => {
                   <ActionIcon
                     color="green"
                     onClick={(e) => {
-                      
                       e.stopPropagation();
                       modals.open({
                         title: "Appointment Details",
-                        children: <AppointmentForm
-                        data={appointment ? appointment : null}
-                        readOnly={appointment.id ? true : false}
-                      ></AppointmentForm>,
-                      })
+                        children: (
+                          <AppointmentForm
+                            data={appointment ? appointment : null}
+                            readOnly={appointment.id ? true : false}
+                          ></AppointmentForm>
+                        ),
+                      });
                     }}
                   >
                     <IconEye size={16} />
