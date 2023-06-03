@@ -32,6 +32,7 @@ model Doctor {
   dob         DateTime      @db.Date
   hire_date   DateTime      @db.Date
   Appointment Appointment[]
+  Records     Records[]
   User        User?
 }
 
@@ -56,14 +57,27 @@ model Patient {
 }
 
 model Records {
-  id           String   @id @default(uuid())
-  procedure    String
-  date         DateTime @db.DateTime(0)
-  doctor_notes String
-  patient_id   String   
+  id                String       @id @default(uuid())
+  procedure         String
+  date              DateTime     @db.DateTime(0)
+  doctor_notes      String
+  patient_id        String
+  doctor_id         String
+  total_amount      Float
+  amount_paid       Float
+  balance           Float
+  doctor_commission Float
+  items             RecordItem[]
+  Doctor            Doctor       @relation(fields: [doctor_id], references: [id])
+  Patient           Patient      @relation(fields: [patient_id], references: [id])
+}
 
- 
-  Patient      Patient  @relation(fields: [patient_id], references: [id])
+model RecordItem {
+  id               String  @id @default(uuid())
+  service_rendered String
+  cost             Float
+  record_id        String
+  record           Records @relation(fields: [record_id], references: [id])
 }
 
 model Treatment {

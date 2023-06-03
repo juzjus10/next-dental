@@ -15,10 +15,13 @@ import {
 } from "@mantine/core";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { DataTable } from "mantine-datatable";
-import { IconEye, IconEdit, IconTrash, IconSearch } from "@tabler/icons-react";
+import { IconEye, IconEdit, IconTrash, IconSearch, IconPdf, IconPaperclip } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
 import { requireAuth } from "common/requireAuth";
+import { exportToPdf } from "@/utils/exportToPdf";
+import { modals } from "@mantine/modals";
+import DoctorForm from "@/components/Forms/DoctorForm";
 
 
 const Doctor = () => {
@@ -78,11 +81,26 @@ const Doctor = () => {
             value={query}
             onChange={(e) => setQuery(e.currentTarget.value)}
           />
+          <div >
+            <Button
+            leftIcon={<IconPaperclip/>}
+            mr={10}
+            variant="light"
+            radius="xl"
+            color="red"
+            onClick={() => {
+              exportToPdf("#doctor-table", `Doctor-${new Date()}`);
+            }}
+          >Save as PDF</Button>
 
-          <FormModal title={"Create Doctor"} doctor={records}/>
+          <FormModal title={"Create Doctor"} doctor/>
+          </div>
         </Group>
 
         <DataTable
+          /*
+          // @ts-ignore */
+          id="doctor-table"
           m={10}
           mih={200}
           withBorder
@@ -156,6 +174,25 @@ const Doctor = () => {
 
                 <Group spacing={4} position="center" noWrap>
                   <FormModal title={"View Doctor"} doctor={doctor} icon />
+
+                  <ActionIcon
+                    color="blue"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      modals.open({
+                        title: "Edit Doctor",
+                        children: (
+                          <DoctorForm
+                            data={doctor}
+                            close={modals.closeAll}
+                           
+                          ></DoctorForm>
+                        ),
+                      });
+                    }}
+                  >
+                    <IconEdit size={16} />
+                  </ActionIcon>
 
                   <ActionIcon color="red" onClick={() => mutate(doctor.id)}>
                     <IconTrash size={16} />

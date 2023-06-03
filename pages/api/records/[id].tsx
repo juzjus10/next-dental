@@ -15,6 +15,11 @@ export default async function handler(
             where: {
               patient_id: patient_id as string,
             },
+            include: {
+              Patient: true,
+              Doctor: true,
+              items: true,
+            }
           });
   
           return res.status(200).json(records);

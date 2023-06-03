@@ -15,9 +15,10 @@ import { useForm } from "@mantine/form";
 import { IconStethoscope, IconWheelchair } from "@tabler/icons-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { createDoctor } from "@/lib/api";
+import { createDoctor, updateDoctor } from "@/lib/api";
 import { ReactPropTypes, useEffect } from "react";
 import { DateInput } from "@mantine/dates";
+import { DataTable } from "mantine-datatable";
 
 // create a type for the initial values of the form
 type DoctorFormValues = {
@@ -33,11 +34,17 @@ const DoctorForm = (props: any) => {
   const { close, readOnly, data } = props;
   const queryClient = useQueryClient();
 
-  const { mutate } = useMutation((doctorData) => createDoctor(doctorData), {
-    onSuccess: () => {
-      queryClient.invalidateQueries(["doctor"]);
-    },
-  });
+  
+
+  const { mutate } = useMutation(
+    (doctorData) => (data.id ? updateDoctor(data.id, doctorData) : createDoctor(doctorData)),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["doctor"]);
+        close();
+      },
+    }
+  );
 
   const form = useForm<DoctorFormValues>({
     initialValues: {
@@ -74,7 +81,7 @@ const DoctorForm = (props: any) => {
   };
   return (
     <>
-      <Paper mih={500}>
+      <Paper mih={550} miw={900}>
         <form
           onSubmit={form.onSubmit((values) => {
             handleSubmit(values);
@@ -82,7 +89,7 @@ const DoctorForm = (props: any) => {
           })}
         >
           <Grid>
-            <Grid.Col span={12}>
+            <Grid.Col span={6}>
               
                   <TextInput
                     mt="md"
@@ -129,13 +136,33 @@ const DoctorForm = (props: any) => {
                   disabled={readOnly}
                   {...form.getInputProps("hire_date")}
                 />
-           
-
+             
               {!readOnly && (
                 <Button mt={20} type="submit" fullWidth>
                   Submit
                 </Button>
               )}
+            </Grid.Col>
+
+            <Grid.Col span={6}>
+            <DataTable mt="md" 
+              withBorder
+              height={500}
+              records={
+                data.Records
+              }
+              columns={[
+                {
+                  accessor: "id",
+                  hidden: true,
+
+                },
+                {
+                  accessor: "doctor_commission",
+                  title: "Doctor Commission",
+                }
+              ]}></DataTable>
+
             </Grid.Col>
           </Grid>
         </form>

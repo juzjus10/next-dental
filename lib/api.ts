@@ -28,9 +28,13 @@ export async function deleteUser(id: string) {
 export async function getAllAppointments() {
   const appointments = await axios.get("/api/appointment");
   //convert all date strings to date objects
-  
 
   return appointments.data;
+}
+
+export async function getAppointment(id: string) {
+  const appointment = await axios.get(`/api/appointment/${id}`);
+  return appointment.data;
 }
 
 export async function createAppointment(data: any) {
@@ -96,21 +100,21 @@ export async function getAllPatients() {
 
 export async function getPatient(id: string) {
   const patient = await axios.get(`/api/patient/${id}`);
-  return patient.data;  
+  return patient.data;
 }
 
 export async function createPatient(data: any) {
   try {
     const patient = await axios.post("/api/patient", data);
-  return patient.data;
+    return patient.data;
   } catch (error: any) {
     if (error.response && error.response.status === 400) {
       const { details } = error.response.data;
       details.forEach((detail: string) => {
         notifications.show({
-          title: 'Validation Error',
+          title: "Validation Error",
           message: detail,
-          color: 'red',
+          color: "red",
         });
       });
     } else {
@@ -142,8 +146,25 @@ export async function checkPatient(data: any) {
 }
 
 export async function updatePatient(id: string, data: any) {
-  const patient = await axios.put(`/api/patient/${id}`, data);
-  return patient.data;
+  try {
+    const response = await axios.put(`/api/patient/${id}`, data);
+    notifications.show({
+      title: "Patient Status",
+      color: "green",
+      message: response.data.message,
+      icon: "👋",
+    });
+    return response.data;
+  } catch (error: any) {
+    if (error.response) {
+      notifications.show({
+        title: "Error",
+        color: "red",
+        icon: "🙁",
+        message: error.response.data.message,
+      });
+    }
+  }
 }
 
 export async function deletePatient(id: string) {
@@ -160,13 +181,47 @@ export async function getAllDoctors() {
 }
 
 export async function createDoctor(data: any) {
-  const doctor = await axios.post("/api/doctor", data);
-  return doctor.data;
+  try {
+    const response = await axios.post("/api/doctor", data);
+    notifications.show({
+      title: "Doctor Status",
+      color: "green",
+      message: response.data.message,
+      icon: "👋",
+    });
+    return response.data;
+  } catch (error: any) {
+    if (error.response) {
+      notifications.show({
+        title: "Error",
+        color: "red",
+        icon: "🙁",
+        message: error.response.data.message,
+      });
+    }
+  }
 }
 
 export async function updateDoctor(id: string, data: any) {
-  const doctor = await axios.put(`/api/doctor/${id}`, data);
-  return doctor.data;
+  try {
+    const response = await axios.put(`/api/doctor/${id}`, data);
+    notifications.show({
+      title: "Doctor Status",
+      color: "green",
+      message: response.data.message,
+      icon: "👋",
+    });
+    return response.data;
+  } catch (error: any) {
+    if (error.response) {
+      notifications.show({
+        title: "Error",
+        color: "red",
+        icon: "🙁",
+        message: error.response.data.message,
+      });
+    }
+  }
 }
 
 export async function deleteDoctor(id: string) {
@@ -186,7 +241,6 @@ export async function updateSettings(id: string, data: any) {
   const settings = await axios.put(`/api/settings/${id}`, data);
   return settings.data;
 }
-
 
 // Records APi
 
@@ -210,9 +264,9 @@ export async function createRecord(data: any) {
       const { details } = error.response.data;
       details.forEach((detail: string) => {
         notifications.show({
-          title: 'Validation Error',
+          title: "Validation Error",
           message: detail,
-          color: 'red',
+          color: "red",
         });
       });
     } else {

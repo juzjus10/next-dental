@@ -1,41 +1,33 @@
 import { FormModal } from "@/components/Forms/FormModal";
 import ApplicationShell from "@/components/Layout";
 import {
-  deleteRecord,
+  deleteRecord, getAppointment,
   getPatient,
-  getRecordByID,
-  updatePatient,
+  getRecordByID
 } from "@/lib/api";
 import {
   Group,
   Paper,
   Text,
   ActionIcon,
-  Grid,
-  TextInput,
-  Button,
-  Modal,
-  Divider,
-  Badge,
-  Title,
-  Card,
+  Grid, Title,
+  Card
 } from "@mantine/core";
-import { useMutation, useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
 import { DataTable } from "mantine-datatable";
-import { IconEye, IconEdit, IconTrash, IconSearch } from "@tabler/icons-react";
+import { IconTrash } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
-import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
+import { useDebouncedValue } from "@mantine/hooks";
 import { requireAuth } from "common/requireAuth";
-import { useRouter } from "next/router";
 
 const UsersInfo = (props: any) => {
-  const { id } = props;
+  const { id, appointmentId } = props;
   const [query, setQuery] = useState("");
   const [debouncedQuery] = useDebouncedValue(query, 200);
   const queryClient = useQueryClient();
 
   //create a query to get patient info by id
-  const [patientQuery, recordQuery] = useQueries({
+  const [patientQuery, recordQuery, appointmentQuery] = useQueries({
     queries:[{
       queryKey: ["patient", { id }],
       queryFn: () => getPatient(id as string),
@@ -45,10 +37,16 @@ const UsersInfo = (props: any) => {
       queryKey: ["record", { id }],
       queryFn: () => getRecordByID(id as string),
       enabled: !!id,
+    },
+    {
+      queryKey: ["appointment", { id }],
+      queryFn: () => getAppointment(appointmentId as string),
+      enabled: !!appointmentId,
     }],
   })
   const patient = patientQuery.data;
   const record = recordQuery.data;
+  const appointment = appointmentQuery.data;
 
   const { mutate } = useMutation((data: any) => deleteRecord(data.id), {
     onSuccess: () => {
@@ -81,11 +79,12 @@ const UsersInfo = (props: any) => {
             alignItems: "center",
           }}
         >
-          {record && patient && (
+          {record && patient && appointmentId && (
             <FormModal
               title={"Add Record"}
               record={record}
               patientId={patient.id}
+              doctorId={appointment?.Doctor?.id}
             />
           )}
         </div>
@@ -233,11 +232,13 @@ const UsersInfo = (props: any) => {
 export default UsersInfo;
 
 export const getServerSideProps = requireAuth(async (ctx) => {
-  // get id from  query
-  const { id } = ctx.query;
+  // get id and appointment from query
+  const { id, appointmentId } = ctx.query;
 
-  // if query is not defined,  redirect to /patient
+  console.log("ID: ", id);
+  console.log("Appointment: ", appointmentId);
 
+  // if query is not defined, redirect to /patient
   if (!id) {
     return {
       redirect: {
@@ -250,6 +251,7 @@ export const getServerSideProps = requireAuth(async (ctx) => {
   return {
     props: {
       id,
+      appointmentId: appointmentId || null,
     },
   };
 });

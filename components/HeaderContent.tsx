@@ -47,8 +47,8 @@ const useStyles = createStyles((theme) => ({
   },
 
   burger: {
-    [theme.fn.largerThan("xs")]: {
-      display: "none",
+    [theme.fn.largerThan("md")]: {
+     display: "none",
     },
   },
 }));
@@ -68,6 +68,14 @@ export function HeaderContent({ opened, toggle, session }: HeaderTabsProps) {
     <div className={classes.header}>
       <Container>
         <Group position="apart">
+          
+        <Burger
+            opened={opened}
+            onClick={toggle}
+            className={classes.burger}
+            size="sm"
+            color={theme.white}
+          />
           <Image
             src={
               theme.colorScheme === "dark"
@@ -80,13 +88,6 @@ export function HeaderContent({ opened, toggle, session }: HeaderTabsProps) {
             fit="contain"
           />
 
-          <Burger
-            opened={opened}
-            onClick={toggle}
-            className={classes.burger}
-            size="sm"
-            color={theme.white}
-          />
 
           <Group>
             <ColorSchemeToggle />

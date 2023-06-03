@@ -33,8 +33,8 @@ export default function IndexPage(props: any) {
 
   const { data: session } = useSession();
   const queryClient = useQueryClient();
-  const [date, setDate] = useState<Date | null>(
-    date_of_appointment ? new Date(date_of_appointment) : null
+  const [date, setDate] = useState<Date >(
+    date_of_appointment ? new Date(date_of_appointment) :new Date()
   );
 
   const [completedAppointment, setCompletedAppointment] = useState<any>(0);
@@ -53,12 +53,11 @@ export default function IndexPage(props: any) {
   const [appointmentCount, setAppointmentCount] = useState(0);
 
   useEffect(() => {
-    console.log("typeof date:", typeof date);
-
-    console.log("appointments", appointments);
+    
     if (appointments) {
       const filteredAppointments = appointments.filter(
         (appointment: { date_of_appointment: string; date: Date }) =>
+          appointment.date_of_appointment &&
           isSameDay(parseISO(appointment.date_of_appointment), date)
       );
       setAppointmentCount(filteredAppointments.length);
@@ -67,7 +66,7 @@ export default function IndexPage(props: any) {
     // get the number of completed appointments and set it to completedAppointment
     if (appointments) {
       const filteredAppointments = appointments.filter(
-        (appointment: { date_of_appointment: string; date: Date }) =>
+        (appointment: { date_of_appointment: string; status: string; }) =>
           isSameDay(parseISO(appointment.date_of_appointment), date) &&
           appointment.status === "completed"
       );
@@ -86,7 +85,7 @@ export default function IndexPage(props: any) {
           <Card withBorder>
             <DatePicker
               value={date}
-              onChange={setDate}
+              onChange={setDate as unknown as Date}
               styles={{
                 calendar: {
                   width: "100%",
@@ -168,15 +167,7 @@ export default function IndexPage(props: any) {
         <TimelineSchedule appointments={appointments} date={date} />
       </Paper>
 
-      {/* {appointments?.map(
-        (appointment: { id: React.Key | null | undefined }) => (
-          <AppointmentCard
-            key={appointment.id}
-            appointment={appointment}
-            selectedDate={date}
-          />
-        )
-      )} */}
+
     </ApplicationShell>
   );
 }

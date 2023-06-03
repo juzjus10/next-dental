@@ -179,9 +179,10 @@ const AppointmentModal = ({
             color="blue"
             variant="light"
             size="sm"
+            disabled={doctor === null}
             onClick={() => 
             {
-              router.push(`/patient/${appointment.Patient.id}`);
+              router.push(`/patient/${appointment.Patient.id}?appointmentId=${appointment.id}`);
             }}
           >
             Proceed

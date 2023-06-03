@@ -15,7 +15,7 @@ import {
 } from "@mantine/core";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { DataTable } from "mantine-datatable";
-import { IconEye, IconEdit, IconTrash, IconSearch } from "@tabler/icons-react";
+import { IconEye, IconEdit, IconTrash, IconSearch, IconPaperclip } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
 import UsersForm from "@/components/Forms/UsersForm";
@@ -68,7 +68,7 @@ const Patient = () => {
     );
   }, [debouncedQuery, initialrecord]);
 
-  console.log(records);
+  //console.log(records);
 
   return (
     <ApplicationShell>
@@ -84,20 +84,26 @@ const Patient = () => {
             value={query}
             onChange={(e) => setQuery(e.currentTarget.value)}
           />
+          <div>
           <Button
-            variant="light"
-            radius="xl"
-            color="red"
+              leftIcon={<IconPaperclip />}
+              mr={10}
+              variant="light"
+              radius="xl"
+              color="red"
             onClick={() => {
               exportToPdf('#patient-table', `Patient-${new Date()}`);
             }}
           >
             Save as PDF
           </Button>
-          <FormModal title={"Create Patient"} patient={records} />
+          <FormModal title={"Create Patient"} patient/>
+          </div>
         </Group>
 
         <DataTable
+          /*
+          // @ts-ignore */
           id="patient-table"
           m={10}
           mih={200}
@@ -200,8 +206,7 @@ const Patient = () => {
               title: <Text mr="xs">Actions</Text>,
               textAlignment: "center",
               render: (patient) => (
-                // prevent click on row
-
+            
                 <Group spacing={4} position="center" noWrap>
                   <ActionIcon
                     color="green"
@@ -219,6 +224,25 @@ const Patient = () => {
                     }}
                   >
                     <IconEye size={16} />
+                  </ActionIcon>
+
+                  <ActionIcon
+                    color="blue"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      modals.open({
+                        title: "Patient Details",
+                        children: (
+                          <PatientForm
+                            data={patient}
+                            close={modals.closeAll}
+                           
+                          ></PatientForm>
+                        ),
+                      });
+                    }}
+                  >
+                    <IconEdit size={16} />
                   </ActionIcon>
 
                   <ActionIcon color="red" onClick={() => mutate(patient.id)}>

@@ -6,12 +6,12 @@ import PatientForm from "@/components/Forms/PatientForm";
 import DoctorForm from "@/components/Forms/DoctorForm";
 import RecordForm from "@/components/Forms/RecordForm";
 import { useDisclosure } from "@mantine/hooks";
-import { IconEye } from "@tabler/icons-react";
+import { IconEye, IconPlus } from "@tabler/icons-react";
 
 
 
 export function FormModal(props: any) {
-  const { title, icon, user, appointment, patient, doctor, record, patientId} = props;
+  const { title, icon, user, appointment, patient, doctor, record, patientId, doctorId} = props;
   const [opened, { open, close }] = useDisclosure(false);
 
   //console.log(patientId);
@@ -31,7 +31,7 @@ export function FormModal(props: any) {
       );
     } else {
       return (
-        <Button onClick={open} variant="light" radius="xl">
+        <Button onClick={open} variant="light" radius="xl" leftIcon={<IconPlus/>}>
           Create
         </Button>
       );
@@ -44,11 +44,12 @@ export function FormModal(props: any) {
       <Modal
         opened={opened}
         onClose={close}
-        size="lg"
+        size="auto"
         mih={400}
+       
         title={
           <Text
-            m={5}
+          
             size={20}
             weight={700}
             sx={(theme) => ({
@@ -97,6 +98,7 @@ export function FormModal(props: any) {
             close={close}
             data={record ? record : null}
             patientId={patientId}
+            doctorId={doctorId}
             readOnly={record.id ? true : false}
           ></RecordForm>
         )}

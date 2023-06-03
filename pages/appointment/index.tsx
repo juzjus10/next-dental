@@ -13,10 +13,18 @@ import {
   Divider,
   Badge,
   Select,
+  Stack,
 } from "@mantine/core";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { DataTable } from "mantine-datatable";
-import { IconEye, IconEdit, IconTrash, IconSearch } from "@tabler/icons-react";
+import {
+  IconEye,
+  IconEdit,
+  IconTrash,
+  IconSearch,
+  IconPaperclip,
+  IconCalendarPlus,
+} from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
 import { requireAuth } from "common/requireAuth";
@@ -24,10 +32,9 @@ import { useRouter } from "next/router";
 import { modals } from "@mantine/modals";
 import AppointmentForm from "@/components/Forms/AppointmentForm";
 import { exportToPdf } from "@/utils/exportToPdf";
-
+import AppointmentModal from "@/components/Dashboard/AppointmentModal";
 
 type FilterType = "day" | "week" | "month";
-
 
 function filterAppointmentsByDate(
   appointments: any,
@@ -85,8 +92,8 @@ const Appointment = () => {
   const [query, setQuery] = useState("");
   const [debouncedQuery] = useDebouncedValue(query, 200);
   const queryClient = useQueryClient();
-  const [filter, setFilter] = useState("day");
-  const [statusFilter, setStatusFilter] = useState("pending");
+  const [filter, setFilter] = useState<FilterType>("day");
+  const [statusFilter, setStatusFilter] = useState<StatusType>("pending");
   const router = useRouter();
   const {
     isError,
@@ -125,11 +132,11 @@ const Appointment = () => {
 
     console.log("filter", filter);
 
-    if (filter !== "all") {
+    if (filter) {
       setRecords(filterAppointmentsByDate(initialrecord, filter));
     }
 
-    if (statusFilter !== "all") {
+    if (statusFilter) {
       setRecords(filterAppointmentsByStatus(initialrecord, statusFilter));
     }
   }, [debouncedQuery, initialrecord, filter]);
@@ -139,6 +146,7 @@ const Appointment = () => {
   return (
     <ApplicationShell>
       <Paper p={10}>
+        <Stack>
         <Text size={30} weight={700} align="center">
           Appointment List
         </Text>
@@ -153,7 +161,7 @@ const Appointment = () => {
 
           <Select
             value={filter}
-            onChange={(e) => setFilter(e)}
+            onChange={(e) => setFilter(e as FilterType)}
             data={[
               { value: "day", label: "Day" },
               { value: "week", label: "Week" },
@@ -163,7 +171,7 @@ const Appointment = () => {
 
           <Select
             value={statusFilter}
-            onChange={(e) => setStatusFilter(e)}
+            onChange={(e) => setStatusFilter(e as StatusType)}
             data={[
               { value: "pending", label: "Pending" },
               { value: "completed", label: "Completed" },
@@ -171,12 +179,15 @@ const Appointment = () => {
             ]}
           ></Select>
 
+          <div>
           <Button
+            leftIcon={<IconPaperclip />}
+            mr={10}
             variant="light"
             radius="xl"
             color="red"
             onClick={() => {
-              exportToPdf( "#appointment-table",`Appointment-${new Date()}`);
+              exportToPdf("#appointment-table", `Appointment-${new Date()}`);
             }}
           >
             Save as PDF
@@ -188,12 +199,16 @@ const Appointment = () => {
             onClick={() => {
               router.push("/appointment/create");
             }}
+            leftIcon={<IconCalendarPlus/>}
           >
             Create Appointment
           </Button>
+          </div>
         </Group>
 
         <DataTable
+          /*
+          // @ts-ignore */
           id="appointment-table"
           m={10}
           mih={200}
@@ -205,7 +220,11 @@ const Appointment = () => {
           fetching={isFetching}
           records={records}
           onRowClick={(row) => {
-            router.push(`/?date_of_appointment=${row.date_of_appointment}`);
+            modals.open({
+              children: (
+                <AppointmentModal appointment={row} close={modals.closeAll} />
+              ),
+            });
           }}
           columns={[
             {
@@ -316,6 +335,7 @@ const Appointment = () => {
             },
           ]}
         />
+        </Stack>
       </Paper>
     </ApplicationShell>
   );

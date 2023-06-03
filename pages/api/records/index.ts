@@ -7,9 +7,17 @@ import { type } from "os";
 
 const schema = Joi.object({
   procedure: Joi.string().required(),
-  doctor_notes: Joi.string().required(),
   date: Joi.date().required(),
+  doctor_notes: Joi.string().optional(),
   patientId: Joi.string().required(),
+  service_rendered: Joi.string().required(),
+  cost: Joi.number().required(),
+  items: Joi.array().items(Joi.object()),
+  doctorId: Joi.string().required(),
+  total_amount: Joi.number().required(),
+  amount_paid: Joi.number().required(),
+  balance: Joi.number().required(),
+  doctor_commission: Joi.number().required(),
 });
 
 export default async function handler(
@@ -31,7 +39,20 @@ export default async function handler(
       }
     case "POST":
       try {
-        const { procedure, doctor_notes, date, patientId } = req.body;
+        const {
+          procedure,
+          doctor_notes,
+          date,
+          patientId,
+          cost,
+          items,
+          doctorId,
+          total_amount,
+          balance,
+          amount_paid,
+          doctor_commission,
+          
+        } = req.body;
 
         // validate the request body against the schema
         const { error, value } = schema.validate(req.body, {
@@ -46,11 +67,26 @@ export default async function handler(
 
         const record = await prisma.records.create({
           data: {
-            id: uuidv4(),
             procedure,
-            doctor_notes,
             date,
+            doctor_notes,
             patient_id: patientId,
+            doctor_id: doctorId,
+            total_amount: total_amount,
+            amount_paid: amount_paid ,
+            balance: balance ,
+            doctor_commission: doctor_commission ,
+            items: {
+              //create items with new id 
+              create: items.map((item: { service_rendered: any; cost: any; }) => ({
+                id: uuidv4(),
+                service_rendered: item.service_rendered,
+                cost: item.cost,
+              })),
+              
+            },
+           
+          
           },
         });
 

@@ -14,7 +14,7 @@ import { useForm } from "@mantine/form";
 import { IconStethoscope, IconWheelchair } from "@tabler/icons-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { createPatient, createUser } from "@/lib/api";
+import { createPatient, updatePatient } from "@/lib/api";
 import { ReactPropTypes, useEffect } from "react";
 import { DateInput } from "@mantine/dates";
 
@@ -38,11 +38,15 @@ const PatientForm = (props: any) => {
   const { close, readOnly, data } = props;
   const queryClient = useQueryClient();
 
-  const { mutate } = useMutation((patientData) => createPatient(patientData), {
-    onSuccess: () => {
-      queryClient.invalidateQueries(["patient"]);
-    },
-  });
+  const { mutate } = useMutation(
+    (patientData) => (data.id ? updatePatient(data.id, patientData) : createPatient(patientData)),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["patient"]);
+        close();
+      },
+    }
+  );
 
   const form = useForm<PatientFormValues>({
     initialValues: {
@@ -64,12 +68,16 @@ const PatientForm = (props: any) => {
 
   useEffect(() => {
     // convert date string to Date object
+    console.log("data", data)
+  
+    
     if (data.dob) {
       form.setValues({
         ...data,
         dob: new Date(data.dob),
       });
     }
+    
   }, [data]);
 
   const handleSubmit = (values: any) => {
@@ -204,77 +212,6 @@ const PatientForm = (props: any) => {
           )}
         </Grid.Col>
 
-        {/* <Grid.Col span={6}>
-          {form.values.patient && (
-            <>
-              <TextInput
-                mt="md"
-                label="Address"
-                placeholder="address"
-                {...form.getInputProps("address")}
-              />
-              <TextInput
-                mt="md"
-                label="Age"
-                placeholder="age"
-                {...form.getInputProps("age")}
-              />
-              <TextInput
-                mt="md"
-                label="Sex"
-                placeholder="sex"
-                {...form.getInputProps("sex")}
-              />
-              <TextInput
-                mt="md"
-                label="Civil Status"
-                placeholder="civil status"
-                {...form.getInputProps("civil_status")}
-              />
-              <TextInput
-                mt="md"
-                label="Date of Birth"
-                placeholder="date of birth"
-                {...form.getInputProps("dob")}
-              />
-              <TextInput
-                mt="md"
-                label="Mobile Number"
-                placeholder="(+63) 1234 567 890"
-                {...form.getInputProps("mobile_number")}
-              />
-            </>
-          )}
-          {form.values.doctor && (
-            <>
-              <TextInput
-                mt="md"
-                label="Name"
-                placeholder="name"
-                {...form.getInputProps("name")}
-              />
-              <TextInput
-                mt="md"
-                label="Sex"
-                placeholder="sex"
-                {...form.getInputProps("sex")}
-              />
-              <TextInput
-                mt="md"
-                label="Date of Birth"
-                placeholder="date of birth"
-                {...form.getInputProps("dob")}
-              />
-              <TextInput
-                mt="md"
-                label="Hire Date"
-                placeholder="hire date"
-                {...form.getInputProps("hire_date")}
-              />
-            
-            </>
-          )}
-        </Grid.Col> */}
       </Grid>
     </form>
   );

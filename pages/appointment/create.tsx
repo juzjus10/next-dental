@@ -77,23 +77,12 @@ const CreateAppointment = () => {
         emergency_mobile_no: "",
         medical_history: "",
       },
-
-      // Patient
     },
 
     transformValues: (values) => ({
       ...values,
       age: moment().diff(values.patient.dob, "years"),
     }),
-
-    // validate: {
-    //   firstname: (value) => value.trim().length > 0 || "Required",
-    //   lastname: (value) => value.trim().length > 0 || "Required",
-    //   dob: (value) => value.trim().length > 0 || "Required",
-
-    //   date_of_appointment: (value) => value.trim().length > 0 || "Required",
-    //   appointment_time: (value) => value.trim().length > 0 || "Required",
-    // }
   });
 
   const handleStepChange = async (nextStep: number) => {
@@ -205,8 +194,16 @@ const CreateAppointment = () => {
                   >
                     Back
                   </Button>
-                  <Button onClick={() => handleStepChange(active + 1)}>
-                    Next step
+                  <Button
+                    onClick={() => {
+                      if (active === 2) {
+                        handleStepChange(0);
+                      } else {
+                        handleStepChange(active + 1);
+                      }
+                    }}
+                  >
+                    {active === 2 ? "Create another appointment" : "Next step"}
                   </Button>
                 </Group>
               </Box>

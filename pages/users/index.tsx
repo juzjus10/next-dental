@@ -15,12 +15,13 @@ import {
 } from "@mantine/core";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { DataTable } from "mantine-datatable";
-import { IconEye, IconEdit, IconTrash, IconSearch } from "@tabler/icons-react";
+import { IconEye, IconEdit, IconTrash, IconSearch, IconPaperclip } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
 import UsersForm from "@/components/Forms/UsersForm";
 import axios from "axios";
 import { requireAuth } from "common/requireAuth";
+import { exportToPdf } from "@/utils/exportToPdf";
 const Users = () => {
   const [query, setQuery] = useState("");
   const [debouncedQuery] = useDebouncedValue(query, 200);
@@ -48,7 +49,7 @@ const Users = () => {
   useEffect(() => {
     if (!initialrecord) return;
     setRecords(
-      initialrecord.filter(({ firstname, lastname } : any) => {
+      initialrecord.filter(({ firstname, lastname }: any) => {
         if (
           debouncedQuery !== "" &&
           !`${firstname} ${lastname}`
@@ -79,11 +80,26 @@ const Users = () => {
             value={query}
             onChange={(e) => setQuery(e.currentTarget.value)}
           />
-
-          <FormModal title={"Create User"} user={records}/>
+          <div>
+          <Button
+            leftIcon={<IconPaperclip />}
+            mr={10}
+            variant="light"
+            radius="xl"
+            color="red"
+            onClick={() => {
+              exportToPdf("#user-table", `Users-${new Date()}`);
+            }}
+          >Save as PDF</Button>
+          
+          <FormModal title={"Create User"} user={records} />
+          </div>
         </Group>
 
         <DataTable
+          /*
+          // @ts-ignore */
+          id="user-table"
           m={10}
           mih={200}
           withBorder

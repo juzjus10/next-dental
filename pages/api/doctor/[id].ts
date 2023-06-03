@@ -1,6 +1,5 @@
 import { prisma } from "@/lib/prisma";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { v4 as uuidv4 } from "uuid";
 
 
 export default async function handler(
@@ -9,7 +8,6 @@ export default async function handler(
 ) {
   const { method } = req;
   console.log(req.query.id);
-  
 
   switch (method) {
     case "GET":
@@ -18,7 +16,6 @@ export default async function handler(
         const doctor = await prisma.doctor.findUnique({
           where: { id },
           include: {
-        
             Appointment: true,
           },
         });
@@ -34,19 +31,17 @@ export default async function handler(
       }
     case "PUT":
       try {
-        const {
-          doctor_name,
-          gender,
-          dob,
-          hire_date,
-        } = req.body;
+        const { firstname, middlename, lastname, gender, dob, hire_date } =
+          req.body;
 
         const id = req.query.id as string;
 
         const doctor = await prisma.doctor.update({
           where: { id },
           data: {
-            doctor_name,
+            firstname,
+            middlename,
+            lastname,
             gender,
             dob,
             hire_date,
@@ -54,13 +49,11 @@ export default async function handler(
         });
 
         res.json(doctor);
-
-      }
-      catch (error) {
+      } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Error Updating Doctor!", error});
+        res.status(500).json({ message: "Error Updating Doctor!", error });
       }
-    break;
+      break;
     case "DELETE":
       try {
         const { id } = req.query as { id: string };
