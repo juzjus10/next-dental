@@ -62,7 +62,7 @@ export const nextAuthOptions: NextAuthOptions = {
     },
   },
   jwt: {
-    secret: "tangina",
+    secret: "testables",
   },
   debug: true,
 };

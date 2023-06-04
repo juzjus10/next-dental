@@ -19,13 +19,26 @@ export default function SignUp() {
 
   const handleSignUp = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setVisible((v) => !v);
+    setVisible(true);
     const form = event.target as HTMLFormElement;
-    
 
-   
+    const res = await fetch("/api/users", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: form.email.value,
+        password: form.password.value,
+        username: form.username.value,
+        firstname: form.firstname.value,
+        middlename: form.middlename.value,
+        lastname: form.lastname.value,
+        user_level: "dentist",
+      }),
+    }).then((res) => res.json());
 
-    // Check if res has a error property
+    // Check if res has an error property
     if (res?.error) {
       setError(res.error);
       setVisible(false);
@@ -53,15 +66,20 @@ export default function SignUp() {
       </Title>
       <form onSubmit={handleSignUp}>
         <Paper withBorder shadow="md" p={30} mt={30} radius="md">
-          <TextInput label="Username" name="username" placeholder="username" type='text' required />
-          <TextInput label="E-mail" name="email" placeholder="email" type='email' required />
+          <TextInput label="Username" name="username" placeholder="Password" type='text' required mt="md"/>
+          <TextInput label="E-mail" name="email" placeholder="domain@host.com" type='email' required  mt="md"/>
           <PasswordInput
             label="Password"
             name="password"
             error={error}
             placeholder="password"
             required
+
+            mt="md"
           />
+           <TextInput label="First Name" name="firstname" placeholder="Juan " required mt="md"/>
+           <TextInput label="Middle Name" name="middlename" placeholder="Dela" required mt="md"/>
+           <TextInput label="Last Name" name="lastname" placeholder="Cruz" required mt="md"/>
           <Group position="apart" mt="md">
             <Text size='sm'>Already have an account?</Text>
 
