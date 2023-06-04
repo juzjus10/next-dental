@@ -12,7 +12,7 @@ import {
   Textarea,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconStethoscope, IconWheelchair } from "@tabler/icons-react";
+import { IconCurrencyPeso, IconStethoscope, IconWheelchair } from "@tabler/icons-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { createDoctor, updateDoctor } from "@/lib/api";
@@ -154,12 +154,25 @@ const DoctorForm = (props: any) => {
               columns={[
                 {
                   accessor: "id",
-                  hidden: true,
+                  title: "Record #",
+                  // render the index
+                  render: (row: any, index) => index + 1,
 
+                  
                 },
                 {
                   accessor: "doctor_commission",
                   title: "Doctor Commission",
+                  render: (row: any) => 
+                  {
+                    return (
+                      <Group>
+                    <IconCurrencyPeso size={20} />
+                    {row.doctor_commission}
+                    </Group>
+                    );
+                      
+                  },
                 }
               ]}></DataTable>
 

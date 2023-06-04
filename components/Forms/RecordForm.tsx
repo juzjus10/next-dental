@@ -19,7 +19,6 @@ import { createRecord } from "@/lib/api";
 import { useEffect } from "react";
 import { DateInput } from "@mantine/dates";
 import { DataTable } from "mantine-datatable";
-
 // create a type for the initial values of the form
 type RecordFormValues = {
   procedure: string;
@@ -41,7 +40,8 @@ const RecordForm = (props: any) => {
 
   const { mutate } = useMutation((recordData) => createRecord(recordData), {
     onSuccess: () => {
-      queryClient.invalidateQueries(["doctor"]);
+      queryClient.invalidateQueries(["patient"]),
+        queryClient.invalidateQueries(["record"]);
     },
   });
 
@@ -61,7 +61,12 @@ const RecordForm = (props: any) => {
       doctor_commission: 0,
     },
   });
-
+  useEffect(() => {
+    form.setValues((prev) => ({
+      ...prev,
+      balance: (prev.total_amount ?? 0) - (prev.amount_paid ?? 0),
+    }));
+  }, [form.values.amount_paid]);
   useEffect(() => {
     // convert date string to Date object
     if (!data) return;
@@ -69,6 +74,16 @@ const RecordForm = (props: any) => {
     console.log("RecordForm: ", data);
 
     patientId && form.setValues({ patientId: patientId });
+
+    // loop through items and add cost to total_amount
+    let total = 0;
+
+    // if (form.values.items) {
+    //   form.values.items.forEach((item: any) => {
+    //     total += item.cost;
+    //   });
+    //   form.setValues({ items: data.items, total_amount: total });
+    // }
 
     if (data.date) {
       data.date && form.setValues({ date: new Date(data.date) });
@@ -90,7 +105,7 @@ const RecordForm = (props: any) => {
       console.log("RecordForm: ", data);
       console.log(form.values);
     }
-  }, [data]);
+  }, [data, form.values.items]);
 
   const handleSubmit = (values: any) => {
     try {
@@ -111,7 +126,7 @@ const RecordForm = (props: any) => {
         >
           <Grid>
             <Grid.Col span={6}>
-              <Paper withBorder p={10} >
+              <Paper withBorder p={10}>
                 <TextInput
                   label="Service Rendered"
                   disabled={readOnly}
@@ -137,7 +152,11 @@ const RecordForm = (props: any) => {
                       service_rendered: form.values.service_rendered,
                       cost: form.values.cost,
                     });
-                    form.setValues(form.values);
+
+                    form.setValues((prev) => ({
+                      ...prev,
+                      total_amount: (prev.total_amount ?? 0) + (prev.cost ?? 0),
+                    }));
                     console.log(form.values);
                   }}
                   disabled={readOnly}
@@ -168,7 +187,6 @@ const RecordForm = (props: any) => {
             </Grid.Col>
             <Grid.Col span={6}>
               <DataTable
-               
                 height={300}
                 withBorder
                 withColumnBorders
@@ -176,7 +194,7 @@ const RecordForm = (props: any) => {
                 columns={[
                   {
                     accessor: "id",
-                 
+
                     hidden: true,
                   },
                   {
@@ -195,7 +213,7 @@ const RecordForm = (props: any) => {
                 icon={<IconCurrencyPeso />}
                 hideControls
                 label="Total Amount"
-                disabled={readOnly}
+                disabled
                 {...form.getInputProps("total_amount")}
               />
               <NumberInput
@@ -211,7 +229,7 @@ const RecordForm = (props: any) => {
                 icon={<IconCurrencyPeso />}
                 hideControls
                 label="Balance"
-                disabled={readOnly}
+                disabled
                 {...form.getInputProps("balance")}
               />
 
