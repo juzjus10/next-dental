@@ -139,14 +139,7 @@ const UsersInfo = (props: any) => {
                   </Text>
                 </Card.Section>
 
-                <Card.Section withBorder inheritPadding py="xs" mt="sm">
-                  <Text mt="sm" weight={500}>
-                    Balance Info
-                  </Text>
-                  <Text mt={"sm"} color="dimmed" size="sm">
-                    {}
-                  </Text>
-                </Card.Section>
+               
               </Card>
             </Grid.Col>
             <Grid.Col span={12} md={8}>

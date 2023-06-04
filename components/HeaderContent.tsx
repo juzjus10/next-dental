@@ -135,20 +135,9 @@ export function HeaderContent({ opened, toggle, session }: HeaderTabsProps) {
                   >
                     Account settings
                   </Menu.Item>
-                  <Menu.Item
-                    icon={<IconSwitchHorizontal size="0.9rem" stroke={1.5} />}
-                  >
-                    Change account
-                  </Menu.Item>
+                
 
-                  <Menu.Divider />
-
-                  <Menu.Item
-                    color="red"
-                    icon={<IconLogout size="0.9rem" stroke={1.5} />}
-                  >
-                    Logout
-                  </Menu.Item>
+                
                 </Menu.Dropdown>
               </Menu>
             )}
