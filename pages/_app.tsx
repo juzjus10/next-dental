@@ -10,8 +10,7 @@ import { useState } from "react";
 import { getCookie, setCookie, setCookies } from "cookies-next";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Notifications } from "@mantine/notifications";
-import { ModalsProvider } from '@mantine/modals';
-
+import { ModalsProvider } from "@mantine/modals";
 
 const queryClient = new QueryClient();
 
@@ -38,13 +37,30 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
         <QueryClientProvider client={queryClient}>
           <Head>
             <title>{title}</title>
-            <link rel="shortcut icon" href="/favicon.svg" />
+            <link
+              rel="apple-touch-icon"
+              sizes="180x180"
+              href="/apple-touch-icon.png"
+            />
+            <link
+              rel="icon"
+              type="image/png"
+              sizes="32x32"
+              href="/favicon-32x32.png"
+            />
+            <link
+              rel="icon"
+              type="image/png"
+              sizes="16x16"
+              href="/favicon-16x16.png"
+            />
+            <link rel="manifest" href="/site.webmanifest" />
             <meta
               name="viewport"
               content="minimum-scale=1, initial-scale=1, width=device-width"
             />
           </Head>
-         
+
           <ColorSchemeProvider
             colorScheme={colorScheme}
             toggleColorScheme={toggleColorScheme}
@@ -139,12 +155,11 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
                 },
               }}
             >
-                 <ModalsProvider>
-               <Notifications />
-              <Component {...pageProps}  />
-              </ModalsProvider> 
+              <ModalsProvider>
+                <Notifications />
+                <Component {...pageProps} />
+              </ModalsProvider>
             </MantineProvider>
-            
           </ColorSchemeProvider>
         </QueryClientProvider>
       </SessionProvider>
