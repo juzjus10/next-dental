@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { v4 as uuid } from 'uuid';
-import { hash } from "bcrypt";
+import { hashSync } from "bcryptjs";
 
 const prisma = new PrismaClient();
 
@@ -15,7 +15,7 @@ async function main() {
       lastname: 'dental',
       user_level: 'admin',
       username: 'genepoldente',
-      password: await hash(password, 10),
+      password: hashSync(password, 10),
     },
   });
 

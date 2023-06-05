@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { v4 as uuidv4 } from "uuid";
-import { hash } from "bcrypt";
+import { hashSync } from "bcryptjs";
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -49,7 +49,7 @@ export default async function handler(
           data: {
             id,
             firstname,
-            password: await hash(password, 10),
+            password:  hashSync(password, 10),
             username,
             lastname,
             middlename,

@@ -1,7 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { v4 as uuidv4 } from "uuid";
-import { hash } from "bcrypt";
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse

@@ -32,8 +32,8 @@
     "@types/bcrypt": "^5.0.0",
     "@types/uuid": "^9.0.1",
     "axios": "^1.4.0",
-    "bcrypt": "^5.1.0",
     "bcrypt-cli": "^1.1.0",
+    "bcryptjs": "^2.4.3",
     "cookies-next": "^2.1.1",
     "date-fns": "^2.30.0",
     "dayjs": "^1.11.7",
@@ -52,6 +52,7 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.2",
     "@types/node": "^20.1.1",
     "@types/react": "18.2.6",
     "@types/react-dom": "18.2.4",
