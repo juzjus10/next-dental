@@ -18,11 +18,7 @@ export default async function handler(
       try {
         const id = req.query.id as string;
         const user = await prisma.user.findUnique({
-          where: { id },
-          include: {
-            Doctor: true,
-            Patient: true,
-          },
+          where: { id }
         });
 
         if (!user) {
