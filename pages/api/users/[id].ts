@@ -34,37 +34,6 @@ export default async function handler(
         console.error(error);
         return res.status(500).json({ message: "Internal server error", error });
       }
-      try {
-        const {
-          id,
-          username,
-          password,
-          firstname,
-          lastname,
-          middlename,
-          user_level,
-          email,
-        } = req.body;
-
-        const user = await prisma.user.create({
-          where: { id  },
-          data: {
-            id,
-            username,
-            password,
-            firstname,
-            lastname,
-            middlename,
-            user_level,
-            email,
-          },
-        });
-        res.json(user);
-      } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Error Creating User!" });
-      }
-      break;
     case "PUT":
       try {
         const {
@@ -99,7 +68,7 @@ export default async function handler(
       try {
         const { id } = req.query;
         const user = await prisma.user.delete({
-          where: { id },
+            where: { id: String(id) },
         });
         res.json(user);
       } catch (error) {

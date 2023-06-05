@@ -31,17 +31,14 @@ export default function IndexPage(props: any) {
   const router = useRouter();
   const { date_of_appointment } = router.query;
 
-  const { data: session } = useSession();
-  const queryClient = useQueryClient();
-  const [date, setDate] = useState<Date >(
-    date_of_appointment ? new Date(date_of_appointment) :new Date()
+  const [date, setDate] = useState<Date | null>(
+    date_of_appointment ? new Date(date_of_appointment[0]) : new Date()
   );
 
   const [completedAppointment, setCompletedAppointment] = useState<any>(0);
 
   const {
-    isError,
-    error,
+   
     data: appointments,
     isFetching,
   } = useQuery({
@@ -58,6 +55,7 @@ export default function IndexPage(props: any) {
       const filteredAppointments = appointments.filter(
         (appointment: { date_of_appointment: string; date: Date }) =>
           appointment.date_of_appointment &&
+          date &&
           isSameDay(parseISO(appointment.date_of_appointment), date)
       );
       setAppointmentCount(filteredAppointments.length);
@@ -67,6 +65,7 @@ export default function IndexPage(props: any) {
     if (appointments) {
       const filteredAppointments = appointments.filter(
         (appointment: { date_of_appointment: string; status: string; }) =>
+          date &&
           isSameDay(parseISO(appointment.date_of_appointment), date) &&
           appointment.status === "completed"
       );
@@ -85,7 +84,7 @@ export default function IndexPage(props: any) {
           <Card withBorder>
             <DatePicker
               value={date}
-              onChange={setDate as unknown as Date}
+              onChange={setDate}
               styles={{
                 calendar: {
                   width: "100%",

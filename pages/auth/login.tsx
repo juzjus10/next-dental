@@ -43,7 +43,7 @@ export default function Login() {
     if (status === "authenticated") {
       router.push("/");
     }
-  }, [status]);
+  }, [status, router]);
 
   return (
     <Container size={420} mt={40} my={40}>
@@ -67,7 +67,7 @@ export default function Login() {
           required
         />
         <Group position="apart" mt="md">
-        <Text size='sm'>Don't have an account?</Text>
+        <Text size="sm">Don&apos;t have an account?</Text>
 
           <Anchor size="sm" href='/auth/signup'>Sign Up</Anchor>
         </Group>

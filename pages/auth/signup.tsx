@@ -1,5 +1,15 @@
-import { Anchor, Container, Group, LoadingOverlay, Paper, PasswordInput, TextInput, Title, Text, Button } from "@mantine/core";
-import { signUp } from "next-auth/react";
+import {
+  Anchor,
+  Container,
+  Group,
+  LoadingOverlay,
+  Paper,
+  PasswordInput,
+  TextInput,
+  Title,
+  Text,
+  Button,
+} from "@mantine/core";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
@@ -51,7 +61,7 @@ export default function SignUp() {
     if (status === "authenticated") {
       router.push("/");
     }
-  }, [status]);
+  }, [status, router]);
 
   return (
     <Container size={420} mt={40} my={40}>
@@ -66,26 +76,59 @@ export default function SignUp() {
       </Title>
       <form onSubmit={handleSignUp}>
         <Paper withBorder shadow="md" p={30} mt={30} radius="md">
-          <TextInput label="Username" name="username" placeholder="Password" type='text' required mt="md"/>
-          <TextInput label="E-mail" name="email" placeholder="domain@host.com" type='email' required  mt="md"/>
+          <TextInput
+            label="Username"
+            name="username"
+            placeholder="Username"
+            type="text"
+            required
+            mt="md"
+          />
+          <TextInput
+            label="E-mail"
+            name="email"
+            placeholder="domain@host.com"
+            type="email"
+            error={error}
+            required
+            mt="md"
+          />
           <PasswordInput
             label="Password"
             name="password"
-            error={error}
             placeholder="password"
             required
-
             mt="md"
           />
-           <TextInput label="First Name" name="firstname" placeholder="Juan " required mt="md"/>
-           <TextInput label="Middle Name" name="middlename" placeholder="Dela" required mt="md"/>
-           <TextInput label="Last Name" name="lastname" placeholder="Cruz" required mt="md"/>
+          <TextInput
+            label="First Name"
+            name="firstname"
+            placeholder="Juan "
+            required
+            mt="md"
+          />
+          <TextInput
+            label="Middle Name"
+            name="middlename"
+            placeholder="Dela"
+            required
+            mt="md"
+          />
+          <TextInput
+            label="Last Name"
+            name="lastname"
+            placeholder="Cruz"
+            required
+            mt="md"
+          />
           <Group position="apart" mt="md">
-            <Text size='sm'>Already have an account?</Text>
+            <Text size="sm">Already have an account?</Text>
 
-            <Anchor size="sm" href='/auth/login'>Login</Anchor>
+            <Anchor size="sm" href="/auth/login">
+              Login
+            </Anchor>
           </Group>
-          <div style={{ position: 'relative' }}>
+          <div style={{ position: "relative" }}>
             <LoadingOverlay visible={visible} overlayBlur={2} />
             <Button fullWidth mt="xl" type="submit">
               Sign Up

@@ -52,7 +52,7 @@ import {
                 required
               />
               <Group position="apart" mt="md">
-              <Text size='sm'>Don't have an account?</Text>
+              <Text size="sm">Don&apos;t have an account?</Text>
   
                 <Anchor size="sm" href='/sign-up'>Sign Up</Anchor>
               </Group>

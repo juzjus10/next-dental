@@ -14,10 +14,11 @@ export const nextAuthOptions: NextAuthOptions = {
     CredentialsProvider({
       name: "Credentials",
       credentials: {
+        email: { label: "Email", type: "email", placeholder: "jsmith@example.com" },
         username: { label: "Username", type: "text", placeholder: "jsmith" },
         password: { label: "Password", type: "password" },
       },
-      authorize: async (credentials: Record<string, string>) => {
+      authorize: async (credentials: Record<"email" | "username" | "password", string> | undefined) => {
         if (!credentials) {
           return null;
         }
@@ -29,7 +30,7 @@ export const nextAuthOptions: NextAuthOptions = {
         if (!user) {
           return null;
         }
-
+    
         const isPasswordValid = await compare(
           credentials.password,
           user.password
@@ -37,7 +38,7 @@ export const nextAuthOptions: NextAuthOptions = {
         if (!isPasswordValid) {
           return null;
         }
-
+    
         return user;
       },
     }),

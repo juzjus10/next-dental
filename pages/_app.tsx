@@ -11,13 +11,18 @@ import { getCookie, setCookie, setCookies } from "cookies-next";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Notifications } from "@mantine/notifications";
 import { ModalsProvider } from '@mantine/modals';
+import { ComponentType } from "react";
 import "./styles.css";
 
 
 const queryClient = new QueryClient();
 
+
+
 export default function App(props: AppProps & { colorScheme: ColorScheme }) {
   const { Component, pageProps } = props;
+
+  const AnyComponent = Component as any;
   const [colorScheme, setColorScheme] = useState<ColorScheme>(
     props.colorScheme
   );
@@ -32,6 +37,7 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
   };
 
   const title = `M.C. Dental Clinic`;
+
 
   return (
     <>
@@ -160,7 +166,7 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
             >
               <ModalsProvider>
                 <Notifications />
-                <Component {...pageProps} />
+                <AnyComponent {...pageProps} />
               </ModalsProvider>
             </MantineProvider>
           </ColorSchemeProvider>

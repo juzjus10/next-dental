@@ -36,7 +36,7 @@ export const AppointmentEmail = ({
           M.C. Dental Clinic
         </Text>
         </Section>
-        <Heading style={h1}>Here's your appointment schedule</Heading>
+        <Heading style={h1}>Here&apos;s your appointment schedule</Heading>
         <Text style={heroText}>
           Thank you for creating an appointment with us. We are pleased to
           confirm your appointment scheduled for the following date and time:

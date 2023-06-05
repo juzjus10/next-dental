@@ -60,7 +60,7 @@ const UsersInfo = (props: any) => {
     if (!record) return;
     console.log("Record: ", record);
     setRecords(record);
-  }, [debouncedQuery, patient]);
+  }, [debouncedQuery, patient, record]);
 
  
     
@@ -111,7 +111,7 @@ const UsersInfo = (props: any) => {
                   ) {
                     if (key === "dob") {
                       return (
-                        <Text mt={"sm"} color="dimmed" size="sm">
+                        <Text mt={"sm"} color="dimmed" size="sm" key={key}>
                           {key}:{" "}
                           <Text component="span" inherit color="yellow" ml={2}>
                             {new Date(patient[key]).toLocaleDateString()}
@@ -120,7 +120,7 @@ const UsersInfo = (props: any) => {
                       );
                     }
                     return (
-                      <Text mt={"sm"} color="dimmed" size="sm">
+                      <Text mt={"sm"} color="dimmed" size="sm" key={key}>
                         {key}:{" "}
                         <Text component="span" inherit color="yellow" ml={2}>
                           {patient[key]}

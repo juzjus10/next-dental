@@ -139,7 +139,7 @@ const Appointment = () => {
     if (statusFilter) {
       setRecords(filterAppointmentsByStatus(initialrecord, statusFilter));
     }
-  }, [debouncedQuery, initialrecord, filter]);
+  }, [debouncedQuery, initialrecord, filter, statusFilter]);
 
   console.log(records);
 
