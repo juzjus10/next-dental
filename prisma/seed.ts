@@ -10,8 +10,8 @@ async function main() {
     data: {
       email: 'genepoldente@gmail.com',
       id: uuid(),
-      firstname: 'genepolly',
-      middlename: 'p',
+      firstname: 'genepol',
+      middlename: 'polly',
       lastname: 'dental',
       user_level: 'admin',
       username: 'genepoldente',

@@ -19,26 +19,32 @@ export const nextAuthOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       authorize: async (credentials: Record<"email" | "username" | "password", string> | undefined) => {
+        
+      
         if (!credentials) {
-          return null;
+          throw new Error("Credentials not provided");
         }
-        let user = await prisma.user.findFirst({
+
+      
+        console.log(credentials);
+        
+        const user = await prisma.user.findUnique({
           where: {
-            email: credentials?.email,
+            email: credentials.email,
           },
         });
+
+
         if (!user) {
-          return null;
+          throw new Error("Invalid email or password");
         }
-    
-        const isPasswordValid = compareSync(
-          credentials.password,
-          user.password
-        );
+      
+        const isPasswordValid = compareSync(credentials.password, user.password);
+      
         if (!isPasswordValid) {
-          return null;
+          throw new Error("Invalid email or password");
         }
-    
+      
         return user;
       },
     }),

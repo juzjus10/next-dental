@@ -23,14 +23,14 @@ export default function Login() {
     const form = event.target as HTMLFormElement;
 
     const res = await signIn("credentials", {
-      username: form.email.value,
+      email: form.email.value,
       password: form.password.value,
       redirect: false,
     });
 
     // Check if res has a error property
     if (res?.error) {
-        setError("Invalid username or password");
+        setError(res.error);
         setVisible(false);
       
     } else {

@@ -34,7 +34,7 @@ model Doctor {
   hire_date   DateTime      @db.Date
   Appointment Appointment[]
   Records     Records[]
-  User        User?
+ 
 }
 
 model Patient {
@@ -54,7 +54,7 @@ model Patient {
   medical_history     String        @db.LongText
   Appointment         Appointment[]
   Records             Records[]
-  User                User?
+ 
 }
 
 model Records {
@@ -99,11 +99,9 @@ model User {
   lastname   String   @db.Text
   middlename String   @db.Text
   user_level String   @db.Text
-  email      String   @db.Text
-  patient_id String?  @unique
-  doctor_id  String?  @unique
-  Doctor     Doctor?  @relation(fields: [doctor_id], references: [id])
-  Patient    Patient? @relation(fields: [patient_id], references: [id])
+  email      String   @unique
+
+  
 }
 
 model Settings {
