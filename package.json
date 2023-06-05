@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build && prisma db seed && prisma generate",
+    "postinstall": "prisma generate && prisma db seed",
+    "build": "next build ",
     "start": "next start",
     "lint": "next lint"
   },
