@@ -33,6 +33,18 @@ export default async function handler(
 
         const id = uuidv4();
 
+        // check if user already exists
+        const userExists = await prisma.user.findFirst({
+          where: {
+            email,
+          },
+        });
+
+        if (userExists) {
+          return res.status(400).json({ message: "User already exists!" });
+        }
+        
+
         const user = await prisma.user.create({
           data: {
             id,
