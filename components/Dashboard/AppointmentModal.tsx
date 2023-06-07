@@ -183,7 +183,9 @@ const AppointmentModal = ({
             onClick={() => 
             {
               router.push(`/patient/${appointment.Patient.id}?appointmentId=${appointment.id}`);
-            }}
+              close();
+            }
+          }
           >
             Proceed
           </Button>

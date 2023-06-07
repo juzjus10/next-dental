@@ -3,6 +3,7 @@ import {
   Grid,
   NumberInput,
   Paper,
+  Stack,
   TextInput,
   Textarea,
 } from "@mantine/core";
@@ -13,6 +14,7 @@ import {
   IconCurrencyPeso,
   IconPlus,
   IconReceipt2,
+  IconTrash,
 } from "@tabler/icons-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createRecord } from "@/lib/api";
@@ -60,6 +62,26 @@ const RecordForm = (props: any) => {
       balance: 0,
       doctor_commission: 0,
     },
+
+    validate: (values) => ({
+      procedure: !values.procedure ? "Procedure is required" : null,
+      date: !values.date ? "Date is required" : null,
+      patientId: !values.patientId ? "Patient is required" : null,
+      service_rendered: !values.service_rendered
+        ? "Service rendered is required"
+        : null,
+      cost: !values.cost ? "Cost is required" : null,
+      items: !values.items ? "Items is required" : null,
+      doctorId: !values.doctorId ? "Doctor is required" : null,
+      total_amount: !values.total_amount ? "Total amount is required" : null,
+      amount_paid: !values.amount_paid ? "Amount paid is required" : null,
+      balance: !values.balance ? "Balance is required" : null,
+      doctor_commission: !values.doctor_commission
+        ? "Doctor commission is required"
+        : null,
+
+      doctor_notes: !values.doctor_notes ? "Doctor notes is required" : null,
+    }),
   });
   useEffect(() => {
     form.setValues((prev) => ({
@@ -126,43 +148,69 @@ const RecordForm = (props: any) => {
         >
           <Grid>
             <Grid.Col span={6}>
-              <Paper withBorder p={10}>
-                <TextInput
-                  label="Service Rendered"
-                  disabled={readOnly}
-                  icon={<IconAppsFilled size={20} />}
-                  {...form.getInputProps("service_rendered")}
-                />
-                <NumberInput
-                  mt="md"
-                  label="Cost"
-                  disabled={readOnly}
-                  icon={<IconReceipt2 />}
-                  hideControls
-                  {...form.getInputProps("cost")}
-                />
-                <Button
-                  mt={20}
-                  color="green"
-                  variant="light"
-                  leftIcon={<IconPlus />}
-                  fullWidth
-                  onClick={() => {
-                    form.values.items.push({
-                      service_rendered: form.values.service_rendered,
-                      cost: form.values.cost,
-                    });
-
-                    form.setValues((prev) => ({
-                      ...prev,
-                      total_amount: (prev.total_amount ?? 0) + (prev.cost ?? 0),
-                    }));
-                    console.log(form.values);
+              <Paper withBorder p={10} mih={300}>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                   
+                    height: "100%",
+                    gap: "20px",
                   }}
-                  disabled={readOnly}
                 >
-                  Add
-                </Button>
+                  <TextInput
+                    label="Service Rendered"
+                    disabled={readOnly}
+                    icon={<IconAppsFilled size={20} />}
+                    {...form.getInputProps("service_rendered")}
+                  />
+                  <NumberInput
+                    label="Cost"
+                    disabled={readOnly}
+                    icon={<IconReceipt2 />}
+                    hideControls
+                    {...form.getInputProps("cost")}
+                  />
+
+                  <Button
+                    color="green"
+                    variant="light"
+                    leftIcon={<IconPlus />}
+                    fullWidth
+                    onClick={() => {
+                      form.values.items.push({
+                        service_rendered: form.values.service_rendered,
+                        cost: form.values.cost,
+                      });
+
+                      form.setValues((prev) => ({
+                        ...prev,
+                        total_amount:
+                          (prev.total_amount ?? 0) + (prev.cost ?? 0),
+                      }));
+                      console.log(form.values);
+                    }}
+                    disabled={readOnly}
+                  >
+                    Add
+                  </Button>
+                  <Button
+                    color="red"
+                    variant="light"
+                    leftIcon={<IconTrash />}
+                    fullWidth
+                    onClick={() => {
+                      //clear form.values.items
+                      form.setValues((prev) => ({
+                        ...prev,
+                        items: [],
+                      }));
+                    }}
+                    disabled={readOnly}
+                  >
+                    Clear
+                  </Button>
+                </div>
               </Paper>
 
               <DateInput
@@ -191,6 +239,7 @@ const RecordForm = (props: any) => {
                 withBorder
                 withColumnBorders
                 records={form.values.items}
+                borderRadius="sm"
                 columns={[
                   {
                     accessor: "id",
