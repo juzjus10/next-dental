@@ -34,7 +34,7 @@ import AppointmentForm from "@/components/Forms/AppointmentForm";
 import { exportToPdf } from "@/utils/exportToPdf";
 import AppointmentModal from "@/components/Dashboard/AppointmentModal";
 
-type FilterType = "day" | "week" | "month";
+type FilterType = "day" | "week" | "month" | "all";
 
 function filterAppointmentsByDate(
   appointments: any,
@@ -67,7 +67,7 @@ function filterAppointmentsByDate(
   return filteredAppointments;
 }
 
-type StatusType = "pending" | "completed" | "cancel";
+type StatusType = "pending" | "completed" | "cancel" | "all";
 
 function filterAppointmentsByStatus(
   appointments: any,
@@ -132,11 +132,11 @@ const Appointment = () => {
 
     console.log("filter", filter);
 
-    if (filter) {
+    if (filter !== "all") {
       setRecords(filterAppointmentsByDate(initialrecord, filter));
     }
 
-    if (statusFilter) {
+    if (statusFilter !== "all") {
       setRecords(filterAppointmentsByStatus(initialrecord, statusFilter));
     }
   }, [debouncedQuery, initialrecord, filter, statusFilter]);
@@ -163,6 +163,7 @@ const Appointment = () => {
             value={filter}
             onChange={(e) => setFilter(e as FilterType)}
             data={[
+              { value: "all", label: "All" },
               { value: "day", label: "Day" },
               { value: "week", label: "Week" },
               { value: "month", label: "Month" },
@@ -173,6 +174,7 @@ const Appointment = () => {
             value={statusFilter}
             onChange={(e) => setStatusFilter(e as StatusType)}
             data={[
+              { value: "all", label: "All" },
               { value: "pending", label: "Pending" },
               { value: "completed", label: "Completed" },
               { value: "cancel", label: "Cancel" },
