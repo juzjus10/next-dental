@@ -35,17 +35,24 @@ import { exportToPdf } from "@/utils/exportToPdf";
 import AppointmentModal from "@/components/Dashboard/AppointmentModal";
 
 type FilterType = "day" | "week" | "month" | "all";
+type StatusType = "pending" | "completed" | "cancel" | "all";
 
-function filterAppointmentsByDate(
+
+function filterAppointments(
   appointments: any,
-  filterType: FilterType
+  filterType: FilterType,
+  status: StatusType,
+  debouncedQuery: string
 ): any {
   const now = new Date();
   const filteredAppointments = appointments.filter((appointment: any) => {
     const appointmentDate = new Date(appointment.date_of_appointment);
     switch (filterType) {
       case "day":
-        return appointmentDate.getDate() === now.getDate();
+        if (appointmentDate.getDate() !== now.getDate()) {
+          return false;
+        }
+        break;
       case "week":
         const weekStart = new Date(
           now.getFullYear(),
@@ -57,34 +64,51 @@ function filterAppointmentsByDate(
           now.getMonth(),
           now.getDate() - now.getDay() + 6
         );
-        return appointmentDate >= weekStart && appointmentDate <= weekEnd;
+        if (!(appointmentDate >= weekStart && appointmentDate <= weekEnd)) {
+          return false;
+        }
+        break;
       case "month":
-        return appointmentDate.getMonth() === now.getMonth();
+        if (appointmentDate.getMonth() !== now.getMonth()) {
+          return false;
+        }
+        break;
       default:
-        return true;
+        break;
     }
-  });
-  return filteredAppointments;
-}
 
-type StatusType = "pending" | "completed" | "cancel" | "all";
-
-function filterAppointmentsByStatus(
-  appointments: any,
-  status: StatusType
-): any {
-  const filteredAppointments = appointments.filter((appointment: any) => {
     switch (status) {
       case "pending":
-        return appointment.status === "pending";
+        if (appointment.status !== "pending") {
+          return false;
+        }
+        break;
       case "completed":
-        return appointment.status === "completed";
+        if (appointment.status !== "completed") {
+          return false;
+        }
+        break;
       case "cancel":
-        return appointment.status === "cancel";
+        if (appointment.status !== "cancel") {
+          return false;
+        }
+        break;
       default:
-        return true;
+        break;
     }
+
+    if (
+      debouncedQuery !== "" &&
+      !`${appointment.Patient.firstname} ${appointment.Patient.lastname}`
+        .toLowerCase()
+        .includes(debouncedQuery.trim().toLowerCase())
+    ) {
+      return false;
+    }
+
+    return true;
   });
+
   return filteredAppointments;
 }
 
@@ -117,10 +141,10 @@ const Appointment = () => {
   useEffect(() => {
     if (!initialrecord) return;
     setRecords(
-      initialrecord.filter(({ firstname, lastname }: any) => {
+      initialrecord.filter(({ Patient }: any) => {
         if (
           debouncedQuery !== "" &&
-          !`${firstname} ${lastname}`
+          !`${Patient.firstname} ${Patient.lastname}`
             .toLowerCase()
             .includes(debouncedQuery.trim().toLowerCase())
         ) {
@@ -132,13 +156,8 @@ const Appointment = () => {
 
     console.log("filter", filter);
 
-    if (filter !== "all") {
-      setRecords(filterAppointmentsByDate(initialrecord, filter));
-    }
-
-    if (statusFilter !== "all") {
-      setRecords(filterAppointmentsByStatus(initialrecord, statusFilter));
-    }
+    const filteredAppointments = filterAppointments(initialrecord, filter, statusFilter, debouncedQuery);
+setRecords(filteredAppointments);
   }, [debouncedQuery, initialrecord, filter, statusFilter]);
 
   console.log(records);
@@ -151,9 +170,10 @@ const Appointment = () => {
           Appointment List
         </Text>
         <Group position="apart" m={10}>
+          
           <TextInput
             sx={{ flexBasis: "40%" }}
-            placeholder="Search user"
+            placeholder="Search user in appointment list"
             icon={<IconSearch size={16} />}
             value={query}
             onChange={(e) => setQuery(e.currentTarget.value)}

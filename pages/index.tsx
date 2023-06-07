@@ -37,11 +37,7 @@ export default function IndexPage(props: any) {
 
   const [completedAppointment, setCompletedAppointment] = useState<any>(0);
 
-  const {
-   
-    data: appointments,
-    isFetching,
-  } = useQuery({
+  const { data: appointments, isFetching } = useQuery({
     queryKey: ["appointment"],
     queryFn: getAllAppointments,
     refetchOnWindowFocus: false,
@@ -50,7 +46,6 @@ export default function IndexPage(props: any) {
   const [appointmentCount, setAppointmentCount] = useState(0);
 
   useEffect(() => {
-    
     if (appointments) {
       const filteredAppointments = appointments.filter(
         (appointment: { date_of_appointment: string; date: Date }) =>
@@ -64,15 +59,15 @@ export default function IndexPage(props: any) {
     // get the number of completed appointments and set it to completedAppointment
     if (appointments) {
       const filteredAppointments = appointments.filter(
-        (appointment: { date_of_appointment: string; status: string; }) =>
+        (appointment: { date_of_appointment: string; status: string }) =>
           date &&
           isSameDay(parseISO(appointment.date_of_appointment), date) &&
           appointment.status === "completed"
       );
       setCompletedAppointment(filteredAppointments.length);
     }
-    
-    
+
+  
   }, [date, appointments]);
 
   return (
@@ -120,53 +115,32 @@ export default function IndexPage(props: any) {
               }}
             />
           </Card>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "start",
-              alignItems: "center",
 
-              gap: "10px",
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <IconDental size={30}></IconDental>
-              <Title fz={18} c="dimmed">
-                Appointments Today
-              </Title>
-            </div>
+          <Group position="center">
+            <IconDental size={30}></IconDental>
+            <Title fz={18} c="dimmed">
+              Appointments Today
+            </Title>
 
             {isFetching ? (
               <Loader />
             ) : (
               <Title fz={80}>{appointmentCount}</Title>
             )}
-          </div>
+          </Group>
 
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "start",
-              alignItems: "center",
-              gap: "10px",
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <IconChecklist size={40}></IconChecklist>
-              <Title fz={18} c="dimmed">
-                Completed Appointment
-              </Title>
-            </div>
+          <Group position="center">
+            <IconChecklist size={40}></IconChecklist>
+            <Title fz={18} c="dimmed">
+              Completed Appointment
+            </Title>
+
             <Title fz={80}>{completedAppointment}</Title>
-          </div>
+          </Group>
         </Group>
 
         <TimelineSchedule appointments={appointments} date={date} />
       </Paper>
-
-
     </ApplicationShell>
   );
 }
