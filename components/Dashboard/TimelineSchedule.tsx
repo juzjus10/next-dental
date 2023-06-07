@@ -7,6 +7,8 @@ import {
   Button,
   Badge,
   Card,
+  SimpleGrid,
+  Center,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
@@ -46,7 +48,14 @@ const TimeLineItem = ({ appointment }: any) => {
     <>
       <div>
         <Card withBorder>
-          <Group grow>
+          <SimpleGrid
+            cols={2}
+            breakpoints={[
+              { maxWidth: "sm", cols: 1 },
+
+              { maxWidth: "xs", cols: 1 },
+            ]}
+          >
             <div
               style={{
                 borderRightStyle: "solid",
@@ -55,6 +64,8 @@ const TimeLineItem = ({ appointment }: any) => {
                   theme.colorScheme === "dark"
                     ? theme.colors.dark[4]
                     : theme.colors.gray[2],
+                
+                
               }}
             >
               <Badge
@@ -99,34 +110,40 @@ const TimeLineItem = ({ appointment }: any) => {
                 </Modal>
               </Group>
             </div>
-            <div style={{ display: "flex", justifyContent: "flex-end" }}>
-              <Button m={5} radius="sm" variant="light" onClick={open}>
-                View Details
-              </Button>
-              <Button
-                m={5}
-                radius="sm"
-                variant="light"
-                color="green"
-                onClick={() => {
-                  mutate({ id: appointment.id, status: "completed" });
-                }}
-              >
-                Complete
-              </Button>
-              <Button
-                m={5}
-                radius="sm"
-                variant="light"
-                color="red"
-                onClick={() => {
-                  mutate({ id: appointment.id, status: "cancel" });
-                }}
-              >
-                Cancel
-              </Button>
+
+            <Center>
+            <div>
+               
+             
+            <Button m={5} radius="sm" variant="light" onClick={open}>
+              View Details
+            </Button>
+            <Button
+              m={5}
+              radius="sm"
+              variant="light"
+              color="green"
+              onClick={() => {
+                mutate({ id: appointment.id, status: "completed" });
+              }}
+            >
+              Complete
+            </Button>
+            <Button
+              m={5}
+              radius="sm"
+              variant="light"
+              color="red"
+              onClick={() => {
+                mutate({ id: appointment.id, status: "cancel" });
+              }}
+            >
+              Cancel
+            </Button>
+          
             </div>
-          </Group>
+            </Center>
+          </SimpleGrid>
         </Card>
       </div>
     </>
@@ -150,7 +167,7 @@ export default function TimelineSchedule(props: any) {
 
   return (
     <>
-      <Title m={10} align="center">
+      <Title m="xl" align="center">
         {date && format(date, "MMMM do, yyyy")}
       </Title>
       {appointments && appointmentFiltered.length > 0 ? (

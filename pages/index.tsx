@@ -14,6 +14,8 @@ import {
   Title,
   ActionIcon,
   Loader,
+  Stack,
+  SimpleGrid,
 } from "@mantine/core";
 import ApplicationShell from "@/components/Layout";
 import { StatsGrid } from "@/components/StatsGrid";
@@ -22,7 +24,7 @@ import { requireAuth } from "common/requireAuth";
 import { useSession } from "next-auth/react";
 import { getAllAppointments } from "@/lib/api";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { isSameDay, parseISO } from "date-fns";
+import { format, isSameDay, parseISO } from "date-fns";
 import { Icon24Hours, IconChecklist, IconDental } from "@tabler/icons-react";
 import TimelineSchedule from "@/components/Dashboard/TimelineSchedule";
 import { useRouter } from "next/router";
@@ -66,8 +68,6 @@ export default function IndexPage(props: any) {
       );
       setCompletedAppointment(filteredAppointments.length);
     }
-
-  
   }, [date, appointments]);
 
   return (
@@ -75,7 +75,15 @@ export default function IndexPage(props: any) {
       <Paper shadow="sm" p="md">
         <StatsGrid appointments={appointments} />
 
-        <Group grow>
+        <SimpleGrid
+          cols={3}
+          breakpoints={[
+            { maxWidth: "lg", cols: 3 },
+            { maxWidth: "md", cols: 1 },
+           
+            { maxWidth: "xs", cols: 1 },
+          ]}
+        >
           <Card withBorder>
             <DatePicker
               value={date}
@@ -116,28 +124,40 @@ export default function IndexPage(props: any) {
             />
           </Card>
 
-          <Group position="center">
-            <IconDental size={30}></IconDental>
-            <Title fz={18} c="dimmed">
-              Appointments Today
-            </Title>
+          <Stack align="center">
+            <Group position="center">
+              <IconDental size={30}></IconDental>
+              <Title fz={18} c="dimmed">
+                Appointments Today
+              </Title>
+            </Group>
 
             {isFetching ? (
               <Loader />
             ) : (
-              <Title fz={80}>{appointmentCount}</Title>
+              <>
+                <Title fz={150}>{appointmentCount}</Title>
+                <Text fz="sm" c="dimmed" mt={7}>
+                  Total Appointments for { date && format(date, "MMMM do, yyyy")}
+                </Text>
+              </>
             )}
-          </Group>
+          </Stack>
 
-          <Group position="center">
-            <IconChecklist size={40}></IconChecklist>
-            <Title fz={18} c="dimmed">
-              Completed Appointment
-            </Title>
+          <Stack align="center">
+            <Group position="center">
+              <IconChecklist size={30}></IconChecklist>
+              <Title fz={18} c="dimmed">
+                Completed Appointment
+              </Title>
+            </Group>
 
-            <Title fz={80}>{completedAppointment}</Title>
-          </Group>
-        </Group>
+            <Title fz={150}>{completedAppointment}</Title>
+            <Text fz="sm" c="dimmed" mt={7}>
+              Total Completed Appointments for { date && format(date, "MMMM do, yyyy")}
+            </Text>
+          </Stack>
+        </SimpleGrid>
 
         <TimelineSchedule appointments={appointments} date={date} />
       </Paper>
