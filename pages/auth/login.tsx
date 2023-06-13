@@ -67,10 +67,11 @@ export default function Login() {
           required
         />
         <Group position="apart" mt="md">
-        <Text size="sm">Don&apos;t have an account?</Text>
+        <Anchor size="sm" color="red" href='/auth/forgot-password'>Forgot Password</Anchor>
 
           <Anchor size="sm" href='/auth/signup'>Sign Up</Anchor>
         </Group>
+        
         <div style={{ position: 'relative' }}>
           <LoadingOverlay visible={visible} overlayBlur={2} />
           <Button fullWidth mt="xl" type="submit">

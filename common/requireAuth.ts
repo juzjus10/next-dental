@@ -21,5 +21,19 @@ export const requireAuth =
       };
     }
 
+    const user = session.user;
+    const isDentist = user.user_level === "dentist";
+    const isSettingsPage = ctx.req.url === "/settings";
+    const isUsersPage = ctx.req.url === "/users";
+    if ((isDentist && isSettingsPage) || (isDentist && isUsersPage)) {
+      return {
+        redirect: {
+          destination: "/", 
+          permanent: false,
+        },
+      };
+    }
+
+
     return await func(ctx);
   };

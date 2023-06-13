@@ -100,7 +100,8 @@ model User {
   middlename String   @db.Text
   user_level String   @db.Text
   email      String   @unique
-
+  passwordResetToken String?
+  passwordResetTokenExpiration DateTime?
   
 }
 
