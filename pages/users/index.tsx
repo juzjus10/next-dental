@@ -22,6 +22,7 @@ import UsersForm from "@/components/Forms/UsersForm";
 import axios from "axios";
 import { requireAuth } from "common/requireAuth";
 import { exportToPdf } from "@/utils/exportToPdf";
+import { modals } from "@mantine/modals";
 const Users = () => {
   const [query, setQuery] = useState("");
   const [debouncedQuery] = useDebouncedValue(query, 200);
@@ -159,6 +160,25 @@ const Users = () => {
 
                   <ActionIcon color="red" onClick={() => mutate(user.id)}>
                     <IconTrash size={16} />
+                  </ActionIcon>
+
+                  <ActionIcon
+                    color="blue"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      modals.open({
+                        title: "Patient Details",
+                        children: (
+                          <UsersForm
+                            data={user}
+                            close={modals.closeAll}
+                           
+                          ></UsersForm>
+                        ),
+                      });
+                    }}
+                  >
+                    <IconEdit size={16} />
                   </ActionIcon>
                 </Group>
               ),

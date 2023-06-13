@@ -12,18 +12,35 @@ import { useForm } from "@mantine/form";
 import { IconStethoscope, IconWheelchair } from "@tabler/icons-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { createUser } from "@/lib/api";
+import { createUser, updateUser } from "@/lib/api";
 import { ReactPropTypes, useEffect } from "react";
+
+import { useSession } from "next-auth/react";
 
 const UsersForm = (props: any) => {
   const { close, readOnly, data } = props;
   const queryClient = useQueryClient();
+  const { update, data:session  } = useSession();
 
-  const { mutate } = useMutation((userData) => createUser(userData), {
-    onSuccess: () => {
-      queryClient.invalidateQueries(["users"]);
-    },
-  });
+  const { mutate } = useMutation(
+    (userData) =>
+      data.id ? updateUser(data.id, userData) : createUser(userData),
+    {
+      onSuccess: async (userData) => {
+         await update({
+          ...session,
+          user: {
+            ...session?.user,
+            user_level: userData.user_level,
+          },
+
+          
+         });
+        queryClient.invalidateQueries(["users"]);
+        close();
+      },
+    }
+  );
 
   const form = useForm({
     initialValues: {

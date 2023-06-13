@@ -15,6 +15,8 @@ import { useState } from "react";
 import router from "next/router";
 import { useSession, signOut } from "next-auth/react";
 
+
+
 const useStyles = createStyles((theme) => ({
   navbar: {
     backgroundColor:
@@ -100,8 +102,13 @@ const data = [
   // { link: "/schedule", label: "Schedule", icon: IconCalendarEvent },
   { link: "/patient", label: "Patient", icon: IconEmpathize },
   { link: "/doctors", label: "Doctors", icon: IconNurse },
-  { link: "/users", label: "Users", icon: IconUsersGroup },
-   { link: '/settings', label: 'Settings', icon: IconSettings },
+  {
+    link: "/settings",
+    label: "Settings",
+    icon: IconSettings,
+    user_level: "admin",
+  },
+  { link: "/users", label: "Users", icon: IconUsersGroup, user_level: "admin" },
 ];
 
 export function NavbarSimple(props: any) {
@@ -109,7 +116,19 @@ export function NavbarSimple(props: any) {
   const { classes, cx } = useStyles();
   const [active, setActive] = useState("Billing");
 
-  const links = data.map((item) => (
+  // get session
+  const { data: session } = useSession();
+  console.log(session);
+  
+
+  const links = data
+  .filter((item) => {
+    if (session?.user?.user_level === 'dentist' && ['Users', 'Settings'].includes(item.label)) {
+      return false;
+    }
+    return !item.user_level || item.user_level !== 'dentist';
+  })
+  .map((item) => (
     <a
       className={cx(classes.link, {
         [classes.linkActive]: item.label === active,
@@ -128,7 +147,13 @@ export function NavbarSimple(props: any) {
   ));
 
   return (
-    <Navbar width={{ sm: 300 }} p="md" className={classes.navbar} hidden={opened} hiddenBreakpoint="sm">
+    <Navbar
+      width={{ sm: 300 }}
+      p="md"
+      className={classes.navbar}
+      hidden={opened}
+      hiddenBreakpoint="sm"
+    >
       <Navbar.Section grow>{links}</Navbar.Section>
 
       <Navbar.Section className={classes.footer}>
