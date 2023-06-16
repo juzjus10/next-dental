@@ -57,6 +57,19 @@ export default async function handler(
     case "DELETE":
       try {
         const { id } = req.query as { id: string };
+
+        await prisma.recordItem.deleteMany({
+          where: { record: { doctor_id: id } },
+        });
+
+        
+        // Delete related records first
+        await prisma.records.deleteMany({
+          where: { doctor_id: id },
+        });
+        // also delete the record items related to the record
+      
+        // Then delete the doctor
         const doctor = await prisma.doctor.delete({
           where: { id },
         });

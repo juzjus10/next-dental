@@ -245,7 +245,10 @@ const Patient = () => {
                     <IconEdit size={16} />
                   </ActionIcon>
 
-                  <ActionIcon color="red" onClick={() => mutate(patient.id)}>
+                  <ActionIcon color="red" onClick={(e) => {
+                     e.stopPropagation();
+                    mutate(patient.id)
+                    }}>
                     <IconTrash size={16} />
                   </ActionIcon>
                 </Group>

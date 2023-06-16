@@ -71,6 +71,9 @@ model Records {
   items             RecordItem[]
   Doctor            Doctor       @relation(fields: [doctor_id], references: [id])
   Patient           Patient      @relation(fields: [patient_id], references: [id])
+
+  @@index([ doctor_id], map: "Records_doctor_id_fkey")
+  @@index([patient_id], map: "Records_patient_id_fkey")
 }
 
 model RecordItem {
@@ -79,6 +82,8 @@ model RecordItem {
   cost             Float
   record_id        String
   record           Records @relation(fields: [record_id], references: [id])
+
+  @@index([record_id], map: "RecordItem_record_id_fkey")
 }
 
 model Treatment {
