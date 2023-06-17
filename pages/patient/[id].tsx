@@ -48,7 +48,8 @@ const UsersInfo = (props: any) => {
   const record = recordQuery.data;
   const appointment = appointmentQuery.data;
 
-  const { mutate } = useMutation((data: any) => deleteRecord(data.id), {
+  const { mutate } = useMutation(deleteRecord, {
+  
     onSuccess: () => {
       queryClient.invalidateQueries(["record"]);
     },
@@ -154,7 +155,10 @@ const UsersInfo = (props: any) => {
                  // fetching={isFetching}
                   records={records}
                   // define columns
-                
+                 onRowClick={(record) => {
+                    console.log("Record: ", record);
+                   
+                 }}
                   columns={[
                     {
                       accessor: "id",
@@ -190,7 +194,7 @@ const UsersInfo = (props: any) => {
                       title: <Text mr="xs">Actions</Text>,
                       textAlignment: "center",
                       render: (record: any) => (
-                        // prevent click on row
+                       
                         
                         <Group spacing={4} position="center" noWrap>
                           <FormModal
