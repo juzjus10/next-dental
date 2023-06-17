@@ -123,11 +123,12 @@ const Appointment = () => {
     isError,
     error,
     data: initialrecord,
-    isFetching,
+    isLoading,
   } = useQuery({
     queryKey: ["appointment"],
     queryFn: getAllAppointments,
-    refetchOnWindowFocus: true,
+    refetchOnWindowFocus: false,
+    refetchInterval: 1000,
   });
 
   const { mutate } = useMutation(deleteAppointment, {
@@ -239,7 +240,7 @@ setRecords(filteredAppointments);
           withColumnBorders
           striped
           highlightOnHover
-          fetching={isFetching}
+          fetching={isLoading}
           records={records}
           onRowClick={(row) => {
             modals.open({
