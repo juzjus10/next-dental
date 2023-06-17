@@ -127,7 +127,7 @@ const Appointment = () => {
   } = useQuery({
     queryKey: ["appointment"],
     queryFn: getAllAppointments,
-    refetchOnWindowFocus: false,
+    refetchOnWindowFocus: true,
   });
 
   const { mutate } = useMutation(deleteAppointment, {

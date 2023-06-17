@@ -12,6 +12,7 @@ const AppointmentForm = (props: any) => {
   const { mutate } = useMutation((userData) => createUser(userData), {
     onSuccess: () => {
       queryClient.invalidateQueries(["users"]);
+      queryClient.invalidateQueries(["appointment"]);
     },
   });
 

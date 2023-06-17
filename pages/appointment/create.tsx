@@ -45,6 +45,9 @@ const CreateAppointment = () => {
   const [highestStepVisited, setHighestStepVisited] = useState(active);
   const [patientExists, setPatientExists] = useState(false);
 
+
+  
+
   // Allow the user to freely go back and forth between visited steps.
   const shouldAllowSelectStep = (step: number) =>
     highestStepVisited >= step && active !== step;
@@ -85,6 +88,30 @@ const CreateAppointment = () => {
     }),
   });
 
+  const { mutate } = useMutation((appointment  :any) => createAppointment(appointment), {
+    onSuccess: (response) => {
+      console.log("Appointment", response);
+      const { patient_id, id } = response.appointment;
+      form.setValues({
+        ...form.values,
+        appointment: {
+          ...form.values.appointment,
+          id,
+        },
+        patient: {
+          ...form.values.patient,
+          id: patient_id,
+        },
+      });
+
+      console.log(form.values);
+      setDateValidated(true);
+
+      queryClient.invalidateQueries(["appointment"]);
+    },
+  });
+  
+
   const handleStepChange = async (nextStep: number) => {
     const isOutOfBounds = nextStep > 3 || nextStep < 0;
 
@@ -109,29 +136,9 @@ const CreateAppointment = () => {
       console.log("Appointment Data", data);
 
       if (!data) return;
-
-      const response = await createAppointment(form.values);
-
-      if (!response) return;
-
-      console.log("Appointment", response);
-
-      const { patient_id, id } = response.appointment;
-
-      form.setValues({
-        ...form.values,
-        appointment: {
-          ...form.values.appointment,
-          id,
-        },
-        patient: {
-          ...form.values.patient,
-          id: patient_id,
-        },
-      });
-
-      console.log(form.values);
-      setDateValidated(true);
+ 
+      mutate(form.values)
+     
     }
     setActive(nextStep);
     setHighestStepVisited((hSC) => Math.max(hSC, nextStep));
