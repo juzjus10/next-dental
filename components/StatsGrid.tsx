@@ -138,8 +138,7 @@ export function StatsGrid({ appointments }: StatsGridProps) {
             fw={500}
             className={classes.diff}
           >
-            <span>{stat.diff}%</span>
-            <DiffIcon size="1rem" stroke={1.5} />
+            
           </Text>
         </Group>
 
