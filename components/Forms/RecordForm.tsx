@@ -67,18 +67,17 @@ const RecordForm = (props: any) => {
       procedure: !values.procedure ? "Procedure is required" : null,
       date: !values.date ? "Date is required" : null,
       patientId: !values.patientId ? "Patient is required" : null,
-      service_rendered: !values.service_rendered
-        ? "Service rendered is required"
-        : null,
-      cost: !values.cost ? "Cost is required" : null,
+      // service_rendered: !values.service_rendered
+      //   ? "Service rendered is required"
+      //   : null,
+     //  cost: !values.cost ? "Cost is required" : null,
       items: !values.items ? "Items is required" : null,
       doctorId: !values.doctorId ? "Doctor is required" : null,
-      total_amount: !values.total_amount ? "Total amount is required" : null,
-      amount_paid: !values.amount_paid ? "Amount paid is required" : null,
-      balance: !values.balance ? "Balance is required" : null,
-      doctor_commission: !values.doctor_commission
-        ? "Doctor commission is required"
-        : null,
+      
+     // amount_paid: !values.amount_paid ? "Amount paid is required" : null,
+      // doctor_commission: !values.doctor_commission
+      //   ? "Doctor commission is required"
+      //   : null,
 
       doctor_notes: !values.doctor_notes ? "Doctor notes is required" : null,
     }),

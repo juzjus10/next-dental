@@ -10,13 +10,13 @@ const schema = Joi.object({
   date: Joi.date().required(),
   doctor_notes: Joi.string().optional(),
   patientId: Joi.string().required(),
-  service_rendered: Joi.string().required(),
-  cost: Joi.number().required(),
+  service_rendered: Joi.string().optional(),
+  cost: Joi.number().optional(),
   items: Joi.array().items(Joi.object()),
   doctorId: Joi.string().required(),
-  total_amount: Joi.number().required(),
+  total_amount: Joi.number().optional(),
   amount_paid: Joi.number().required(),
-  balance: Joi.number().required(),
+  balance: Joi.number().optional(),
   doctor_commission: Joi.number().required(),
 });
 
