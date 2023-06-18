@@ -1,170 +1,118 @@
-import React, { useEffect, useMemo, useState } from "react";
-import {
-  Button,
-  Text,
-  Card,
-  Paper,
-  Grid,
-  Divider,
-  List,
-  Badge,
-  Group,
-  Modal,
-  Container,
-  Title,
-  ActionIcon,
-  Loader,
-  Stack,
-  SimpleGrid,
-} from "@mantine/core";
 import ApplicationShell from "@/components/Layout";
-import { StatsGrid } from "@/components/StatsGrid";
-import { DatePicker } from "@mantine/dates";
-import { requireAuth } from "common/requireAuth";
-import { useSession } from "next-auth/react";
-import { getAllAppointments } from "@/lib/api";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { format, isSameDay, parseISO } from "date-fns";
-import { Icon24Hours, IconChecklist, IconDental } from "@tabler/icons-react";
-import TimelineSchedule from "@/components/Dashboard/TimelineSchedule";
 import { useRouter } from "next/router";
+import { HeroContentLeft } from "@/components/Landing/HeroContentLeft";
+import {
+  Container,
+  Divider,
+  Grid,
+  Header,
+  Paper,
+  ScrollArea,
+  Title,
+  rem,
+  useMantineTheme,
+} from "@mantine/core";
+import { HeaderContent } from "@/components/HeaderContent";
+import { Banner } from "@/components/Landing/Banner";
+import { ContactIconsList } from "@/components/Appointment/ContactIcons";
+import { useQuery } from "@tanstack/react-query";
+import { getAllSettings } from "@/lib/api";
+import {
+  IconDentalBroken,
+  IconMapPin,
+  IconPhone,
+  IconSun,
+} from "@tabler/icons-react";
+import { Services } from "@/components/Landing/Services";
 
 export default function IndexPage(props: any) {
-  const router = useRouter();
-  const { date_of_appointment } = router.query;
-
-  const [date, setDate] = useState<Date | null>(
-    date_of_appointment ? new Date(date_of_appointment[0]) : new Date()
-  );
-
-  const [completedAppointment, setCompletedAppointment] = useState<any>(0);
-
-  const { data: appointments, isFetching } = useQuery({
-    queryKey: ["appointment"],
-    queryFn: getAllAppointments,
+  const theme = useMantineTheme();
+  const { data: settings, isLoading } = useQuery({
+    queryKey: ["settings"],
+    queryFn: getAllSettings,
     refetchOnWindowFocus: false,
   });
-
-  const [appointmentCount, setAppointmentCount] = useState(0);
-
-  useEffect(() => {
-    if (appointments) {
-      const filteredAppointments = appointments.filter(
-        (appointment: { date_of_appointment: string; date: Date }) =>
-          appointment.date_of_appointment &&
-          date &&
-          isSameDay(parseISO(appointment.date_of_appointment), date)
-      );
-      setAppointmentCount(filteredAppointments.length);
-    }
-
-    // get the number of completed appointments and set it to completedAppointment
-    if (appointments) {
-      const filteredAppointments = appointments.filter(
-        (appointment: { date_of_appointment: string; status: string }) =>
-          date &&
-          isSameDay(parseISO(appointment.date_of_appointment), date) &&
-          appointment.status === "completed"
-      );
-      setCompletedAppointment(filteredAppointments.length);
-    }
-  }, [date, appointments]);
-
   return (
-    <ApplicationShell>
-      <Paper shadow="sm" p="md">
-        <StatsGrid appointments={appointments} />
+    <>
+      <HeaderContent {...props} />
 
-        <SimpleGrid
-          cols={3}
-          breakpoints={[
-            { maxWidth: "lg", cols: 3 },
-            { maxWidth: "md", cols: 1 },
-           
-            { maxWidth: "xs", cols: 1 },
-          ]}
+      <HeroContentLeft />
+
+      <div id="services">
+        <Paper
+          sx={(theme) => ({
+            backgroundColor:
+              theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.white,
+            padding: `calc(${theme.spacing.md} * 2)`,
+          })}
         >
-          <Card withBorder>
-            <DatePicker
-              value={date}
-              onChange={setDate}
-              styles={{
-                calendar: {
-                  width: "100%",
-                },
-                yearLevelGroup: {
-                  width: "100%",
-                },
-                yearLevel: {
-                  width: "100%",
-                },
-                calendarHeader: {
-                  width: "100%",
-                  maxWidth: "100%",
-                },
-                monthsList: {
-                  width: "100%",
-                },
-                month: {
-                  width: "100%",
-                },
-                pickerControl: {
-                  margin: "0 auto",
-                },
-                decadeLevelGroup: {
-                  width: "100%",
-                },
-                decadeLevel: {
-                  width: "100%",
-                },
-                yearsList: {
-                  width: "100%",
-                },
-              }}
-            />
-          </Card>
+          <Services />
+        </Paper>
+      </div>
+      <div id="appointment">
+        <Banner />
+      </div>
+      <div id="contact">
+        <Paper
+          sx={(theme) => ({
+            backgroundColor:
+              theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.white,
+            padding: `calc(${theme.spacing.md} * 2)`,
+          })}
+        >
+          <Title align="left" mb="lg">
+            Contact Us
+          </Title>
+          <Grid>
+            <Grid.Col span={12} md={6}>
+              {settings && (
+                <ContactIconsList
+                  variant="white"
+                  data={[
+                    {
+                      title: "Clinic",
+                      description: settings[0]?.clinic_name,
+                      icon: IconDentalBroken,
+                    },
+                    {
+                      title: "Phone",
+                      description: settings[0]?.clinic_contact,
+                      icon: IconPhone,
+                    },
+                    {
+                      title: "Address",
+                      description: settings[0]?.clinic_address,
+                      icon: IconMapPin,
+                    },
+                    {
+                      title: "Working Hours",
+                      description: `${settings[0]?.opening_time} - ${settings[0]?.closing_time}`,
+                      icon: IconSun,
+                    },
+                  ]}
+                />
+              )}
+            </Grid.Col>
 
-          <Stack align="center">
-            <Group position="center">
-              <IconDental size={30}></IconDental>
-              <Title fz={18} c="dimmed">
-                Appointments Today
-              </Title>
-            </Group>
-
-            {isFetching ? (
-              <Loader />
-            ) : (
-              <>
-                <Title fz={150}>{appointmentCount}</Title>
-                <Text fz="sm" c="dimmed" mt={7}>
-                  Total Appointments for { date && format(date, "MMMM do, yyyy")}
-                </Text>
-              </>
-            )}
-          </Stack>
-
-          <Stack align="center">
-            <Group position="center">
-              <IconChecklist size={30}></IconChecklist>
-              <Title fz={18} c="dimmed">
-                Completed Appointment
-              </Title>
-            </Group>
-
-            <Title fz={150}>{completedAppointment}</Title>
-            <Text fz="sm" c="dimmed" mt={7}>
-              Total Completed Appointments for { date && format(date, "MMMM do, yyyy")}
-            </Text>
-          </Stack>
-        </SimpleGrid>
-
-        <TimelineSchedule appointments={appointments} date={date} />
-      </Paper>
-    </ApplicationShell>
+            <Grid.Col span={12} md={6}>
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3858.7638366244573!2d121.03613397567337!3d14.725939685775337!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397b1d0c14be3d9%3A0x25023d281e9961f4!2sM.C%20Dental%20Clinic%20Susano!5e0!3m2!1sen!2sph!4v1687082919230!5m2!1sen!2sph"
+                style={{
+                  border: 0,
+                  height: 450,
+                  width: "100%",
+                  [theme.fn.smallerThan("sm")]: {
+                    maxWidth: "100%",
+                  },
+                }}
+                allowFullScreen={true}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              ></iframe>
+            </Grid.Col>
+          </Grid>
+        </Paper>
+      </div>
+    </>
   );
 }
-
-export const getServerSideProps = requireAuth(async (ctx) => {
-  return { props: {} };
-});

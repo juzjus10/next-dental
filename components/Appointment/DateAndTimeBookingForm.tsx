@@ -83,8 +83,6 @@ const DateAndTimeBookingForm = (props: any) => {
             borderRadius: theme.radius.lg,
             padding: rem(20),
             border: `2px dashed ${theme.colors[theme.primaryColor][8]}`,
-          //  backgroundColor: theme.colors.gray[9],
-            // create a  yellow outer glow
             boxShadow: theme.colorScheme === "dark" ? "none" : `10px 7px 10px 0px ${theme.colors.yellow[4]}`,
 
           })}
