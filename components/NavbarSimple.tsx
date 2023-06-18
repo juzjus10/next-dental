@@ -97,7 +97,7 @@ const useStyles = createStyles((theme) => ({
 }));
 
 const data = [
-  { link: "/", label: "Dashboard", icon: IconLayoutDashboard },
+  { link: "/dashboard", label: "Dashboard", icon: IconLayoutDashboard },
   { link: "/appointment", label: "Appointment", icon: IconListCheck },
   // { link: "/schedule", label: "Schedule", icon: IconCalendarEvent },
   { link: "/patient", label: "Patient", icon: IconEmpathize },
