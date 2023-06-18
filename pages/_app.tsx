@@ -42,7 +42,7 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
   return (
     <>
       <SessionProvider session={pageProps.session}>
-       
+      <QueryClientProvider client={queryClient} >
           <Head>
             <title>{title}</title>
             <link
@@ -166,13 +166,13 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
             >
               <ModalsProvider>
                 <Notifications />
-                <QueryClientProvider client={queryClient} >
+                
                 <AnyComponent {...pageProps} />
-                </QueryClientProvider>
+             
               </ModalsProvider>
             </MantineProvider>
           </ColorSchemeProvider>
-      
+          </QueryClientProvider>
       </SessionProvider>
     </>
   );

@@ -34,14 +34,14 @@ export default function Login() {
         setVisible(false);
       
     } else {
-      router.push("/");
+      router.push("/dashboard");
     }
   };
 
   useEffect(() => {
     console.log(status);
     if (status === "authenticated") {
-      router.push("/");
+      router.push("/dashboard");
     }
   }, [status, router]);
 

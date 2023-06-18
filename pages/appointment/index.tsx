@@ -344,7 +344,7 @@ setRecords(filteredAppointments);
                     <IconEye size={16} />
                   </ActionIcon>
 
-                  <ActionIcon
+                  {/* <ActionIcon
                     color="red"
                     onClick={(e: any) => {
                       e.stopPropagation();
@@ -352,7 +352,7 @@ setRecords(filteredAppointments);
                     }}
                   >
                     <IconTrash size={16} />
-                  </ActionIcon>
+                  </ActionIcon> */}
                 </Group>
               ),
             },

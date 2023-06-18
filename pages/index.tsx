@@ -24,21 +24,28 @@ import {
   IconSun,
 } from "@tabler/icons-react";
 import { Services } from "@/components/Landing/Services";
+import { useScroll, motion, useTransform } from "framer-motion";
 
 export default function IndexPage(props: any) {
   const theme = useMantineTheme();
+  const { scrollY } = useScroll();
   const { data: settings, isLoading } = useQuery({
     queryKey: ["settings"],
     queryFn: getAllSettings,
     refetchOnWindowFocus: false,
   });
+
+  const y = useTransform(scrollY, [0, 1200], ["0%", "50%"]);
   return (
     <>
       <HeaderContent {...props} />
 
-      <HeroContentLeft />
 
-      <div id="services">
+      <motion.div style={{ y }} initial={{ y: 0 }}>
+        <HeroContentLeft />
+      </motion.div>
+
+      <div id="services" style={{ position: "relative", zIndex: 1 }}>
         <Paper
           sx={(theme) => ({
             backgroundColor:
@@ -49,6 +56,8 @@ export default function IndexPage(props: any) {
           <Services />
         </Paper>
       </div>
+
+
       <div id="appointment">
         <Banner />
       </div>
