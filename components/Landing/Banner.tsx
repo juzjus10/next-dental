@@ -83,11 +83,11 @@ export function Banner() {
             Your Smile is Our Top Priority
           </Title>
           <Text fw={500} fz="lg" mb={5}>
-            We're Here to Help You Achieve a Healthy, Beautiful Smile.
+            We&apos;re Here to Help You Achieve a Healthy, Beautiful Smile.
           </Text>
           <Text fz="md" c="dimmed">
             At M.C. Dental Clinic, we believe that a healthy smile is a happy
-            smile. That's why we offer comprehensive dental care for the whole
+            smile. That&apos;s why we offer comprehensive dental care for the whole
             family, from routine cleanings and checkups to advanced restorative
             treatments.
           </Text>
