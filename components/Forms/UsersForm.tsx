@@ -47,7 +47,7 @@ const UsersForm = (props: any) => {
       firstname: "",
       lastname: "",
       middlename: "",
-      user_level: "dentist",
+      user_level: "doctor",
       email: "",
       patient: true,
       doctor: false,
@@ -124,7 +124,7 @@ const UsersForm = (props: any) => {
             placeholder="Pick one"
             data={[
               { value: "admin", label: "Admin" },
-              { value: "dentist", label: "Dentist" },
+              { value: "doctor", label: "Doctor" },
             ]}
             disabled={readOnly}
             {...form.getInputProps("user_level")}

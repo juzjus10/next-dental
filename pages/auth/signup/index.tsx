@@ -9,6 +9,7 @@ import {
   Title,
   Text,
   Button,
+  Checkbox,
 } from "@mantine/core";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
@@ -44,7 +45,7 @@ export default function SignUp() {
         firstname: form.firstname.value,
         middlename: form.middlename.value,
         lastname: form.lastname.value,
-        user_level: "dentist",
+        user_level: "admin",
       }),
     }).then((res) => res.json());
 
@@ -121,6 +122,16 @@ export default function SignUp() {
             required
             mt="md"
           />
+          <div
+            style={{
+              marginTop: "1rem",
+            }}
+          >
+            <Anchor size="sm" href="/auth/signup/doctor">
+              Sign up as a doctor?
+            </Anchor>
+          </div>
+
           <Group position="apart" mt="md">
             <Text size="sm">Already have an account?</Text>
 

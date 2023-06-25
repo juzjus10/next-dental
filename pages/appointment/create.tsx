@@ -63,7 +63,7 @@ const CreateAppointment = () => {
         id: "",
         status: "pending",
         appointment_time: "",
-        date_of_appointment: "",
+        date_of_appointment: "", // 5  days from now
       },
       patient: {
         id: "",
@@ -80,6 +80,15 @@ const CreateAppointment = () => {
         emergency_mobile_no: "",
         medical_history: "",
       },
+      doctor: {
+        id: "",
+        firstname: "",
+        middlename: "",
+        lastname: "",
+      },
+      service: {
+        id: "",
+      }
     },
 
     transformValues: (values) => ({
@@ -122,20 +131,19 @@ const CreateAppointment = () => {
     }
     if (nextStep === 2 && !dateValidated) {
       //first step
-      const { appointment_time, date_of_appointment, status } =
-        form.values.appointment;
+      const { appointment_time, date_of_appointment } = form.values.appointment;
       if (!appointment_time || !date_of_appointment) {
         return;
       }
 
-      const data = await checkAppointment({
-        appointment_time,
-        date_of_appointment,
-        status,
-      });
-      console.log("Appointment Data", data);
+      // const data = await checkAppointment({
+      //   appointment_time,
+      //   date_of_appointment,
+      //   status,
+      // });
+      // console.log("Appointment Data", data);
 
-      if (!data) return;
+      // if (!data) return;
  
       mutate(form.values)
      

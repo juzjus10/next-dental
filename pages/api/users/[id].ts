@@ -18,7 +18,11 @@ export default async function handler(
       try {
         const id = req.query.id as string;
         const user = await prisma.user.findUnique({
-          where: { id }
+          where: { id },
+          include: { 
+            doctor: true,
+            
+          }
         });
 
         if (!user) {
@@ -65,8 +69,12 @@ export default async function handler(
         const { id } = req.query;
         const user = await prisma.user.delete({
             where: { id: String(id) },
+            
         });
-        res.json(user);
+
+
+
+        res.json({user});
       } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Error Deleting User!", error });

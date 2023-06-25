@@ -28,6 +28,8 @@ export default function Login() {
       redirect: false,
     });
 
+    console.log(res);
+    
     // Check if res has a error property
     if (res?.error) {
         setError(res.error);

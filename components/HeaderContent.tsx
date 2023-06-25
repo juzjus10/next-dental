@@ -1,5 +1,6 @@
 import {
   Burger,
+  Button,
   Container,
   Group,
   Image,
@@ -147,7 +148,6 @@ export function HeaderContent({ opened, toggle, session }: HeaderTabsProps) {
       {link.label}
     </a>
   ));
- 
 
   return (
     <div className={classes.header}>
@@ -174,10 +174,23 @@ export function HeaderContent({ opened, toggle, session }: HeaderTabsProps) {
 
           <Group>
             {router.pathname === "/" && items}
-            <ColorSchemeToggle />
+            {router.pathname === "/" ? (
+              <Button
+                radius="xl"
+                variant="outline"
+                miw={90}
+                onClick={() => {
+                  router.push("/auth/login");
+                }}
+              >
+                Login
+              </Button>
+            ) : (
+              <ColorSchemeToggle />
+            )}
+
             {session && (
               <>
-               
                 <Menu
                   width={260}
                   position="bottom-end"

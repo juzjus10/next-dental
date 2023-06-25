@@ -12,8 +12,9 @@ import {
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { isSameDay } from "date-fns";
 import { useEffect, useState } from "react";
-import { useRouter } from 'next/router';
-
+import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
+import { modals } from "@mantine/modals";
 const AppointmentModal = ({
   appointment,
   close,
@@ -23,7 +24,11 @@ const AppointmentModal = ({
 }) => {
   const router = useRouter();
   const [status, setStatus] = useState(appointment.status);
+
   const queryClient = useQueryClient();
+  const { data: session } = useSession();
+
+  const user = session?.user;
   const [doctor, setDoctor] = useState(appointment.doctor_id);
   const {
     isError,
@@ -91,42 +96,45 @@ const AppointmentModal = ({
             {appointment.Patient.lastname}
           </Text>
         </Group>
+        {user?.user_level === "admin" && (
+          <Group grow>
+            <Text fz="md" fw={500} c="dimmed">
+              Doctor:
+            </Text>
+            <Select
+              fz="md"
+              fw={600}
+              placeholder="Select Doctor"
+              maxDropdownHeight={160}
+              variant="filled"
+              dropdownPosition="bottom"
+              data={
+                doctors?.map(
+                  (doctor: {
+                    firstname: string;
+                    lastname: string;
+                    id: string;
+                  }) => ({
+                    label: `${doctor.firstname} ${doctor.lastname}`,
+                    value: doctor.id,
+                  })
+                ) ?? []
+              }
+              searchable
+              value={doctor}
+              onChange={(value) => {
+                setDoctor(value);
+              }}
+            />
+          </Group>
+        )}
+
         <Group grow>
           <Text fz="md" fw={500} c="dimmed">
-            Doctor:
-          </Text>
-          <Select
-            fz="md"
-            fw={600}
-            placeholder="Select Doctor"
-            maxDropdownHeight={160}
-            variant="filled"
-            dropdownPosition="bottom"
-            data={
-              doctors?.map(
-                (doctor: {
-                  firstname: string;
-                  lastname: string;
-                  id: string;
-                }) => ({
-                  label: `${doctor.firstname} ${doctor.lastname}`,
-                  value: doctor.id,
-                })
-              ) ?? []
-            }
-            searchable
-            value={doctor}
-            onChange={(value) => {
-              setDoctor(value);
-            }}
-          />
-        </Group>
-        <Group grow>
-          <Text fz="md" fw={500} c="dimmed">
-            Purpose:
+            Service:
           </Text>
           <Text fz="md" fw={600}>
-            {appointment.purpose || "n/a"}
+            {appointment.Service.name || "n/a"}
           </Text>
         </Group>
 
@@ -159,33 +167,41 @@ const AppointmentModal = ({
         {/* <Divider my={10} size={2} /> */}
 
         <Group grow mt={20}>
-          <Button
-            color="green"
-            variant="light"
-            size="sm"
-            onClick={() => {
-              mutate({
-                id: appointment.id,
+          {user?.user_level === "admin" && (
+            <Button
+              color="green"
+              variant="light"
+              size="sm"
+              onClick={() => {
+                mutate({
+                  id: appointment.id,
 
-                doctor_id: doctor,
-              });
-              close();
-            }}
-          >
-            Assign
-          </Button>
-
+                  doctor_id: doctor,
+                });
+                close();
+              }}
+            >
+              Assign
+            </Button>
+          )}
           <Button
             color="blue"
             variant="light"
             size="sm"
             disabled={doctor === null}
-            onClick={() => 
-            {
-              router.push(`/patient/${appointment.Patient.id}?appointmentId=${appointment.id}`);
-              close();
-            }
-          }
+            onClick={() => {
+              if (user?.user_level === "doctor") { 
+                mutate({
+                  id: appointment.id,
+                  status: "payment",
+                  doctor_id: doctor,
+                });
+              }
+              router.push(
+                `/patient/${appointment.Patient.id}?appointmentId=${appointment.id}`
+              );
+              modals.closeAll
+            }}
           >
             Proceed
           </Button>

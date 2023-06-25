@@ -12,10 +12,14 @@ import {
   Textarea,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconCurrencyPeso, IconStethoscope, IconWheelchair } from "@tabler/icons-react";
+import {
+  IconCurrencyPeso,
+  IconStethoscope,
+  IconWheelchair,
+} from "@tabler/icons-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { createDoctor, updateDoctor } from "@/lib/api";
+import { createDoctor, getPatient, updateDoctor } from "@/lib/api";
 import { ReactPropTypes, useEffect } from "react";
 import { DateInput } from "@mantine/dates";
 import { DataTable } from "mantine-datatable";
@@ -34,10 +38,9 @@ const DoctorForm = (props: any) => {
   const { close, readOnly, data } = props;
   const queryClient = useQueryClient();
 
-  
-
   const { mutate } = useMutation(
-    (doctorData) => (data.id ? updateDoctor(data.id, doctorData) : createDoctor(doctorData)),
+    (doctorData) =>
+      data.id ? updateDoctor(data.id, doctorData) : createDoctor(doctorData),
     {
       onSuccess: () => {
         queryClient.invalidateQueries(["doctor"]);
@@ -60,7 +63,7 @@ const DoctorForm = (props: any) => {
 
   useEffect(() => {
     console.log("data", data);
-    
+
     // convert date string to Date object
     if (data.dob || data.hire_date) {
       form.setValues({
@@ -90,53 +93,50 @@ const DoctorForm = (props: any) => {
         >
           <Grid>
             <Grid.Col span={6}>
-              
-                  <TextInput
-                    mt="md"
-                    label="First Name"
-                    placeholder="First Name"
-                    disabled={readOnly}
-                    {...form.getInputProps("firstname")}
-                  />
-                  <TextInput
-                    mt="md"
-                    label="Middle Name"
-                    placeholder="Middle Name"
-                    disabled={readOnly}
-                    {...form.getInputProps("middlename")}
-                  />
-                  <TextInput
-                    mt="md"
-                    label="Last Name"
-                    placeholder="Last Name"
-                    disabled={readOnly}
-                    {...form.getInputProps("lastname")}
-                  />
-              
+              <TextInput
+                mt="md"
+                label="First Name"
+                placeholder="First Name"
+                disabled={readOnly}
+                {...form.getInputProps("firstname")}
+              />
+              <TextInput
+                mt="md"
+                label="Middle Name"
+                placeholder="Middle Name"
+                disabled={readOnly}
+                {...form.getInputProps("middlename")}
+              />
+              <TextInput
+                mt="md"
+                label="Last Name"
+                placeholder="Last Name"
+                disabled={readOnly}
+                {...form.getInputProps("lastname")}
+              />
 
-              
-                <TextInput
-                  mt="md"
-                  label="Gender"
-                  placeholder="Gender"
-                  disabled={readOnly}
-                  {...form.getInputProps("gender")}
-                />
-                <DateInput
-                  mt="md"
-                  label="Date of Birth"
-                  placeholder="Date of Birth"
-                  disabled={readOnly}
-                  {...form.getInputProps("dob")}
-                />
-                <DateInput
-                  mt="md"
-                  label="Date Hired"
-                  placeholder="Date Hired"
-                  disabled={readOnly}
-                  {...form.getInputProps("hire_date")}
-                />
-             
+              <TextInput
+                mt="md"
+                label="Gender"
+                placeholder="Gender"
+                disabled={readOnly}
+                {...form.getInputProps("gender")}
+              />
+              <DateInput
+                mt="md"
+                label="Date of Birth"
+                placeholder="Date of Birth"
+                disabled={readOnly}
+                {...form.getInputProps("dob")}
+              />
+              <DateInput
+                mt="md"
+                label="Date Hired"
+                placeholder="Date Hired"
+                disabled={readOnly}
+                {...form.getInputProps("hire_date")}
+              />
+
               {!readOnly && (
                 <Button mt={20} type="submit" fullWidth>
                   Submit
@@ -145,37 +145,54 @@ const DoctorForm = (props: any) => {
             </Grid.Col>
 
             <Grid.Col span={6}>
-            <DataTable mt="md" 
-              withBorder
-              height={500}
-              records={
-                data.Records
-              }
-              columns={[
-                {
-                  accessor: "id",
-                  title: "Record #",
-                  // render the index
-                  render: (row: any, index) => index + 1,
-
-                  
-                },
-                {
-                  accessor: "doctor_commission",
-                  title: "Doctor Commission",
-                  render: (row: any) => 
+              <DataTable
+                mt="md"
+                withBorder
+                height={500}
+                records={data.Records}
+                columns={[
                   {
-                    return (
-                      <Group>
-                    <IconCurrencyPeso size={20} />
-                    {row.doctor_commission}
-                    </Group>
-                    );
-                      
+                    accessor: "id",
+                    title: "Record #",
+                    // render the index
+                    render: (row: any, index) => index + 1,
                   },
-                }
-              ]}></DataTable>
-
+                  {
+                    accessor: "doctor_commission",
+                    title: "Doctor Commission",
+                    render: (row: any) => {
+                      return (
+                        <Group>
+                          <IconCurrencyPeso size={20} />
+                          {row.doctor_commission}
+                        </Group>
+                      );
+                    },
+                  },
+                  {
+                    accessor: "date",
+                    title: "Date",
+                    render: (row: any) => { return new Date(row.date).toLocaleDateString(); },
+                  },
+                  // {
+                  //   accessor: "patient_id",
+                  //   title: "Patient Name",
+                  //   render: async (record: any) => {
+                  //     const patientPromise = getPatient(record.patient_id);
+                  //     const patient = await patientPromise;
+                  //     if (!patient) {
+                  //       return <div>Loading...</div>;
+                  //     }
+                  //     console.log("patient", patient);
+                  //     return (
+                  //       <Group>
+                  //         {patient.firstname}
+                  //       </Group>
+                  //     );
+                  //   },
+                  // },
+                ]}
+              ></DataTable>
             </Grid.Col>
           </Grid>
         </form>

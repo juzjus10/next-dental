@@ -2,14 +2,12 @@ import { prisma } from "@/lib/prisma";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { v4 as uuidv4 } from "uuid";
 
-
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   const { method } = req;
   console.log(req.query.id);
-  
 
   switch (method) {
     case "GET":
@@ -20,6 +18,7 @@ export default async function handler(
           include: {
             Doctor: true,
             Patient: true,
+            Service: true,
           },
         });
 
@@ -40,6 +39,11 @@ export default async function handler(
           date_of_appointment,
           doctor_id,
           patient_id,
+
+          record_id,
+          doctor_commission,
+          amount_paid,
+          balance,
         } = req.body;
         console.log("doctor_id", doctor_id);
         const id = req.query.id as string;
@@ -55,14 +59,21 @@ export default async function handler(
           },
         });
 
-        res.json(appointment);
+        const record = await prisma.records.update({
+          where: { id: record_id },
+          data: {
+            doctor_commission: parseFloat(doctor_commission),
+            amount_paid: parseFloat(amount_paid),
+            balance,
+          },
+        });
 
-      }
-      catch (error) {
+        res.json({ appointment, record });
+      } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Error Updating appointment!", error});
+        res.status(500).json({ message: "Error Updating appointment!", error });
       }
-    break;
+      break;
     case "DELETE":
       try {
         const { id } = req.query as { id: string };

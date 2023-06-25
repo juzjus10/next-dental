@@ -8,6 +8,11 @@ export async function getAllUsers() {
   return users.data;
 }
 
+export async function getUser(id: string) {
+  const user = await axios.get(`/api/users/${id}`);
+  return user.data;
+}
+
 export async function createUser(data: any) {
   const user = await axios.post("/api/users", data);
   return user.data;
@@ -27,8 +32,6 @@ export async function deleteUser(id: string) {
 
 export async function getAllAppointments() {
   const appointments = await axios.get("/api/appointment");
-  //convert all date strings to date objects
-
   return appointments.data;
 }
 
@@ -45,6 +48,21 @@ export async function createAppointment(data: any) {
       color: "green",
       message: "Appointment created successfully",
     });
+    return response.data;
+  } catch (error: any) {
+    if (error.response) {
+      notifications.show({
+        title: "Error",
+        color: "red",
+        message: error.response.data.message,
+      });
+    }
+  }
+}
+
+export async function getAvailableTimes(data: any) {
+  try {
+    const response = await axios.post("/api/appointment/getAvailable", data);
     return response.data;
   } catch (error: any) {
     if (error.response) {
@@ -180,6 +198,11 @@ export async function getAllDoctors() {
   return doctors.data;
 }
 
+export async function getDoctor(id: string) {
+  const doctor = await axios.get(`/api/doctor/${id}`);
+  return doctor.data;
+}
+
 export async function createDoctor(data: any) {
   try {
     const response = await axios.post("/api/doctor", data);
@@ -255,6 +278,11 @@ export async function getRecordByID(id: string) {
   return record.data;
 }
 
+export async function getRecordByAppointmentID(appointment_id: string) {
+  const record = await axios.get(`/api/records/appointment?appointment_id=${appointment_id}`);
+  return record.data;
+}
+
 export async function createRecord(data: any) {
   try {
     const record = await axios.post("/api/records", data);
@@ -283,4 +311,12 @@ export async function updateRecord(id: string, data: any) {
 export async function deleteRecord(id: string) {
   const record = await axios.delete(`/api/records/${id}`);
   return record.data;
+}
+
+
+// Services API
+export async function getAllServices() {
+  const services = await axios.get("/api/service");
+
+  return services.data;
 }

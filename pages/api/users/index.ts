@@ -15,7 +15,9 @@ export default async function handler(
         return res.status(200).json(users);
       } catch (error) {
         console.error(error);
-        return res.status(500).json({ message: "Internal server error", error });
+        return res
+          .status(500)
+          .json({ message: "Internal server error", error });
       }
     case "POST":
       try {
@@ -25,13 +27,9 @@ export default async function handler(
           middlename,
           user_level,
           email,
-          doctor,
-          patient,
           username,
           password,
         } = req.body;
-
-        const id = uuidv4();
 
         // check if user already exists
         const userExists = await prisma.user.findFirst({
@@ -44,21 +42,50 @@ export default async function handler(
           return res.status(400).json({ error: "Email already exists!" });
         }
 
+        if (user_level === "doctor") {
+          const user = await prisma.user.create({
+            data: {
+              id: uuidv4(),
+              firstname,
+              lastname,
+              middlename,
+              user_level,
+              email,
+              username,
+              password: hashSync(password, 10),
+              doctor: {
+                create: {
+                  id: uuidv4(),
+                  firstname,
+                  lastname,
+                  middlename,
+                  gender: "Male",
+                  hire_date: new Date(),
+                  dob: new Date(),
+                },
+              },
+            },
+          });
+          return res.json(user);
+        } else if ( user_level === "admin"){
+          const user = await prisma.user.create({
+            data: {
+              id: uuidv4(),
+              firstname,
+              lastname,
+              middlename,
+              user_level,
+              email,
+              username,
+              password: hashSync(password, 10),
+             
+            },
+          });
+          return res.json(user);
+        } else {
+          res.status(400).json({ error: "Invalid user level!" });
+        }
 
-        const user = await prisma.user.create({
-          data: {
-            id,
-            firstname,
-            password:  hashSync(password, 10),
-            username,
-            lastname,
-            middlename,
-            user_level,
-            email,
-          },
-        });
-
-        res.json(user);
       } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Error Creating User!", error });

@@ -1,24 +1,29 @@
 import { FormModal } from "@/components/Forms/FormModal";
 import ApplicationShell from "@/components/Layout";
 import {
-  deleteRecord, getAppointment,
+  deleteRecord,
+  getAppointment,
   getPatient,
-  getRecordByID
+  getRecordByID,
 } from "@/lib/api";
 import {
   Group,
   Paper,
   Text,
   ActionIcon,
-  Grid, Title,
-  Card
+  Grid,
+  Title,
+  Card,
+  Button,
 } from "@mantine/core";
 import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
 import { DataTable } from "mantine-datatable";
-import { IconTrash } from "@tabler/icons-react";
+import { IconPlus, IconTrash } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { useDebouncedValue } from "@mantine/hooks";
 import { requireAuth } from "common/requireAuth";
+import { modals, openModal } from "@mantine/modals";
+import RecordForm from "@/components/Forms/RecordForm";
 
 const UsersInfo = (props: any) => {
   const { id, appointmentId } = props;
@@ -28,28 +33,29 @@ const UsersInfo = (props: any) => {
 
   //create a query to get patient info by id
   const [patientQuery, recordQuery, appointmentQuery] = useQueries({
-    queries:[{
-      queryKey: ["patient", { id }],
-      queryFn: () => getPatient(id as string),
-      enabled: !!id,
-    },
-    {
-      queryKey: ["record", { id }],
-      queryFn: () => getRecordByID(id as string),
-      enabled: !!id,
-    },
-    {
-      queryKey: ["appointment", { id }],
-      queryFn: () => getAppointment(appointmentId as string),
-      enabled: !!appointmentId,
-    }],
-  })
+    queries: [
+      {
+        queryKey: ["patient", { id }],
+        queryFn: () => getPatient(id as string),
+        enabled: !!id,
+      },
+      {
+        queryKey: ["record", { id }],
+        queryFn: () => getRecordByID(id as string),
+        enabled: !!id,
+      },
+      {
+        queryKey: ["appointment", { id }],
+        queryFn: () => getAppointment(appointmentId as string),
+        enabled: !!appointmentId,
+      },
+    ],
+  });
   const patient = patientQuery.data;
   const record = recordQuery.data;
   const appointment = appointmentQuery.data;
 
   const { mutate } = useMutation(deleteRecord, {
-  
     onSuccess: () => {
       queryClient.invalidateQueries(["record"]);
     },
@@ -63,8 +69,22 @@ const UsersInfo = (props: any) => {
     setRecords(record);
   }, [debouncedQuery, patient, record]);
 
- 
-    
+  const OpenModal = () => {
+    modals.open({
+      size: 900,
+      title: "Add Record",
+      children: (
+        <RecordForm
+          close={close}
+          data={record ? record : null}
+          patientId={appointment.Patient.id}
+          doctorId={appointment.Doctor.id}
+          readOnly={record.id ? true : false}
+          appointment={appointment}
+        ></RecordForm>
+      ),
+    });
+  };
 
   return (
     <ApplicationShell>
@@ -80,13 +100,15 @@ const UsersInfo = (props: any) => {
             alignItems: "center",
           }}
         >
-          {record && patient && appointmentId && (
-            <FormModal
-              title={"Add Record"}
-              record={record}
-              patientId={patient.id}
-              doctorId={appointment?.Doctor?.id}
-            />
+          {record && patient && appointment && (
+            <Button
+              onClick={OpenModal}
+              variant="light"
+              radius="xl"
+              leftIcon={<IconPlus />}
+            >
+              Create
+            </Button>
           )}
         </div>
 
@@ -139,8 +161,6 @@ const UsersInfo = (props: any) => {
                     {patient.medical_history}
                   </Text>
                 </Card.Section>
-
-               
               </Card>
             </Grid.Col>
             <Grid.Col span={12} md={8}>
@@ -152,13 +172,12 @@ const UsersInfo = (props: any) => {
                   withColumnBorders
                   striped
                   highlightOnHover
-                 // fetching={isFetching}
+                  // fetching={isFetching}
                   records={records}
                   // define columns
-                 onRowClick={(record) => {
+                  onRowClick={(record) => {
                     console.log("Record: ", record);
-                   
-                 }}
+                  }}
                   columns={[
                     {
                       accessor: "id",
@@ -168,12 +187,6 @@ const UsersInfo = (props: any) => {
                       textAlignment: "left",
                       hidden: true,
                     },
-                    {
-                      accessor: "procedure",
-                      title: "Procedure",
-                      textAlignment: "left",
-                    },
-
                     {
                       accessor: "date",
                       title: "Date",
@@ -185,6 +198,25 @@ const UsersInfo = (props: any) => {
                       ),
                     },
                     {
+                      accessor: "Doctor.firstname",
+                      title: "Doctor Firstname",
+                      textAlignment: "left",
+                    },
+                    {
+                      accessor: "Doctor.lastname",
+                      title: "Doctor Firstname",
+                      textAlignment: "left",
+                    },
+
+  {
+                      accessor: "items[0].name",
+                      title: "Doctor Firstname",
+                      textAlignment: "left",
+                    },
+                    
+
+                  
+                    {
                       accessor: "doctor_notes",
                       title: "Doctor Notes ",
                       textAlignment: "left",
@@ -194,8 +226,6 @@ const UsersInfo = (props: any) => {
                       title: <Text mr="xs">Actions</Text>,
                       textAlignment: "center",
                       render: (record: any) => (
-                       
-                        
                         <Group spacing={4} position="center" noWrap>
                           <FormModal
                             title={"View Record"}
@@ -203,9 +233,7 @@ const UsersInfo = (props: any) => {
                             patientId={patient.id}
                             icon
                           />
-                         
-                         
-                      
+
                           <ActionIcon
                             color="red"
                             onClick={() => mutate(record.id)}

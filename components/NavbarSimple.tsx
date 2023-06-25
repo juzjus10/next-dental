@@ -2,20 +2,25 @@ import Logo from "@/components/Logo";
 import { Group, Navbar, createStyles, getStylesRef, rem } from "@mantine/core";
 import {
   IconCalendarEvent,
+  IconCalendarStats,
   IconEmpathize,
+  IconGauge,
+  IconHome,
   IconLayoutDashboard,
   IconListCheck,
   IconLogout,
+  IconNotes,
   IconNurse,
   IconSettings,
+  IconStethoscope,
   IconSwitchHorizontal,
+  IconUserBolt,
   IconUsersGroup,
 } from "@tabler/icons-react";
 import { useState } from "react";
 import router from "next/router";
 import { useSession, signOut } from "next-auth/react";
-
-
+import { LinksGroup } from "./NavbarLinksGroup";
 
 const useStyles = createStyles((theme) => ({
   navbar: {
@@ -96,55 +101,81 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-const data = [
-  { link: "/dashboard", label: "Dashboard", icon: IconLayoutDashboard },
-  { link: "/appointment", label: "Appointment", icon: IconListCheck },
-  // { link: "/schedule", label: "Schedule", icon: IconCalendarEvent },
-  { link: "/patient", label: "Patient", icon: IconEmpathize },
-  { link: "/doctors", label: "Doctors", icon: IconNurse },
-  {
-    link: "/settings",
-    label: "Settings",
-    icon: IconSettings,
-    user_level: "admin",
-  },
-  { link: "/users", label: "Users", icon: IconUsersGroup, user_level: "admin" },
-];
-
 export function NavbarSimple(props: any) {
   const { opened } = props;
   const { classes, cx } = useStyles();
-  const [active, setActive] = useState("Billing");
 
   // get session
   const { data: session } = useSession();
-  console.log(session);
-  
+ 
 
-  const links = data
-  .filter((item) => {
-    if (session?.user?.user_level === 'dentist' && ['Users', 'Settings'].includes(item.label)) {
-      return false;
+  const mockdata = [
+    // {
+    //   label: "Home",
+    //   icon: IconHome,
+    //   links: [{ label: "Dashboard", link: "/dashboard" }],
+    // },
+    {
+      label: "Admin",
+      icon: IconUserBolt,
+      initiallyOpened: true,
+      links: [
+        { label: "Users", link: "/users" },
+        { label: "Doctors", link: "/doctors" },
+        { label: "Patients", link: "/patient" },
+        { label: "Appointment", link: "/appointment" },
+        { label: "Settings", link: "/settings" },
+        { label: "Dashboard", link: "/dashboard" },
+        // { label: "Releases schedule", link: "/" },
+      ],
+    },
+    {
+      label: "Doctor",
+      icon: IconStethoscope,
+      initiallyOpened: true,
+      links: [
+        { label: "Dashboard", link: `/doctors/${session?.user.id}` },
+        {
+          label: "Appointment",
+          link: `/doctors/${session?.user.id}/appointment`,
+        },
+        { label: "Patient", link: `/doctors/${session?.user.id}/patient` },
+        { label: "Profile", link: `/doctors/${session?.user.id}/profile` },
+      ],
+    },
+  ];
+
+  const links = mockdata.map((item) => {
+    if (item.label === "Admin" && session?.user?.user_level !== "admin") {
+      return null;
     }
-    return !item.user_level || item.user_level !== 'dentist';
-  })
-  .map((item) => (
-    <a
-      className={cx(classes.link, {
-        [classes.linkActive]: item.label === active,
-      })}
-      href={item.link}
-      key={item.label}
-      onClick={(event) => {
-        event.preventDefault();
-        setActive(item.label);
-        router.push(item.link);
-      }}
-    >
-      <item.icon className={classes.linkIcon} stroke={1.5} />
-      <span>{item.label}</span>
-    </a>
-  ));
+
+    return <LinksGroup {...item} key={item.label} />;
+  });
+  // const links = data
+  // .filter((item) => {
+  //   if (session?.user?.user_level === 'doctor' && ['Users', 'Settings'].includes(item.label)) {
+  //     return false;
+  //   }
+  //   return !item.user_level || item.user_level !== 'doctor';
+  // })
+  // .map((item) => (
+  //   <a
+  //     className={cx(classes.link, {
+  //       [classes.linkActive]: item.label === active,
+  //     })}
+  //     href={item.link}
+  //     key={item.label}
+  //     onClick={(event) => {
+  //       event.preventDefault();
+  //       setActive(item.label);
+  //       router.push(item.link);
+  //     }}
+  //   >
+  //     <item.icon className={classes.linkIcon} stroke={1.5} />
+  //     <span>{item.label}</span>
+  //   </a>
+  // ));
 
   return (
     <Navbar

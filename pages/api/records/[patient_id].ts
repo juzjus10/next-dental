@@ -18,6 +18,7 @@ export default async function handler(
             Patient: true,
             Doctor: true,
             items: true,
+            Appointment: true,
           },
         });
 
@@ -44,6 +45,9 @@ export default async function handler(
           where: {
             id: patient_id as string,
           },
+          include: {
+            Appointment: true,
+          }
         });
 
         return res.status(200).json(records);

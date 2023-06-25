@@ -3,25 +3,44 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url = env("DATABASE_URL")
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
 
 model Appointment {
-  id                  String      @id @default(uuid())
-  status              String      @db.VarChar(45)
+  id                  String   @id @default(uuid())
+  status              String   @db.VarChar(45)
   appointment_time    String
-  date_of_appointment DateTime    @db.DateTime(0)
-  created_at          DateTime    @default(now())
-  patient_id          String?
-  doctor_id           String?
-  Doctor              Doctor?     @relation(fields: [doctor_id], references: [id])
-  Patient             Patient?    @relation(fields: [patient_id], references: [id])
-  Treatment           Treatment[]
+  date_of_appointment DateTime @db.DateTime(0)
+
+  patient_id String?
+  doctor_id  String?
+  service_id String?
+  Doctor     Doctor?  @relation(fields: [doctor_id], references: [id])
+  Patient    Patient? @relation(fields: [patient_id], references: [id])
+  Service    Service? @relation(fields: [service_id], references: [id])
+
+  created_at DateTime @default(now())
+
+  // Add a reference to the Record model
+  record_id String?  @unique
+  Record    Records? @relation(fields: [record_id], references: [id])
 
   @@index([doctor_id], map: "Appointment_doctor_id_fkey")
   @@index([patient_id], map: "Appointment_patient_id_fkey")
+  @@index([service_id], map: "Appointment_serviceId_fkey")
+}
+
+model Service {
+  id          String        @id @default(uuid())
+  name        String
+  duration    Int           @default(60) // Add a default duration of 60 minutes
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  category    String?
+  cost        Float?
+  Appointment Appointment[]
 }
 
 model Doctor {
@@ -34,7 +53,9 @@ model Doctor {
   hire_date   DateTime      @db.Date
   Appointment Appointment[]
   Records     Records[]
- 
+
+  User    User?   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id String @unique
 }
 
 model Patient {
@@ -54,60 +75,54 @@ model Patient {
   medical_history     String        @db.LongText
   Appointment         Appointment[]
   Records             Records[]
- 
 }
 
 model Records {
-  id                String       @id @default(uuid())
-  procedure         String
-  date              DateTime     @db.DateTime(0)
-  doctor_notes      String
-  patient_id        String
-  doctor_id         String
+  id           String   @id @default(uuid())
+  date         DateTime @db.DateTime(0)
+  doctor_notes String
+
   total_amount      Float
   amount_paid       Float
   balance           Float
   doctor_commission Float
   items             RecordItem[]
-  Doctor            Doctor       @relation(fields: [doctor_id], references: [id])
-  Patient           Patient      @relation(fields: [patient_id], references: [id])
 
-  @@index([ doctor_id], map: "Records_doctor_id_fkey")
+  patient_id String
+  doctor_id  String
+
+  Doctor      Doctor       @relation(fields: [doctor_id], references: [id])
+  Patient     Patient      @relation(fields: [patient_id], references: [id])
+  Appointment Appointment?
+
+  @@index([doctor_id], map: "Records_doctor_id_fkey")
   @@index([patient_id], map: "Records_patient_id_fkey")
 }
 
 model RecordItem {
   id               String  @id @default(uuid())
-  service_rendered String
+  name             String?
   cost             Float
+  date             DateTime?
   record_id        String
   record           Records @relation(fields: [record_id], references: [id])
 
   @@index([record_id], map: "RecordItem_record_id_fkey")
 }
 
-model Treatment {
-  id             String      @id @default(uuid())
-  treatment      String      @db.VarChar(50)
-  cost           Int
-  appointment_id String
-  Appointment    Appointment @relation(fields: [appointment_id], references: [id])
-
-  @@index([appointment_id], map: "Treatment_appointment_id_fkey")
-}
-
 model User {
-  id         String   @id @default(uuid())
-  username   String   @db.Text
-  password   String   @db.Text
-  firstname  String   @db.Text
-  lastname   String   @db.Text
-  middlename String   @db.Text
-  user_level String   @db.Text
-  email      String   @unique
-  passwordResetToken String?
+  id                           String    @id @default(uuid())
+  username                     String    @db.Text
+  password                     String    @db.Text
+  firstname                    String    @db.Text
+  lastname                     String    @db.Text
+  middlename                   String    @db.Text
+  user_level                   String    @db.Text
+  email                        String    @unique
+  passwordResetToken           String?
   passwordResetTokenExpiration DateTime?
-  
+
+  doctor Doctor?
 }
 
 model Settings {

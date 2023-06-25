@@ -53,7 +53,7 @@ export default async function handler(
           emergency_contact,
           emergency_mobile_no,
           medical_history,
-          email
+          email,
         } = req.body;
 
         // validate the request body against the schema

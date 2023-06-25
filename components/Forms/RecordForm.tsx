@@ -1,9 +1,14 @@
 import {
+  ActionIcon,
   Button,
+  Center,
+  Checkbox,
   Grid,
+  Group,
   NumberInput,
   Paper,
-  Stack,
+  Select,
+  Text,
   TextInput,
   Textarea,
 } from "@mantine/core";
@@ -12,22 +17,21 @@ import {
   IconAppsFilled,
   IconCalendar,
   IconCurrencyPeso,
+  IconEdit,
   IconPlus,
   IconReceipt2,
   IconTrash,
 } from "@tabler/icons-react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createRecord } from "@/lib/api";
-import { useEffect } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { createRecord, getAllServices, updateAppointment } from "@/lib/api";
+import { useEffect, useState } from "react";
 import { DateInput } from "@mantine/dates";
 import { DataTable } from "mantine-datatable";
 // create a type for the initial values of the form
 type RecordFormValues = {
-  procedure: string;
   date: Date;
   doctor_notes: string;
   patientId: string;
-  service_rendered: string;
   cost: number;
   items: any[];
   doctorId: string;
@@ -36,24 +40,111 @@ type RecordFormValues = {
   balance: number;
   doctor_commission: number;
 };
+
+const SelectService = (props: any) => {
+  const { services, form } = props;
+  // console.log(services);
+
+  const [category, setCategory] = useState<any>();
+
+  const categories = Array.from(
+    new Set(services.map((item: any) => item.category))
+  );
+
+  const CheckBoxes = () => {
+    const [checked, setChecked] = useState<boolean[]>([]);
+
+    const servicesByCategory = services.filter(
+      (service: any) => service.category === category
+    );
+
+    const handleCheck = (index: number) => {
+      const newChecked = [...checked];
+      newChecked[index] = !newChecked[index];
+      setChecked(newChecked);
+    };
+
+    const handleAddService = () => {
+      const selectedServices = servicesByCategory.filter(
+        (service: any, index: number) => checked[index]
+      );
+
+      const items = selectedServices.map((service: any) => ({
+        id: service.id,
+        category: service.category,
+        name: service.name,
+        cost: service.cost,
+      }));
+
+      form.values.items.push(...items);
+      form.setFieldValue(
+        "total_amount",
+        items.reduce((a: any, b: any) => a + b.cost, 0)
+      );
+
+      console.log(form.values.items);
+    };
+
+    return (
+      <div>
+        {servicesByCategory.map((service: any, index: number) => (
+          <Checkbox
+            m={5}
+            key={service.id}
+            checked={checked[index] || false}
+            onChange={() => handleCheck(index)}
+            label={service.name}
+          />
+        ))}
+
+        <Button mt="md" variant="light" fullWidth onClick={handleAddService}>
+          Add Service
+        </Button>
+      </div>
+    );
+  };
+
+  return (
+    <>
+      <Select
+        placeholder="Select service"
+        value={category}
+        data={[
+          ...categories.map((category: any) => ({
+            label: category,
+            value: category,
+          })),
+        ]}
+        onChange={(value) => setCategory(value)}
+      />
+      <CheckBoxes />
+    </>
+  );
+};
 const RecordForm = (props: any) => {
-  const { close, readOnly, data, patientId, doctorId } = props;
+  const { close, readOnly, data, patientId, doctorId, appointment } = props;
   const queryClient = useQueryClient();
 
-  const { mutate } = useMutation((recordData) => createRecord(recordData), {
-    onSuccess: () => {
-      queryClient.invalidateQueries(["patient"]),
+  //create query to get all services
+  console.log("appointment: ", appointment);
+
+  const { data: services } = useQuery(["services"], () => getAllServices());
+
+  const { mutate: mutated_record } = useMutation(
+    (recordData) => createRecord(recordData),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["patient"]);
         queryClient.invalidateQueries(["record"]);
-    },
-  });
+      },
+    }
+  );
 
   const form = useForm<RecordFormValues>({
     initialValues: {
-      procedure: "",
       date: new Date(),
       doctor_notes: "",
       patientId: "",
-      service_rendered: "",
       cost: 0,
       items: [],
       doctorId: doctorId || "",
@@ -64,17 +155,16 @@ const RecordForm = (props: any) => {
     },
 
     validate: (values) => ({
-      procedure: !values.procedure ? "Procedure is required" : null,
       date: !values.date ? "Date is required" : null,
       patientId: !values.patientId ? "Patient is required" : null,
       // service_rendered: !values.service_rendered
       //   ? "Service rendered is required"
       //   : null,
-     //  cost: !values.cost ? "Cost is required" : null,
+      //  cost: !values.cost ? "Cost is required" : null,
       items: !values.items ? "Items is required" : null,
       doctorId: !values.doctorId ? "Doctor is required" : null,
-      
-     // amount_paid: !values.amount_paid ? "Amount paid is required" : null,
+
+      // amount_paid: !values.amount_paid ? "Amount paid is required" : null,
       // doctor_commission: !values.doctor_commission
       //   ? "Doctor commission is required"
       //   : null,
@@ -110,11 +200,9 @@ const RecordForm = (props: any) => {
       data.date && form.setValues({ date: new Date(data.date) });
 
       form.setValues({
-        procedure: data.procedure,
         date: new Date(data.date),
         doctor_notes: data.doctor_notes,
         patientId: patientId,
-        service_rendered: data.service_rendered,
         cost: data.cost,
         items: data.items,
         doctorId: doctorId,
@@ -126,11 +214,15 @@ const RecordForm = (props: any) => {
       console.log("RecordForm: ", data);
       console.log(form.values);
     }
-  }, [data, form.values.items]);
+  }, [data, form.values.items, services]);
 
   const handleSubmit = (values: any) => {
     try {
-      const recordData = mutate(values);
+      const recordData = mutated_record({
+        ...values,
+        appointment_id: appointment.id,
+      });
+
       console.log("New Record created:", recordData);
     } catch (error) {
       console.error("Error creating user:", error);
@@ -147,53 +239,43 @@ const RecordForm = (props: any) => {
         >
           <Grid>
             <Grid.Col span={6}>
+              {appointment?.Service?.name && (
+                <Group my="md">
+                  <Text>Main Procedure: </Text>
+                  <Text>{appointment?.Service?.name}</Text>
+                </Group>
+              )}
               <Paper withBorder p={10} mih={300}>
                 <div
                   style={{
                     display: "flex",
                     flexDirection: "column",
-                   
+
                     height: "100%",
                     gap: "20px",
                   }}
                 >
-                  <TextInput
-                    label="Service Rendered"
+                  {services && (
+                    <SelectService services={services} form={form} />
+                  )}
+                  {/* <Select
+                    data={services ? services.filter(
+                      (service: any) => service.category === "Procedure"
+                    ) : [] } 
+                    label="Services"
                     disabled={readOnly}
                     icon={<IconAppsFilled size={20} />}
                     {...form.getInputProps("service_rendered")}
-                  />
-                  <NumberInput
+                             /> */}
+                  {/* <NumberInput
                     label="Cost"
                     disabled={readOnly}
                     icon={<IconReceipt2 />}
                     hideControls
                     {...form.getInputProps("cost")}
-                  />
+                  /> */}
 
-                  <Button
-                    color="green"
-                    variant="light"
-                    leftIcon={<IconPlus />}
-                    fullWidth
-                    onClick={() => {
-                      form.values.items.push({
-                        service_rendered: form.values.service_rendered,
-                        cost: form.values.cost,
-                      });
-
-                      form.setValues((prev) => ({
-                        ...prev,
-                        total_amount:
-                          (prev.total_amount ?? 0) + (prev.cost ?? 0),
-                      }));
-                      console.log(form.values);
-                    }}
-                    disabled={readOnly}
-                  >
-                    Add
-                  </Button>
-                  <Button
+                  {/* <Button
                     color="red"
                     variant="light"
                     leftIcon={<IconTrash />}
@@ -208,7 +290,7 @@ const RecordForm = (props: any) => {
                     disabled={readOnly}
                   >
                     Clear
-                  </Button>
+                  </Button> */}
                 </div>
               </Paper>
 
@@ -218,12 +300,6 @@ const RecordForm = (props: any) => {
                 label="Date"
                 disabled={readOnly}
                 {...form.getInputProps("date")}
-              />
-              <TextInput
-                mt="md"
-                label="Procedure"
-                disabled={readOnly}
-                {...form.getInputProps("procedure")}
               />
               <Textarea
                 mt="md"
@@ -246,12 +322,36 @@ const RecordForm = (props: any) => {
                     hidden: true,
                   },
                   {
-                    accessor: "service_rendered",
+                    accessor: "name",
                     title: "Service Rendered",
                   },
                   {
                     accessor: "cost",
                     title: "Cost",
+                  },
+                  {
+                    accessor: "actions",
+                    title: "Actions",
+
+                    render: (row: any) => (
+                      //Delete button
+                      <Center>
+                        <ActionIcon
+                          color="red"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            form.setValues((prev) => ({
+                              ...prev,
+                              items: prev?.items?.filter(
+                                (item: any) => item.id !== row.id
+                              ),
+                            }));
+                          }}
+                        >
+                          <IconTrash size={16} />
+                        </ActionIcon>
+                      </Center>
+                    ),
                   },
                 ]}
               ></DataTable>
@@ -263,31 +363,6 @@ const RecordForm = (props: any) => {
                 label="Total Amount"
                 disabled
                 {...form.getInputProps("total_amount")}
-              />
-              <NumberInput
-                mt="md"
-                icon={<IconCurrencyPeso />}
-                hideControls
-                label="Amount Paid"
-                disabled={readOnly}
-                {...form.getInputProps("amount_paid")}
-              />
-              <NumberInput
-                mt="md"
-                icon={<IconCurrencyPeso />}
-                hideControls
-                label="Balance"
-                disabled
-                {...form.getInputProps("balance")}
-              />
-
-              <NumberInput
-                mt="md"
-                icon={<IconCurrencyPeso />}
-                hideControls
-                label="Doctor Commission"
-                disabled={readOnly}
-                {...form.getInputProps("doctor_commission")}
               />
             </Grid.Col>
             {!readOnly && (

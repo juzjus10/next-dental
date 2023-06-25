@@ -9,7 +9,7 @@ export default async function handler(
   switch (method) {
     case "GET":
       try {
-        const doctor = await prisma.doctor.findMany( {
+        const doctor = await prisma.doctor.findMany({
           include: {
             Records: true,
           },
@@ -39,7 +39,6 @@ export default async function handler(
             dob,
             hire_date,
           },
-       
         });
 
         res.json(doctor);
