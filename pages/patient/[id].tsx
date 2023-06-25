@@ -210,7 +210,7 @@ const UsersInfo = (props: any) => {
 
   {
                       accessor: "items[0].name",
-                      title: "Doctor Firstname",
+                      title: "Service",
                       textAlignment: "left",
                     },
                     
