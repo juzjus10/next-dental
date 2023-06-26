@@ -69,7 +69,7 @@ const TimeLineItem = ({ appointment }: any) => {
       default:
         color = "gray";
     }
-    return <Badge color={color}>{status}</Badge>;
+    return <Badge color={color}>{status === "pending" ? "request" : status}</Badge>;
   };
   return (
     <>

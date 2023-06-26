@@ -65,7 +65,7 @@ const AppointmentModal = ({
             Status
           </Text>
           <Badge size="lg" variant="light">
-            {status}
+            {status === "pending" ? "request" : status}
           </Badge>
         </Group>
 
@@ -168,23 +168,39 @@ const AppointmentModal = ({
 
         <Group grow mt={20}>
           {user?.user_level === "admin" && (
-            <Button
+            <><Button
               color="green"
               variant="light"
               size="sm"
               onClick={() => {
                 console.log("Appointment", appointment);
-                
+
                 mutate({
                   id: appointment.id,
 
                   doctor_id: doctor,
                 });
                 modals.closeAll();
-              }}
+              } }
             >
               Assign
-            </Button>
+            </Button><Button
+              color="red"
+              variant="light"
+              size="sm"
+              onClick={() => {
+                console.log("Appointment", appointment);
+
+                mutate({
+                  id: appointment.id,
+                  status: "cancel",
+                
+                });
+                modals.closeAll();
+              } }
+            >
+                Cancel
+              </Button></>
           )}
           {user?.user_level === "doctor" && (
             <Button

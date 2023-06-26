@@ -325,7 +325,7 @@ const Appointment = () => {
                     default:
                       color = "gray";
                   }
-                  return <Badge color={color}>{row.status}</Badge>;
+                  return <Badge color={color}>{row.status === "pending" ? "Request" : row.status }</Badge>;
                 },
               },
 
