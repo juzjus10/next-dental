@@ -18,12 +18,13 @@ import {
 } from "@mantine/core";
 import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
 import { DataTable } from "mantine-datatable";
-import { IconPlus, IconTrash } from "@tabler/icons-react";
+import { IconPaperclip, IconPlus, IconTrash } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { useDebouncedValue } from "@mantine/hooks";
 import { requireAuth } from "common/requireAuth";
 import { modals, openModal } from "@mantine/modals";
 import RecordForm from "@/components/Forms/RecordForm";
+import { exportToPdf } from "@/utils/exportToPdf";
 
 const UsersInfo = (props: any) => {
   const { id, appointmentId } = props;
@@ -111,7 +112,18 @@ const UsersInfo = (props: any) => {
             </Button>
           )}
         </div>
-
+        <Button
+          leftIcon={<IconPaperclip />}
+          mr={10}
+          variant="light"
+          radius="xl"
+          color="red"
+          onClick={() => {
+            exportToPdf("#record-table", `Record-${new Date()}`);
+          }}
+        >
+          Save as PDF
+        </Button>
         {patient && (
           <Grid mt={10} ml={5}>
             <Grid.Col span={12} md={4}>
@@ -166,6 +178,9 @@ const UsersInfo = (props: any) => {
             <Grid.Col span={12} md={8}>
               {record && (
                 <DataTable
+                        /*
+                  // @ts-ignore */
+                  id="record-table"
                   mih={200}
                   withBorder
                   borderRadius="sm"
@@ -208,14 +223,12 @@ const UsersInfo = (props: any) => {
                       textAlignment: "left",
                     },
 
-  {
+                    {
                       accessor: "items[0].name",
                       title: "Service",
                       textAlignment: "left",
                     },
-                    
 
-                  
                     {
                       accessor: "doctor_notes",
                       title: "Doctor Notes ",
