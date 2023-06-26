@@ -59,16 +59,21 @@ export default async function handler(
           },
         });
 
-        const record = await prisma.records.update({
-          where: { id: record_id },
-          data: {
-            doctor_commission: parseFloat(doctor_commission),
-            amount_paid: parseFloat(amount_paid),
-            balance,
-          },
-        });
+        if( record_id) {
+          const record = await prisma.records.update({
+            where: { id: record_id },
+            data: {
+              doctor_commission: parseFloat(doctor_commission),
+              amount_paid: parseFloat(amount_paid),
+              balance,
+            },
+          });
 
-        res.json({ appointment, record });
+          console.log("record", record);
+        }
+        
+
+        res.json({ appointment });
       } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Error Updating appointment!", error });

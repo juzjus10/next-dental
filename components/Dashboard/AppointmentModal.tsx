@@ -173,38 +173,41 @@ const AppointmentModal = ({
               variant="light"
               size="sm"
               onClick={() => {
+                console.log("Appointment", appointment);
+                
                 mutate({
                   id: appointment.id,
 
                   doctor_id: doctor,
                 });
-                close();
+                modals.closeAll();
               }}
             >
               Assign
             </Button>
           )}
-          <Button
-            color="blue"
-            variant="light"
-            size="sm"
-            disabled={doctor === null}
-            onClick={() => {
-              if (user?.user_level === "doctor") { 
+          {user?.user_level === "doctor" && (
+            <Button
+              color="blue"
+              variant="light"
+              size="sm"
+              disabled={doctor === null}
+              onClick={() => {
                 mutate({
                   id: appointment.id,
                   status: "payment",
                   doctor_id: doctor,
                 });
-              }
-              router.push(
-                `/patient/${appointment.Patient.id}?appointmentId=${appointment.id}`
-              );
-              modals.closeAll
-            }}
-          >
-            Proceed
-          </Button>
+
+                router.push(
+                  `/patient/${appointment.Patient.id}?appointmentId=${appointment.id}`
+                );
+                modals.closeAll();
+              }}
+            >
+              Proceed
+            </Button>
+          )}
         </Group>
       </Grid.Col>
     </Grid>

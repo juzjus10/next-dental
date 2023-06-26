@@ -27,6 +27,7 @@ import { createRecord, getAllServices, updateAppointment } from "@/lib/api";
 import { useEffect, useState } from "react";
 import { DateInput } from "@mantine/dates";
 import { DataTable } from "mantine-datatable";
+import { modals } from "@mantine/modals";
 // create a type for the initial values of the form
 type RecordFormValues = {
   date: Date;
@@ -234,7 +235,7 @@ const RecordForm = (props: any) => {
         <form
           onSubmit={form.onSubmit((values) => {
             handleSubmit(values);
-            close();
+            modals.closeAll();
           })}
         >
           <Grid>
@@ -245,7 +246,7 @@ const RecordForm = (props: any) => {
                   <Text>{appointment?.Service?.name}</Text>
                 </Group>
               )}
-              <Paper withBorder p={10} mih={300}>
+              { !readOnly && <Paper withBorder p={10} mih={300}>
                 <div
                   style={{
                     display: "flex",
@@ -255,44 +256,12 @@ const RecordForm = (props: any) => {
                     gap: "20px",
                   }}
                 >
-                  {services && (
+                  {services &&  (
                     <SelectService services={services} form={form} />
                   )}
-                  {/* <Select
-                    data={services ? services.filter(
-                      (service: any) => service.category === "Procedure"
-                    ) : [] } 
-                    label="Services"
-                    disabled={readOnly}
-                    icon={<IconAppsFilled size={20} />}
-                    {...form.getInputProps("service_rendered")}
-                             /> */}
-                  {/* <NumberInput
-                    label="Cost"
-                    disabled={readOnly}
-                    icon={<IconReceipt2 />}
-                    hideControls
-                    {...form.getInputProps("cost")}
-                  /> */}
-
-                  {/* <Button
-                    color="red"
-                    variant="light"
-                    leftIcon={<IconTrash />}
-                    fullWidth
-                    onClick={() => {
-                      //clear form.values.items
-                      form.setValues((prev) => ({
-                        ...prev,
-                        items: [],
-                      }));
-                    }}
-                    disabled={readOnly}
-                  >
-                    Clear
-                  </Button> */}
+                 
                 </div>
-              </Paper>
+              </Paper>}
 
               <DateInput
                 mt="md"

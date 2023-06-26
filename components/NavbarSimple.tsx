@@ -120,12 +120,13 @@ export function NavbarSimple(props: any) {
       icon: IconUserBolt,
       initiallyOpened: true,
       links: [
+        { label: "Dashboard", link: "/dashboard" },
         { label: "Users", link: "/users" },
         { label: "Doctors", link: "/doctors" },
         { label: "Patients", link: "/patient" },
         { label: "Appointment", link: "/appointment" },
         { label: "Settings", link: "/settings" },
-        { label: "Dashboard", link: "/dashboard" },
+      
         // { label: "Releases schedule", link: "/" },
       ],
     },
@@ -149,7 +150,9 @@ export function NavbarSimple(props: any) {
     if (item.label === "Admin" && session?.user?.user_level !== "admin") {
       return null;
     }
-
+    if (item.label === "Doctor" && session?.user?.user_level !== "doctor") {
+      return null;
+    }
     return <LinksGroup {...item} key={item.label} />;
   });
   // const links = data

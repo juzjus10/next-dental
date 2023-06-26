@@ -35,8 +35,7 @@ import { exportToPdf } from "@/utils/exportToPdf";
 import AppointmentModal from "@/components/Dashboard/AppointmentModal";
 
 type FilterType = "day" | "week" | "month" | "all";
-type StatusType = "pending" | "completed" | "cancel" | "all";
-
+type StatusType = "pending" | "completed" | "cancel" | "payment" | "all";
 
 function filterAppointments(
   appointments: any,
@@ -90,6 +89,10 @@ function filterAppointments(
         break;
       case "cancel":
         if (appointment.status !== "cancel") {
+          return false;
+        }
+      case "payment":
+        if (appointment.status !== "payment") {
           return false;
         }
         break;
@@ -157,8 +160,13 @@ const Appointment = () => {
 
     console.log("filter", filter);
 
-    const filteredAppointments = filterAppointments(initialrecord, filter, statusFilter, debouncedQuery);
-setRecords(filteredAppointments);
+    const filteredAppointments = filterAppointments(
+      initialrecord,
+      filter,
+      statusFilter,
+      debouncedQuery
+    );
+    setRecords(filteredAppointments);
   }, [debouncedQuery, initialrecord, filter, statusFilter]);
 
   console.log(records);
@@ -167,184 +175,187 @@ setRecords(filteredAppointments);
     <ApplicationShell>
       <Paper p={10}>
         <Stack>
-        <Text size={30} weight={700} align="center">
-          Appointment List
-        </Text>
-        <Group position="apart" m={10}>
-          
-          <TextInput
-            sx={{ flexBasis: "40%" }}
-            placeholder="Search user in appointment list"
-            icon={<IconSearch size={16} />}
-            value={query}
-            onChange={(e) => setQuery(e.currentTarget.value)}
-          />
+          <Text size={30} weight={700} align="center">
+            Appointment List
+          </Text>
+          <Group position="apart" m={10}>
+            <TextInput
+              sx={{ flexBasis: "40%" }}
+              placeholder="Search user in appointment list"
+              icon={<IconSearch size={16} />}
+              value={query}
+              onChange={(e) => setQuery(e.currentTarget.value)}
+            />
 
-          <Select
-            value={filter}
-            onChange={(e) => setFilter(e as FilterType)}
-            data={[
-              { value: "all", label: "All" },
-              { value: "day", label: "Day" },
-              { value: "week", label: "Week" },
-              { value: "month", label: "Month" },
-            ]}
-          ></Select>
+            <Select
+              value={filter}
+              onChange={(e) => setFilter(e as FilterType)}
+              data={[
+                { value: "all", label: "All" },
+                { value: "day", label: "Day" },
+                { value: "week", label: "Week" },
+                { value: "month", label: "Month" },
+              ]}
+            ></Select>
 
-          <Select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e as StatusType)}
-            data={[
-              { value: "all", label: "All" },
-              { value: "pending", label: "Pending" },
-              { value: "completed", label: "Completed" },
-              { value: "cancel", label: "Cancel" },
-            ]}
-          ></Select>
+            <Select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e as StatusType)}
+              data={[
+                { value: "all", label: "All" },
+                { value: "pending", label: "Pending" },
+                { value: "completed", label: "Completed" },
+                { value: "cancel", label: "Cancel" },
+                { value: "payment", label: "Payment" },
+              ]}
+            ></Select>
 
-          <div>
-          <Button
-            leftIcon={<IconPaperclip />}
-            mr={10}
-            variant="light"
-            radius="xl"
-            color="red"
-            onClick={() => {
-              exportToPdf("#appointment-table", `Appointment-${new Date()}`);
-            }}
-          >
-            Save as PDF
-          </Button>
+            <div>
+              <Button
+                leftIcon={<IconPaperclip />}
+                mr={10}
+                variant="light"
+                radius="xl"
+                color="red"
+                onClick={() => {
+                  exportToPdf(
+                    "#appointment-table",
+                    `Appointment-${new Date()}`
+                  );
+                }}
+              >
+                Save as PDF
+              </Button>
 
-          <Button
-            variant="light"
-            radius="xl"
-            onClick={() => {
-              router.push("/appointment/create");
-            }}
-            leftIcon={<IconCalendarPlus/>}
-          >
-            Create Appointment
-          </Button>
-          </div>
-        </Group>
+              <Button
+                variant="light"
+                radius="xl"
+                onClick={() => {
+                  router.push("/appointment/create");
+                }}
+                leftIcon={<IconCalendarPlus />}
+              >
+                Create Appointment
+              </Button>
+            </div>
+          </Group>
 
-        <DataTable
-          /*
+          <DataTable
+            /*
           // @ts-ignore */
-          id="appointment-table"
-          m={10}
-          mih={200}
-          withBorder
-          borderRadius="sm"
-          withColumnBorders
-          striped
-          highlightOnHover
-          fetching={isLoading}
-          records={records}
-          onRowClick={(row) => {
-            modals.open({
-              children: (
-                <AppointmentModal appointment={row} close={modals.closeAll} />
-              ),
-            });
-          }}
-          columns={[
-            {
-              accessor: "id",
-              title: "ID",
-              textAlignment: "left",
-              hidden: true,
-            },
-
-            {
-              accessor: "Patient.firstname",
-              title: "First Name",
-              textAlignment: "left",
-            },
-
-            {
-              accessor: "Patient.middlename",
-              title: "Middle Name",
-              textAlignment: "left",
-            },
-            {
-              accessor: "Patient.lastname",
-              title: "Last Name",
-              textAlignment: "left",
-            },
-            {
-              accessor: "appointment_time",
-              title: "Time of Appointment",
-              textAlignment: "left",
-            },
-            {
-              accessor: "date_of_appointment",
-              title: "Date of Appointment",
-              textAlignment: "left",
-              render: (row: any) =>
-                new Date(row.date_of_appointment).toLocaleDateString(),
-            },
-            {
-              accessor: "Doctor.firstname",
-              title: "Doctor First Name",
-              textAlignment: "left",
-            },
-            {
-              accessor: "Doctor.lastname",
-              title: "Doctor Last Name",
-              textAlignment: "left",
-            },
-            {
-              accessor: "status",
-              title: "Status",
-              textAlignment: "center",
-              render: (row: any) => {
-                let color = "";
-                switch (row.status) {
-                  case "pending":
-                    color = "yellow";
-                    break;
-                  case "completed":
-                    color = "green";
-                    break;
-                  case "cancel":
-                    color = "red";
-                    break;
-                  default:
-                    color = "gray";
-                }
-                return <Badge color={color}>{row.status}</Badge>;
+            id="appointment-table"
+            m={10}
+            mih={200}
+            withBorder
+            borderRadius="sm"
+            withColumnBorders
+            striped
+            highlightOnHover
+            fetching={isLoading}
+            records={records}
+            onRowClick={(row) => {
+              modals.open({
+                children: (
+                  <AppointmentModal appointment={row} close={modals.closeAll} />
+                ),
+              });
+            }}
+            columns={[
+              {
+                accessor: "id",
+                title: "ID",
+                textAlignment: "left",
+                hidden: true,
               },
-            },
 
-            {
-              accessor: "actions",
-              title: <Text mr="xs">Actions</Text>,
-              textAlignment: "center",
-              render: (appointment) => (
-                // prevent click on row
+              {
+                accessor: "Patient.firstname",
+                title: "First Name",
+                textAlignment: "left",
+              },
 
-                <Group spacing={4} position="center" noWrap>
-                  <ActionIcon
-                    color="green"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      modals.open({
-                        title: "Appointment Details",
-                        children: (
-                          <AppointmentForm
-                            data={appointment ? appointment : null}
-                            readOnly={appointment.id ? true : false}
-                          ></AppointmentForm>
-                        ),
-                      });
-                    }}
-                  >
-                    <IconEye size={16} />
-                  </ActionIcon>
+              {
+                accessor: "Patient.middlename",
+                title: "Middle Name",
+                textAlignment: "left",
+              },
+              {
+                accessor: "Patient.lastname",
+                title: "Last Name",
+                textAlignment: "left",
+              },
+              {
+                accessor: "appointment_time",
+                title: "Time of Appointment",
+                textAlignment: "left",
+              },
+              {
+                accessor: "date_of_appointment",
+                title: "Date of Appointment",
+                textAlignment: "left",
+                render: (row: any) =>
+                  new Date(row.date_of_appointment).toLocaleDateString(),
+              },
+              {
+                accessor: "Doctor.firstname",
+                title: "Doctor First Name",
+                textAlignment: "left",
+              },
+              {
+                accessor: "Doctor.lastname",
+                title: "Doctor Last Name",
+                textAlignment: "left",
+              },
+              {
+                accessor: "status",
+                title: "Status",
+                textAlignment: "center",
+                render: (row: any) => {
+                  let color = "";
+                  switch (row.status) {
+                    case "pending":
+                      color = "yellow";
+                      break;
+                    case "completed":
+                      color = "green";
+                      break;
+                    case "cancel":
+                      color = "red";
+                      break;
+                    default:
+                      color = "gray";
+                  }
+                  return <Badge color={color}>{row.status}</Badge>;
+                },
+              },
 
-                  {/* <ActionIcon
+              {
+                accessor: "actions",
+                title: <Text mr="xs">Actions</Text>,
+                textAlignment: "center",
+                render: (appointment) => (
+                  // prevent click on row
+
+                  <Group spacing={4} position="center" noWrap>
+                    <ActionIcon
+                      color="green"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        modals.open({
+                          title: "Appointment Details",
+                          children: (
+                            <AppointmentForm
+                              data={appointment ? appointment : null}
+                              readOnly={appointment.id ? true : false}
+                            ></AppointmentForm>
+                          ),
+                        });
+                      }}
+                    >
+                      <IconEye size={16} />
+                    </ActionIcon>
+
+                    {/* <ActionIcon
                     color="red"
                     onClick={(e: any) => {
                       e.stopPropagation();
@@ -353,11 +364,11 @@ setRecords(filteredAppointments);
                   >
                     <IconTrash size={16} />
                   </ActionIcon> */}
-                </Group>
-              ),
-            },
-          ]}
-        />
+                  </Group>
+                ),
+              },
+            ]}
+          />
         </Stack>
       </Paper>
     </ApplicationShell>
