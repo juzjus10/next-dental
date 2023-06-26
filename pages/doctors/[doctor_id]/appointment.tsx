@@ -159,7 +159,7 @@ const Appointment = (props: any) => {
   useEffect(() => {
     if (!appointmentQuery?.data) return;
     const initialrecord = appointmentQuery?.data?.filter(
-      ({ Doctor }: any) => Doctor.id === user_data.doctor.id
+      ({ Doctor }: any) => Doctor?.id === user_data.doctor.id
     );
 
     setRecords(initialrecord);
