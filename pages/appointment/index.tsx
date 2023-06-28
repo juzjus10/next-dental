@@ -35,7 +35,13 @@ import { exportToPdf } from "@/utils/exportToPdf";
 import AppointmentModal from "@/components/Dashboard/AppointmentModal";
 
 type FilterType = "day" | "week" | "month" | "all";
-type StatusType = "pending" | "completed" | "cancel" | "payment" | "all";
+type StatusType =
+  | "pending"
+  | "completed"
+  | "cancel"
+  | "payment"
+  | "all"
+  | "request";
 
 function filterAppointments(
   appointments: any,
@@ -93,6 +99,11 @@ function filterAppointments(
         }
       case "payment":
         if (appointment.status !== "payment") {
+          return false;
+        }
+        break;
+      case "request":
+        if (appointment.status !== "request") {
           return false;
         }
         break;
@@ -207,6 +218,7 @@ const Appointment = () => {
                 { value: "completed", label: "Completed" },
                 { value: "cancel", label: "Cancel" },
                 { value: "payment", label: "Payment" },
+                { value: "request", label: "Request" },
               ]}
             ></Select>
 
@@ -322,10 +334,13 @@ const Appointment = () => {
                     case "cancel":
                       color = "red";
                       break;
+                    case "request":
+                      color = "blue";
+                      break;
                     default:
                       color = "gray";
                   }
-                  return <Badge color={color}>{row.status === "pending" ? "Request" : row.status }</Badge>;
+                  return <Badge color={color}>{row.status}</Badge>;
                 },
               },
 
@@ -356,14 +371,14 @@ const Appointment = () => {
                     </ActionIcon>
 
                     <ActionIcon
-                    color="red"
-                    onClick={(e: any) => {
-                      e.stopPropagation();
-                      mutate(appointment.id);
-                    }}
-                  >
-                    <IconTrash size={16} />
-                  </ActionIcon>
+                      color="red"
+                      onClick={(e: any) => {
+                        e.stopPropagation();
+                        mutate(appointment.id);
+                      }}
+                    >
+                      <IconTrash size={16} />
+                    </ActionIcon>
                   </Group>
                 ),
               },

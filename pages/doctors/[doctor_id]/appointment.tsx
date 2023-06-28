@@ -46,7 +46,7 @@ import AppointmentModal from "@/components/Dashboard/AppointmentModal";
 import { getSession } from "next-auth/react";
 
 type FilterType = "day" | "week" | "month" | "all";
-type StatusType = "pending" | "completed" | "cancel" | "payment" | "all";
+type StatusType = "pending" | "completed" | "cancel" | "payment" | "all" | "payment";
 
 function filterAppointments(
   appointments: any,
@@ -226,6 +226,7 @@ const Appointment = (props: any) => {
                 { value: "completed", label: "Completed" },
                 { value: "cancel", label: "Cancel" },
                 { value: "payment", label: "Payment" },
+                { value: "request", label: "Request" },
               ]}
             ></Select>
 
@@ -343,6 +344,8 @@ const Appointment = (props: any) => {
                       break;
                     case "payment":
                       color = "orange";
+                    case "request":
+                      color = "blue";
                     default:
                       color = "gray";
                   }

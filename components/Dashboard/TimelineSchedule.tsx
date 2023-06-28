@@ -51,11 +51,14 @@ const TimeLineItem = ({ appointment }: any) => {
   );
   const theme = useMantineTheme();
 
-  const StatusBadge = ( status: string ) => {
+  const StatusBadge = (status: string) => {
     let color = "";
     switch (status) {
       case "pending":
         color = "yellow";
+        break;
+      case "request":
+        color = "blue";
         break;
       case "completed":
         color = "green";
@@ -69,7 +72,7 @@ const TimeLineItem = ({ appointment }: any) => {
       default:
         color = "gray";
     }
-    return <Badge color={color}>{status === "pending" ? "request" : status}</Badge>;
+    return <Badge color={color}>{status}</Badge>;
   };
   return (
     <>
@@ -93,7 +96,7 @@ const TimeLineItem = ({ appointment }: any) => {
                     : theme.colors.gray[2],
               }}
             >
-              { StatusBadge(appointment.status)}
+              {StatusBadge(appointment.status)}
 
               <Group mt={5}>
                 <IconCalendarEvent />

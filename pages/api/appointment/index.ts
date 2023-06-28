@@ -67,6 +67,14 @@ export default async function handler(
             doctor_id: {
               equals: doctor.id,
             },
+            AND: {
+              status: {
+                //not cancelled or request
+                notIn: ["cancelled", "request"],
+              },
+            },
+                
+
           },
           
         });

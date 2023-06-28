@@ -65,7 +65,7 @@ const AppointmentModal = ({
             Status
           </Text>
           <Badge size="lg" variant="light">
-            {status === "pending" ? "request" : status}
+            {status }
           </Badge>
         </Group>
 

@@ -61,7 +61,7 @@ const CreateAppointment = () => {
       // Appointment
       appointment: {
         id: "",
-        status: "pending",
+        status: "request",
         appointment_time: "",
         date_of_appointment: "", // 5  days from now
       },

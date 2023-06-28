@@ -62,7 +62,7 @@ export async function createAppointment(data: any) {
 
 export async function getAvailableTimes(data: any) {
   try {
-    const response = await axios.post("/api/appointment/getAvailable", data);
+    const response = await axios.post("/api/appointment/getAvailable2", data);
     return response.data;
   } catch (error: any) {
     if (error.response) {
